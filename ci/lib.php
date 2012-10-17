@@ -62,9 +62,9 @@ function run_cmd($cmd)
         $log .= $str;
     }
 
-    fclose($fd);
+    $rc = pclose($fd);
 
-    return $log;
+    return array('log' => $log, 'rc' => $rc);
 }
 
 function run_remote_cmd(array $ssh_settings, $cmd)
@@ -77,4 +77,13 @@ function run_remote_cmd(array $ssh_settings, $cmd)
     return run_cmd($ssh . '"' . $cmd . '"'); // TODO:
 }
 
+function get_dot_file_content($dot_file)
+{
+    $content = file_get_contents($dot_file);
+
+    // split comments
+    $content = preg_replace('/$#.*/', '', $content);
+
+    return $content;
+}
 

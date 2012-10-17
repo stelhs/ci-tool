@@ -105,6 +105,8 @@ function main()
     $cmd = '( ';
     foreach ($execute_targets as $target)
         $cmd .= 'cd ' . $target->get_dir() . ' && ' .
+            'session=$(ci create session) && ' .
+            'cd $session && ' .
             'ci checkout ' . $git_commit . '&& ' .
             'ci build && ci test; ci report '
             . $git_repository . ' ' . $git_branch . ' ' . $git_commit;

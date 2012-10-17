@@ -41,6 +41,15 @@ class Target
     }
 
     /**
+     * Get project object
+     * @return string
+     */
+    function get_project()
+    {
+        return $this->project;
+    }
+
+    /**
      * Get array with all sessions
      * @return array sessions
      */
@@ -55,7 +64,7 @@ class Target
      */
     function get_repo_name()
     {
-        return file_get_contents($this->dir . '/.repo_name');
+        return get_dot_file_content($this->dir . '/.repo_name');
     }
 
     /**
@@ -65,7 +74,7 @@ class Target
     function get_list_branches()
     {
         $list_branches = array();
-        $content = file_get_contents($this->dir . '/.branches');
+        $content = get_dot_file_content($this->dir . '/.branches');
         $rows = explode("\n", $content);
         foreach ($rows as $row)
         {
@@ -112,7 +121,7 @@ class Target
      * Create new session and add to internal list sessions
      * @return bool
      */
-    function add_new_session()
+    function add_new_session($description = '')
     {
         $curr_date = new CiDateTime();
 
@@ -125,9 +134,25 @@ class Target
         $dir_name = 'build_session_' . $index . '_' . $session_date;
         mkdir($this->dir . '/' . $dir_name);
 
+        file_put_contents($this->dir . '/' . $dir_name . '/.session_desc', $description);
+
         $session = new Session($this, $this->dir . '/' . $dir_name, $curr_date, $index);
         $this->add_session($session);
+        $session->set_status('created');
         return $session;
+    }
+
+    /**
+     * Find session object by session name
+     * @param $session_name
+     * @return session object of false
+     */
+    function find_session($session_name)
+    {
+        if (isset($this->sessions[$session_name]))
+            return $this->sessions[$session_name];
+
+        return false;
     }
 
     /**

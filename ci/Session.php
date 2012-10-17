@@ -30,6 +30,15 @@ class Session
     }
 
     /**
+     * Get target object
+     * @return string
+     */
+    function get_target()
+    {
+        return $this->target;
+    }
+
+    /**
      * abort session
      */
     function abort()
@@ -38,8 +47,7 @@ class Session
             return;
 
         run_cmd('kill ' . $this->get_pid());
-        // make list with child proceses  and kill it
-
+        // TODO: make list with child proceses  and kill it
     }
 
     /**
@@ -50,39 +58,42 @@ class Session
     {
         $session_pid = 0;
         if (is_file($this->dir . '/.pid'))
-            $session_pid = (int)file_get_contents($this->dir . '/.pid');
+            $session_pid = (int)get_dot_file_content($this->dir . '/.pid');
 
         return $session_pid;
     }
 
     /**
-     * return current session state
+     * Get stored session status
+     * @return status name
      */
-    function get_state()
+    private function get_stored_status()
     {
-        // - read .staus
-     /*   switch ($status)
+        return get_dot_file_content('.status');
+    }
+
+    /**
+     * Store status into a file .status
+     * and check for valid session
+     */
+    function set_status($status)
+    {
+        switch ($status)
         {
-            case 'running':
-                {
-                    // check .pid not exist - pizdec
-                    // check ps .pid not exist - status set 'aborted', delete .pid - return abort
-                }
-                break;
-
             case 'aborted':
-                // read from .status
-                // if exist .pid - pizdec
-            case 'failed':
-            case 'finished':
-                break;
+                unlink($this->dir . '/.pid');
         }
-        */
-        $session_pid = $this->get_pid();
-        if (!$session_pid)
-            return 'no_process';
 
-        // search session process in running proceses
+        file_put_contents($this->dir .'/.status', $status);
+    }
+
+    /**
+     * Check for running process
+     * @param $pid - PID
+     * @return bool true - running, false - not running
+     */
+    private function check_proc_running($pid)
+    {
         $list = run_cmd('ps -ax');
         $rows = explode("\n", $list);
         foreach ($rows as $row)
@@ -91,14 +102,51 @@ class Session
             if (!$matched)
                 continue;
 
-            $pid = (int)$matched[1];
+            $curr_pid = (int)$matched[1];
 
-            if ($pid == $session_pid)
-                return 'running';
+            if ($curr_pid == $pid)
+                return true;
         }
 
-        unlink($this->dir . '/.pid');
-        return 'no_process';
+        return false;
+    }
+
+    /**
+     * return current session state
+     */
+    function get_state()
+    {
+        $pid = $this->get_pid();
+        $stored_status = $this->get_stored_status();
+        switch ($stored_status)
+        {
+            case 'running':
+                if (!$pid)
+                {
+                    throw new Exception('file .pid not exist');
+                }
+
+                // if process not nunning
+                if (!check_proc_running($pid))
+                {
+                    $this->set_status('aborted');
+                    return 'aborted';
+                }
+                return $stored_status;
+
+            case 'aborted_checkout':
+            case 'aborted_build':
+            case 'aborted_test':
+            case 'failed_checkout':
+            case 'failed_build':
+            case 'failed_test':
+            case 'finished':
+                if ($pid)
+                {
+                    throw new Exception("file .pid must be deleted");
+                }
+                return $stored_status;
+        }
     }
 
     /**
@@ -116,23 +164,31 @@ class Session
 
         file_put_contents($this->dir . '/.pid', getmypid());
 
-        $log = run_cmd('cd ' . $this->target->get_dir() . ';' .
+        $ret = run_cmd('cd ' . $this->target->get_dir() . ';' .
             $this->target->get_dir() . '/' . $bash_file . ' ' . $args);
 
         unlink($this->dir . '/.pid');
 
-        return $log;
+        return $ret;
     }
 
     /**
      * run checkout sources
      */
-    function checkout_src()
+    function checkout_src($commit)
     {
-        $log = $this->run_script('.recipe_checkout');
-        file_put_contents($this->dir . '/log_checkout', $log);
-        // analyze return code, write status
+        $this->set_status('running');
+        file_put_contents($this->dir . '/.commit', $commit);
 
+        $ret = $this->run_script('.recipe_checkout');
+        file_put_contents($this->dir . '/checkout_log', $ret['log']);
+        if ($ret['rc'])
+        {
+            $this->set_status('failed_checkout');
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -140,9 +196,20 @@ class Session
      */
     function build_src()
     {
-        $log = $this->run_script('.recipe_build');
-        file_put_contents($this->dir . '/log_build', $log);
-        // analyze return code, write status
+        $this->set_status('running');
+        $ret = $this->run_script('.recipe_build');
+        file_put_contents($this->dir . '/build_log', $ret['log']);
+        if ($ret['rc'])
+        {
+            $this->set_status('failed_build');
+            return false;
+        }
+
+        // TODO: check log file and return status
+        // if (error)
+        //    $this->set_status('failed_build');
+
+        return true;
     }
 
     /**
@@ -150,9 +217,44 @@ class Session
      */
     function test_src()
     {
-        $log = $this->run_script('.recipe_test');
-        file_put_contents($this->dir . '/log_test', $log);
-        // analyze return code, write status
+        $this->set_status('running');
+        $ret = $this->run_script('.recipe_test');
+        file_put_contents($this->dir . '/test_log', $ret['log']);
+        if ($ret['rc'])
+        {
+            $this->set_status('failed_test');
+            return false;
+        }
+
+        // TODO: check log file and return status
+        // if (error)
+        //    $this->set_status('failed_build');
     }
 
+    function make_report()
+    {
+        $target = $this->get_target();
+        $project = $target->get_project();
+
+        // generate XML report file
+        $xml_data = array();
+        $xml_data['project_name'] = $project->get_name();
+        $xml_data['target_name'] = $target->get_name();
+        $xml_data['session_name'] = $this->get_name();
+        $xml_data['status'] = $this->get_state();
+        $xml_data['path_to_checkout_log'] = $this->dir . '/checkout_log';
+        $xml_data['path_to_build_log'] = $this->dir . '/build_log';
+        $xml_data['path_to_test_log'] = $this->dir . '/test_log';
+
+        if (file_exists($this->dir . '/.build_result'))
+        {
+            $content = get_dot_file_content($this->dir . '/.build_result');
+            $paths = explode("\n", $content);
+            foreach($paths as $i => $path)
+                $xml_data['build_result%' . $i] = $this->dir . '/' . $path;
+        }
+
+        $xml_content = create_xml($xml_data);
+        file_put_contents($this->dir . '/report.xml', $xml_content);
+    }
 }

@@ -1,0 +1,5 @@
+cd promsvyaz
+make V=99
+
+echo /path/to/binary >> .build_out
+

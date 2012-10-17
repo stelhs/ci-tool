@@ -73,6 +73,8 @@ class Project
      */
     function add_new_target($target_name)
     {
+        global $_CONFIG;
+
         $target_dir = $this->dir . '/' . $target_name;
         if (is_dir($target_dir))
         {
@@ -81,12 +83,7 @@ class Project
         }
 
         mkdir($target_dir);
-        file_put_contents($target_dir . '/.target_desc', $target_name);
-        file_put_contents($target_dir . '/.branches', '');
-        file_put_contents($target_dir . '/.repo_name', '');
-        file_put_contents($target_dir . '/.recipe_checkout', '');
-        file_put_contents($target_dir . '/.recipe_build', '');
-        file_put_contents($target_dir . '/.recipe_tests', '');
+        system('cp ' . $_CONFIG['ci_dir'] . '/default_configs/target/.* ' . $target_dir);
 
         $target = new Target($this, $target_dir, $target_name);
         $this->add_target($target);
