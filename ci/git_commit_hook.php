@@ -56,10 +56,8 @@ function main()
     if ($git_repository == $_CONFIG['ci_repo'])
     {
         foreach ($_CONFIG['ci_servers'] as $ci_server)
-        {
             run_remote_cmd($ci_server, 'cd ' . $_CONFIG['ci_dir'] . ';' .
                 'git pull');
-        }
 
         return;
     }
