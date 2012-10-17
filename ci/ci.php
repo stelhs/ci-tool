@@ -98,6 +98,7 @@ function main()
     // Parse path and detect $project_name and $target_name and $session_name
     $target_name = '';
     $project_name = '';
+    $session_name = '';
     $dirs = explode('/', getcwd());
     $dirs = array_reverse($dirs);
     switch ($obj_type)
@@ -207,7 +208,7 @@ function main()
                         }
 
                         $session = $target->add_new_session($param1);
-                        echo $session->get_name();
+                        echo $session->get_name() . "\n";
                         break;
 
                     default:
@@ -217,7 +218,6 @@ function main()
             }
             break;
 
-        // TODO: checkout, build, test, report must be work only from session dir
         case 'checkout':
             if ($obj_type != 'session')
             {

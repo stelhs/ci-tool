@@ -83,7 +83,8 @@ class Project
         }
 
         mkdir($target_dir);
-        system('cp ' . $_CONFIG['ci_dir'] . '/default_configs/target/.* ' . $target_dir);
+        system('find ' . $_CONFIG['ci_dir'] . '/default_configs/target/ ' .
+        ' -name ".*" -type f -exec cp {} ' . $target_dir . ' \;');
 
         $target = new Target($this, $target_dir, $target_name);
         $this->add_target($target);

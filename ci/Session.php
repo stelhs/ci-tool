@@ -69,7 +69,19 @@ class Session
      */
     private function get_stored_status()
     {
-        return get_dot_file_content('.status');
+        return get_dot_file_content($this->dir . '/.status');
+    }
+
+    /**
+     * Get commit number
+     * @return status name
+     */
+    private function get_commit()
+    {
+        if (!file_exists($this->dir . '/.commit'))
+            return false;
+
+        return get_dot_file_content($this->dir . '/.commit');
     }
 
     /**
@@ -120,7 +132,9 @@ class Session
         $stored_status = $this->get_stored_status();
         switch ($stored_status)
         {
-            case 'running':
+            case 'running_checkout':
+            case 'running_build':
+            case 'running_test':
                 if (!$pid)
                 {
                     throw new Exception('file .pid not exist');
@@ -140,7 +154,9 @@ class Session
             case 'failed_checkout':
             case 'failed_build':
             case 'failed_test':
-            case 'finished':
+            case 'finished_checkout':
+            case 'finished_build':
+            case 'finished_test':
                 if ($pid)
                 {
                     throw new Exception("file .pid must be deleted");
@@ -164,7 +180,7 @@ class Session
 
         file_put_contents($this->dir . '/.pid', getmypid());
 
-        $ret = run_cmd('cd ' . $this->target->get_dir() . ';' .
+        $ret = run_cmd('cd ' . $this->dir . ';' .
             $this->target->get_dir() . '/' . $bash_file . ' ' . $args);
 
         unlink($this->dir . '/.pid');
@@ -177,7 +193,7 @@ class Session
      */
     function checkout_src($commit)
     {
-        $this->set_status('running');
+        $this->set_status('running_checkout');
         file_put_contents($this->dir . '/.commit', $commit);
 
         $ret = $this->run_script('.recipe_checkout');
@@ -188,6 +204,7 @@ class Session
             return false;
         }
 
+        $this->set_status('finished_checkout');
         return true;
     }
 
@@ -196,7 +213,7 @@ class Session
      */
     function build_src()
     {
-        $this->set_status('running');
+        $this->set_status('running_build');
         $ret = $this->run_script('.recipe_build');
         file_put_contents($this->dir . '/build_log', $ret['log']);
         if ($ret['rc'])
@@ -209,6 +226,7 @@ class Session
         // if (error)
         //    $this->set_status('failed_build');
 
+        $this->set_status('finished_build');
         return true;
     }
 
@@ -217,7 +235,7 @@ class Session
      */
     function test_src()
     {
-        $this->set_status('running');
+        $this->set_status('running_test');
         $ret = $this->run_script('.recipe_test');
         file_put_contents($this->dir . '/test_log', $ret['log']);
         if ($ret['rc'])
@@ -229,19 +247,23 @@ class Session
         // TODO: check log file and return status
         // if (error)
         //    $this->set_status('failed_build');
+        $this->set_status('finished_test');
+        return true;
     }
 
     function make_report()
     {
         $target = $this->get_target();
         $project = $target->get_project();
+        $status = $this->get_state();
 
         // generate XML report file
         $xml_data = array();
         $xml_data['project_name'] = $project->get_name();
         $xml_data['target_name'] = $target->get_name();
         $xml_data['session_name'] = $this->get_name();
-        $xml_data['status'] = $this->get_state();
+        $xml_data['commit'] = $this->get_commit();
+        $xml_data['status'] = $status;
         $xml_data['path_to_checkout_log'] = $this->dir . '/checkout_log';
         $xml_data['path_to_build_log'] = $this->dir . '/build_log';
         $xml_data['path_to_test_log'] = $this->dir . '/test_log';
@@ -251,10 +273,18 @@ class Session
             $content = get_dot_file_content($this->dir . '/.build_result');
             $paths = explode("\n", $content);
             foreach($paths as $i => $path)
+            {
+                if (!trim($path))
+                    continue;
+
                 $xml_data['build_result%' . $i] = $this->dir . '/' . $path;
+            }
         }
 
         $xml_content = create_xml($xml_data);
         file_put_contents($this->dir . '/report.xml', $xml_content);
+
+        // TODO:
+        // scp to web report.xml to "<host>_<project>_<target>_<session>.xml"
     }
 }
