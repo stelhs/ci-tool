@@ -52,6 +52,21 @@ function main()
         return 1;
     }
 
+    // update CI sources
+    if ($git_repository == $_CONFIG['ci_repo'])
+    {
+        foreach ($_CONFIG['ci_servers'] as $ci_server)
+        {
+            run_remote_cmd($ci_server, 'cd ' . $_CONFIG['ci_dir'] . ';' .
+                'git pull');
+        }
+
+        return;
+    }
+
+
+    //
+    //
 
     // find lettle loaded CI server
     $min_load_average = 100; //100%
