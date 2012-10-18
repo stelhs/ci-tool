@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# $1 - коммит
+# $1 - commit hash
 
 echo BLA
 git pull origin master

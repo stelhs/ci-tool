@@ -43,11 +43,10 @@ class Session
      */
     function abort()
     {
-        if($this->get_state() == 'no_process')
+        if($this->get_state() != 'running')
             return;
 
-        run_cmd('kill ' . $this->get_pid());
-        // TODO: make list with child proceses  and kill it
+        kill_all($this->get_pid());
     }
 
     /**

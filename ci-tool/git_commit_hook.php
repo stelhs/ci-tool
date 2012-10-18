@@ -57,17 +57,23 @@ function main()
     {
         foreach ($_CONFIG['ci_servers'] as $ci_server)
             run_remote_cmd($ci_server, 'cd ' . $_CONFIG['ci_dir'] . ';' .
-                'git pull');
+                'git pull origin master');
 
         return;
     }
 
+    // update projects configurations
+    if ($git_repository == $_CONFIG['ci_projects_repo'])
+    {
+        foreach ($_CONFIG['ci_servers'] as $ci_server)
+            run_remote_cmd($ci_server, 'cd ' . $_CONFIG['project_dir'] . ';' .
+                'git pull origin master');
 
-    //
-    //
+        return;
+    }
 
-    // find lettle loaded CI server
-    $min_load_average = 100; //100%
+    // find little loaded CI server
+    $min_load_average = 1000000; //max load overage
     $little_loaded_ci_server = array();
     foreach ($_CONFIG['ci_servers'] as $ci_server)
     {
@@ -95,6 +101,9 @@ function main()
     $execute_targets = array();
     foreach ($projects->get_list() as $project)
     {
+        if (!$project->get_targets_list())
+            continue;
+
         foreach ($project->get_targets_list() as $target)
         {
             if ($target->get_repo_name() != $git_repository)
@@ -114,19 +123,22 @@ function main()
         }
     }
 
+    if (!$execute_targets)
+    {
+        print_error('no suitable targets to execute');
+        return false;
+    }
+
     // create command for run on CI servers
-    $cmd = '( ';
+    $cmd = '';
     foreach ($execute_targets as $target)
-        $cmd .= 'cd ' . $target->get_dir() . ' && ' .
-            'session=$(ci create session) && ' .
-            'cd $session && ' .
-            'ci checkout ' . $git_commit . '&& ' .
-            'ci build && ci test; ci report '
+        $cmd .= 'cd ' . $target->get_dir() . '; ' .
+            'cd \$(ci create session git); ' .
+            'ci checkout ' . $git_commit . '; ' .
+            'ci build; ci test; ci report '
             . $git_repository . ' ' . $git_branch . ' ' . $git_commit;
-    $cmd .= ' )';
 
-    run_remote_cmd($little_loaded_ci_server, $cmd);
-
+    run_remote_cmd($little_loaded_ci_server, $cmd, true);
 }
 
 main();

@@ -1,0 +1,9 @@
+#!/bin/bash
+
+# This script builds target and returns paths to build products in .build_result file
+
+# building procedure...
+
+# echo /path/to/binary1 >> .build_result
+# echo /path/to/binary2 >> .build_result
+

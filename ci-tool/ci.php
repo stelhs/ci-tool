@@ -19,16 +19,23 @@ function print_help()
 
 function get_load_overage(List_projects $projects)
 {
-    // - calculate count sessions in running mode
+    // calculate count sessions in running mode
     $build_processes = 0;
     foreach ($projects->get_list() as $project)
-        foreach ($project->get_targets_list() as $target)
-            foreach ($target->get_list_sessions() as $session)
-                if ($session->get_state() == 'running')
-                    $build_processes++;
+        if ($project->get_targets_list())
+            foreach ($project->get_targets_list() as $target)
+                if ($target->get_list_sessions())
+                    foreach ($target->get_list_sessions() as $session)
+                        if ($session)
+                            if ($session->get_state() == 'running')
+                                $build_processes++;
 
-    $max_build_processes = (int)get_dot_file_content('.max_build_processes');
-    return $max_build_processes - $build_processes;
+    $max_build_processes = (int)get_dot_file_content($projects->get_dir() . '/.max_build_processes');
+    $free_build_space = $max_build_processes - $build_processes;
+    if ($free_build_space < 0)
+        $free_build_space = 0;
+
+    return $free_build_space;
 }
 
 
@@ -59,19 +66,6 @@ function main()
     $op = isset($argv[1]) ? $argv[1] : NULL;
     switch ($op)
     {
-        case 'test':
-            {
-                $ret = run_cmd('cp a hh');
-                dump($ret);
-                exit;
-
-                $project = $projects->find_project('Promsvyaz');
-                $target = $project->find_target('full_firmware');
-                $session = $target->add_new_session();
-                dump($session->get_name());
-                $session->checkout_src();
-            }
-
         case 'get':
             {
                 $param = isset($argv[2]) ? $argv[2] : NULL;
@@ -79,7 +73,7 @@ function main()
                 {
                     case 'load_average':
                         echo get_load_overage($projects) . "\n";
-                        break;
+                        return;
 
                     default:
                         print_error('No parameter');
@@ -216,6 +210,10 @@ function main()
                         print_help();
                 }
             }
+            break;
+
+        case 'sync':
+            // TODO: sync repository without sessions
             break;
 
         case 'checkout':

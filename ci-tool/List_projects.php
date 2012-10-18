@@ -29,6 +29,15 @@ class List_projects
     }
 
     /**
+     * return projects directory
+     * @return path
+     */
+    function get_dir()
+    {
+        return $this->dir;
+    }
+
+    /**
      * Get array with all projects
      * @return array projects
      */
@@ -61,6 +70,8 @@ class List_projects
         }
         mkdir($project_dir);
         file_put_contents($project_dir . '/.project_desc', $project_name);
+        run_cmd('git add ' . $this->dir .
+            ' && git commit -m "add new project ' . $project_name . '" && git push origin master');
 
         $project = new Project($project_dir, $project_name);
         $this->add_project($project);

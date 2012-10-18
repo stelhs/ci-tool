@@ -1,3 +1,5 @@
 ci/.settings
 ci/.project
 ci/.buildpath
+.idea
+projects/

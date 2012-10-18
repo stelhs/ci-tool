@@ -85,6 +85,8 @@ class Project
         mkdir($target_dir);
         system('find ' . $_CONFIG['ci_dir'] . '/default_configs/target/ ' .
         ' -name ".*" -type f -exec cp {} ' . $target_dir . ' \;');
+        run_cmd('git add ' . $this->dir .
+            ' && git commit -m "add new target ' . $target_name . '" && git push origin master');
 
         $target = new Target($this, $target_dir, $target_name);
         $this->add_target($target);
