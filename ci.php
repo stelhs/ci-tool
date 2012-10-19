@@ -17,7 +17,8 @@ function print_help()
     // Нужно нарисовать красивый хэлп
 }
 
-function get_load_overage(List_projects $projects)
+
+function get_free_build_slots(List_projects $projects)
 {
     // calculate count sessions in running mode
     $build_processes = 0;
@@ -31,18 +32,18 @@ function get_load_overage(List_projects $projects)
                                 $build_processes++;
 
     $max_build_processes = (int)get_dot_file_content($projects->get_dir() . '/.max_build_processes');
-    $free_build_space = $max_build_processes - $build_processes;
-    if ($free_build_space < 0)
-        $free_build_space = 0;
+    $free_build_slots = $max_build_processes - $build_processes;
+    if ($free_build_slots < 0)
+        $free_build_slots = 0;
 
-    return $free_build_space;
+    return $free_build_slots;
 }
 
 
 function main()
 {
     global $argv, $_CONFIG;
-    $rc = NULL;
+    $rc = 0;
 
     // create list all projects
     $projects = new List_projects($_CONFIG['project_dir']);
@@ -71,9 +72,9 @@ function main()
                 $param = isset($argv[2]) ? $argv[2] : NULL;
                 switch ($param)
                 {
-                    case 'load_average':
-                        echo get_load_overage($projects) . "\n";
-                        return;
+                    case 'free_build_slots':
+                        echo get_free_build_slots($projects) . "\n";
+                        return 0;
 
                     default:
                         print_error('No parameter');
@@ -86,7 +87,7 @@ function main()
     if (!$obj_type)
     {
         print_error('incorrect current directory');
-        return;
+        return 1;
     }
 
     // Parse path and detect $project_name and $target_name and $session_name
@@ -126,7 +127,7 @@ function main()
         if (!$project)
         {
             print_error('project not found');
-            return;
+            return 1;
         }
     }
 
@@ -137,7 +138,7 @@ function main()
         if (!$target)
         {
             print_error('target not found');
-            return;
+            return 1;
         }
     }
 
@@ -148,7 +149,7 @@ function main()
         if (!$session)
         {
             print_error('session not found');
-            return;
+            return 1;
         }
     }
 
@@ -163,13 +164,13 @@ function main()
                 if (!$type)
                 {
                     print_error('2 argument is empty');
-                    break;
+                    return 1;
                 }
 
                 if (!$param1)
                 {
                     print_error('3 argument is empty');
-                    break;
+                    return 1;
                 }
 
                 switch ($type)
@@ -178,7 +179,7 @@ function main()
                         if ($obj_type != 'projects_list')
                         {
                             print_error('This operation permited only from projects list dir');
-                            break;
+                            return 1;
                         }
 
                         $rc = $projects->add_new_project($param1);
@@ -188,7 +189,7 @@ function main()
                         if ($obj_type != 'project')
                         {
                             print_error('This operation permited only from project dir');
-                            break;
+                            return 1;
                         }
 
                         $rc = $project->add_new_target($param1);
@@ -198,12 +199,12 @@ function main()
                         if ($obj_type != 'target')
                         {
                             print_error('This operation permited only from project dir');
-                            break;
+                            return 1;
                         }
 
                         $session = $target->add_new_session($param1);
                         echo $session->get_name() . "\n";
-                        break;
+                        return 0;
 
                     default:
                         print_error('No type of create');
@@ -212,22 +213,18 @@ function main()
             }
             break;
 
-        case 'sync':
-            // TODO: sync repository without sessions
-            break;
-
         case 'checkout':
             if ($obj_type != 'session')
             {
                 print_error('This operation permited only from session dir');
-                break;
+                return 1;
             }
 
             $commit = isset($argv[2]) ? $argv[2] : NULL;
             if (!$commit)
             {
                 print_error('2 argument is empty');
-                break;
+                return 1;
             }
 
             $rc = $session->checkout_src($commit);
@@ -237,7 +234,7 @@ function main()
             if ($obj_type != 'session')
             {
                 print_error('This operation permited only from session dir');
-                break;
+                return 1;
             }
 
             $rc = $session->build_src();
@@ -247,7 +244,7 @@ function main()
             if ($obj_type != 'session')
             {
                 print_error('This operation permited only from session dir');
-                break;
+                return 1;
             }
 
             $rc = $session->test_src();
@@ -257,7 +254,7 @@ function main()
             if ($obj_type != 'session')
             {
                 print_error('This operation permited only from session dir');
-                break;
+                return 1;
             }
 
             $rc = $session->make_report();
@@ -266,9 +263,10 @@ function main()
         default:
             print_error('No operation');
             print_help();
+            return 1;
     }
     
     return $rc;
 }
 
-main();
+return main();

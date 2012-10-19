@@ -76,6 +76,9 @@ class Target
         $list_branches = array();
         $content = get_dot_file_content($this->dir . '/.branches');
         $rows = explode("\n", $content);
+        if (!$rows)
+            return false;
+
         foreach ($rows as $row)
         {
             $clean_row = trim($row);
@@ -124,7 +127,6 @@ class Target
     function add_new_session($description = '')
     {
         $curr_date = new CiDateTime();
-
         $session_date = $curr_date->to_string();
 
         $index = 0;
@@ -132,9 +134,8 @@ class Target
             $index++;
 
         $dir_name = 'build_session_' . $index . '_' . $session_date;
-        mkdir($this->dir . '/' . $dir_name);
-
-        file_put_contents($this->dir . '/' . $dir_name . '/.session_desc', $description);
+        create_dir($this->dir . '/' . $dir_name);
+        create_file($this->dir . '/' . $dir_name . '/.session_desc', $description);
 
         $session = new Session($this, $this->dir . '/' . $dir_name, $curr_date, $index);
         $this->add_session($session);
@@ -166,7 +167,7 @@ class Target
         {
             if ($remove_session_name == $session->get_name())
             {
-                rmdir($this->dir . '/' . $remove_session_name);
+                delete_dir($this->dir . '/' . $remove_session_name);
                 unset($this->sessions[$id]);
             }
         }

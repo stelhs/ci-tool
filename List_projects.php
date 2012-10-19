@@ -68,8 +68,9 @@ class List_projects
             print_error('project already exist');
             return false;
         }
-        mkdir($project_dir);
-        file_put_contents($project_dir . '/.project_desc', $project_name);
+
+        create_dir($project_dir);
+        create_file($project_dir . '/.project_desc', $project_name);
         run_cmd('git add ' . $this->dir .
             ' && git commit -m "add new project ' . $project_name . '" && git push origin master');
 

@@ -92,10 +92,10 @@ class Session
         switch ($status)
         {
             case 'aborted':
-                unlink($this->dir . '/.pid');
+                delete_file($this->dir . '/.pid');
         }
 
-        file_put_contents($this->dir .'/.status', $status);
+        create_file($this->dir .'/.status', $status);
     }
 
     /**
@@ -107,6 +107,9 @@ class Session
     {
         $list = run_cmd('ps -ax');
         $rows = explode("\n", $list);
+        if (!$rows)
+            throw new Exception("incorrect output from command: ps -ax");
+
         foreach ($rows as $row)
         {
             preg_match('/[ ]*([0-9]+).*/s', $row, $matched);
@@ -173,16 +176,15 @@ class Session
     {
         if (!is_file($this->target->get_dir() . '/' . $bash_file))
         {
-            print_error($bash_file . ' is not exist');
-            return false;
+            throw new Exception($bash_file . ' is not exist');
         }
 
-        file_put_contents($this->dir . '/.pid', getmypid());
+        create_file($this->dir . '/.pid', getmypid());
 
         $ret = run_cmd('cd ' . $this->dir . ';' .
             $this->target->get_dir() . '/' . $bash_file . ' ' . $args);
 
-        unlink($this->dir . '/.pid');
+        delete_file($this->dir . '/.pid');
 
         return $ret;
     }
@@ -193,10 +195,10 @@ class Session
     function checkout_src($commit)
     {
         $this->set_status('running_checkout');
-        file_put_contents($this->dir . '/.commit', $commit);
+        create_file($this->dir . '/.commit', $commit);
 
         $ret = $this->run_script('.recipe_checkout');
-        file_put_contents($this->dir . '/checkout_log', $ret['log']);
+        create_file($this->dir . '/checkout_log', $ret['log']);
         if ($ret['rc'])
         {
             $this->set_status('failed_checkout');
@@ -214,7 +216,7 @@ class Session
     {
         $this->set_status('running_build');
         $ret = $this->run_script('.recipe_build');
-        file_put_contents($this->dir . '/build_log', $ret['log']);
+        create_file($this->dir . '/build_log', $ret['log']);
         if ($ret['rc'])
         {
             $this->set_status('failed_build');
@@ -236,7 +238,7 @@ class Session
     {
         $this->set_status('running_test');
         $ret = $this->run_script('.recipe_test');
-        file_put_contents($this->dir . '/test_log', $ret['log']);
+        create_file($this->dir . '/test_log', $ret['log']);
         if ($ret['rc'])
         {
             $this->set_status('failed_test');
@@ -281,7 +283,7 @@ class Session
         }
 
         $xml_content = create_xml($xml_data);
-        file_put_contents($this->dir . '/report.xml', $xml_content);
+        create_file($this->dir . '/report.xml', $xml_content);
 
         // TODO:
         // scp to web report.xml to "<host>_<project>_<target>_<session>.xml"

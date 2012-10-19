@@ -22,6 +22,28 @@ function match_branch_with_mask($branch, $branch_mask)
     return $matched ? true : false;
 }
 
+
+/**
+ * Get free ci server
+ * @return ci_server settings array
+ */
+function get_free_ci_server()
+{
+    global $_CONFIG;
+    // get list of load overage ci servers
+    $ci_servers = array();
+    foreach ($_CONFIG['ci_servers'] as $ci_server)
+    {
+        $build_slots = (int)run_remote_cmd($ci_server, 'ci get free_build_slots');
+        $ci_servers[$build_slots] = $ci_server;
+    }
+    krsort($ci_servers);
+
+    foreach ($ci_servers as $first_ci_server) break;
+    return $first_ci_server;
+}
+
+
 function main()
 {
     global $argv, $_CONFIG;
@@ -59,7 +81,7 @@ function main()
             run_remote_cmd($ci_server, 'cd ' . $_CONFIG['ci_dir'] . ';' .
                 'git pull origin master');
 
-        return;
+        return 0;
     }
 
     // update projects configurations
@@ -69,29 +91,7 @@ function main()
             run_remote_cmd($ci_server, 'cd ' . $_CONFIG['project_dir'] . ';' .
                 'git pull origin master');
 
-        return;
-    }
-
-    // find little loaded CI server
-    $min_load_average = 1000000; //max load overage
-    $little_loaded_ci_server = array();
-    foreach ($_CONFIG['ci_servers'] as $ci_server)
-    {
-        $load_average = (int)run_remote_cmd($ci_server, 'ci get load_average');
-        if (!$load_average)
-            continue;
-
-        if ($load_average < $min_load_average)
-        {
-            $min_load_average = $load_average;
-            $little_loaded_ci_server = $ci_server;
-        }
-    }
-
-    if (!$little_loaded_ci_server)
-    {
-        print_error('No found free CI server');
-        return;
+        return 0;
     }
 
     // create list all projects
@@ -130,15 +130,19 @@ function main()
     }
 
     // create command for run on CI servers
-    $cmd = '';
     foreach ($execute_targets as $target)
-        $cmd .= 'cd ' . $target->get_dir() . '; ' .
-            'cd \$(ci create session git); ' .
+    {
+        $cmd = 'cd ' . $target->get_dir() . '; ' .
+            'cd $(ci create session git); ' .
             'ci checkout ' . $git_commit . '; ' .
             'ci build; ci test; ci report '
             . $git_repository . ' ' . $git_branch . ' ' . $git_commit;
 
-    run_remote_cmd($little_loaded_ci_server, $cmd, true);
+        $ci_server = get_free_ci_server();
+        run_remote_cmd($ci_server, $cmd, true);
+    }
+
+    return 0;
 }
 
-main();
+return main();

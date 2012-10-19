@@ -18,7 +18,7 @@ function dump($raw)
 function get_dirs($dir)
 {
     if (!is_dir($dir))
-        return;
+        return false;
 
     $dirs = array();
     $file_list = scandir($dir);
@@ -55,6 +55,8 @@ function print_error($error_text)
 function run_cmd($cmd, $viewed = true)
 {
     $fd = popen($cmd . ' 2>&1', 'r');
+    if ($fd == false)
+        throw new Exception("popen() error in run_cmd()");
 
     $log = '';
     while($str = fgets($fd))
@@ -66,34 +68,58 @@ function run_cmd($cmd, $viewed = true)
     }
 
     $rc = pclose($fd);
+    if ($rc == -1)
+        throw new Exception("pclose() error in run_cmd()");
 
     return array('log' => $log, 'rc' => $rc);
 }
 
-function run_remote_cmd(array $ssh_settings, $cmd, $fork = false)
+/**
+ * Run command on remote server
+ * @param array $server - settings of server (from $_CONFIG['ci_servers'])
+ * @param $cmd - command for run
+ * @param bool $fork - true - run in new thread (not receive results), false - run in current thread
+ * @return array - return result array
+ */
+function run_remote_cmd(array $server, $cmd, $fork = false)
 {
+    $cmd = str_replace('$', '\$', $cmd);
+
     if ($fork == true)
     {
         $pid = pcntl_fork();
         if ($pid == -1)
-            throw new Exception("can't fork");
+            throw new Exception("can't fork() in run_remote_cmd()");
 
         if ($pid) // Current process return
             return;
     }
 
     // New children process
-    $ssh = 'ssh -f ' . $ssh_settings['login'] .
-            '@' . $ssh_settings['host'] .
-            ' -p' . $ssh_settings['port'] . ' ';
+    $ssh = 'ssh -f ' . $server['login'] .
+            '@' . $server['host'] .
+            ' -p' . $server['port'] . ' ';
 
     dump($ssh . '"' . $cmd . '"');
-    return run_cmd($ssh . '"' . $cmd . '"');
+
+    $rc = run_cmd($ssh . '"' . $cmd . '"');
+
+    if ($fork == true)
+        exit;
+
+    return $rc;
 }
 
+/**
+ * Get cleaned content form dot file
+ * @param $dot_file - file name
+ * @return string - content
+ */
 function get_dot_file_content($dot_file)
 {
     $content = file_get_contents($dot_file);
+    if ($content == false)
+        throw new Exception("can't open file: " . $dot_file);
 
     // split comments
     $content = preg_replace('/^#.*/', '', $content);
@@ -110,6 +136,9 @@ function get_child_pids($parent_pid)
 {
     $ret = run_cmd("ps -ax --format '%P %p'", false);
     $rows = explode("\n", $ret['log']);
+    if (!$rows)
+        throw new Exception("incorrect output from command: ps -ax --format '%P %p'");
+
     $pid_list = array();
 
     foreach ($rows as $row)
@@ -141,4 +170,32 @@ function kill_all($kill_pid)
             kill_all($child_pid);
 
     run_cmd('kill -9 ' . $kill_pid);
+}
+
+function create_dir($dir)
+{
+    $rc = mkdir($dir);
+    if ($rc === false)
+        throw new Exception("can't create dir: " . $dir);
+}
+
+function delete_dir($dir)
+{
+    $rc = rmdir($dir);
+    if ($rc === false)
+        throw new Exception("can't remove dir: " . $dir);
+}
+
+function create_file($file_name, $content = '')
+{
+    $rc = file_put_contents($file_name, $content);
+    if ($rc === false)
+        throw new Exception("can't create file: " . $file_name);
+}
+
+function delete_file($file_name)
+{
+    $rc = unlink($file_name);
+    if ($rc === false)
+        throw new Exception("can't remove file: " . $file_name);
 }
