@@ -1,7 +1,7 @@
 #!/usr/bin/php
 <?php
 
-$Ci_dir = '/home/stelhs/projects/ci/ci/';
+$Ci_dir = '/opt/ci-tool/';
 require_once($Ci_dir . 'config.php');
 
 require_once($_CONFIG['ci_dir'] . 'lib.php');
