@@ -87,6 +87,7 @@ function run_remote_cmd(array $server, $cmd, $fork = false)
 
     if ($fork == true)
     {
+	echo("Fork!\n");
         $pid = pcntl_fork();
         if ($pid == -1)
             throw new Exception("can't fork() in run_remote_cmd()");
