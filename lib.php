@@ -27,7 +27,7 @@ function get_dirs($dir)
         if (is_dir($dir . '/' . $file_name) == false)
             continue;
 
-        if ($file_name == '.' || $file_name == '..')
+        if ($file_name[0] == '.')
             continue;
 
         $dirs[] = $file_name;
