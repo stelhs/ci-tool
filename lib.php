@@ -95,9 +95,9 @@ function run_remote_cmd(array $server, $cmd, $fork = false)
             return;
     }
 
-    fclose(STDIN);
-    fclose(STDOUT);
-    fclose(STDERR);
+    #fclose(STDIN);
+    #fclose(STDOUT);
+    #fclose(STDERR);
 
     // New children process
     $ssh = 'ssh ' . $server['login'] .
