@@ -9,17 +9,35 @@ require_once($_CONFIG['ci_dir'] . 'xml.php');
 require_once($_CONFIG['ci_dir'] . 'List_projects.php');
 require_once($_CONFIG['ci_dir'] . 'CiDateTime.php');
 
+$this_server = get_current_ci_server();
 
 
-function print_help()
+/**
+ * ci get bla (--help)
+ * Usage: ci get bla
+ * CI tool purpose ...
+ *     get   various CI parameters
+ *     create
+ *     delete
+ */
+
+/**
+ * ci get --help
+ *
+ *
+ */
+
+
+function print_help_command($description)
 {
-    // TODO:
-    // Нужно нарисовать красивый хэлп
+
 }
 
 
 function get_free_build_slots(List_projects $projects)
 {
+    global $this_server;
+
     // calculate count sessions in running mode
     $build_processes = 0;
     foreach ($projects->get_list() as $project)
@@ -31,11 +49,10 @@ function get_free_build_slots(List_projects $projects)
                             if ($session->get_state() == 'running')
                                 $build_processes++;
 
-    $max_build_processes = (int)get_dot_file_content($projects->get_dir() . '/.max_build_processes');
-    $free_build_slots = $max_build_processes - $build_processes;
-    if ($free_build_slots < 0)
-        $free_build_slots = 0;
+    if (!$this_server)
+        throw new Exception("Can't detect current server");
 
+    $free_build_slots = $this_server['max_build_slots'] - $build_processes;
     return $free_build_slots;
 }
 
@@ -51,9 +68,6 @@ function main()
     // Check operation object
     $obj_type = '';
 
-    if (file_exists('.projects_list'))
-        $obj_type = 'projects_list';
-
     if (file_exists('.project_desc'))
         $obj_type = 'project';
 
@@ -63,32 +77,11 @@ function main()
     if (file_exists('.session_desc'))
         $obj_type = 'session';
 
-    // analysis general operation
-    $op = isset($argv[1]) ? $argv[1] : NULL;
-    switch ($op)
-    {
-        case 'get':
-            {
-                $param = isset($argv[2]) ? $argv[2] : NULL;
-                switch ($param)
-                {
-                    case 'free_build_slots':
-                        echo get_free_build_slots($projects) . "\n";
-                        return 0;
-
-                    default:
-                        print_error('No parameter');
-                        print_help();
-                }
-            }
-            break;
-    }
-
-    if (!$obj_type)
+    /*    if (!$obj_type)
     {
         print_error('incorrect current directory');
         return 1;
-    }
+    }*/
 
     // Parse path and detect $project_name and $target_name and $session_name
     $target_name = '';
@@ -153,9 +146,42 @@ function main()
         }
     }
 
-    // analysis private operation
+    // analysis operation
+    $op = isset($argv[1]) ? $argv[1] : NULL;
     switch ($op)
     {
+        case 'get':
+            {
+                if ($print_help)
+                {
+
+                    return 0;
+                }
+
+                $param = isset($argv[2]) ? $argv[2] : NULL;
+                switch ($param)
+                {
+                    case 'free_build_slots':
+                        echo get_free_build_slots($projects) . "\n";
+                        return 0;
+
+                    case 'session_status':
+                        if ($obj_type != 'session')
+                        {
+                            print_error('This operation permited only from session dir');
+                            return 1;
+                        }
+
+                        echo $session->get_state() . "\n";
+                        return 0;
+
+                    default:
+                        print_error('No parameter');
+                        print_help();
+                }
+            }
+            break;
+
         case 'create':
             {
                 $type = isset($argv[2]) ? $argv[2] : NULL;
@@ -176,12 +202,6 @@ function main()
                 switch ($type)
                 {
                     case 'project':
-                        if ($obj_type != 'projects_list')
-                        {
-                            print_error('This operation permited only from projects list dir');
-                            return 1;
-                        }
-
                         $rc = $projects->add_new_project($param1);
                         break;
 
@@ -211,6 +231,68 @@ function main()
                         print_help();
                 }
             }
+            break;
+
+        case 'all'
+            if ($obj_type != 'session')
+            {
+                print_error('This operation permited only from session dir');
+                return 1;
+            }
+
+            $repo = isset($argv[2]) ? $argv[2] : NULL;
+            $branch = isset($argv[3]) ? $argv[3] : NULL;
+            $commit = isset($argv[4]) ? $argv[4] : NULL;
+
+            if (!$repo)
+            {
+                print_error('"repo name" 2 argument is empty');
+                return 1;
+            }
+
+            if (!$branch)
+            {
+                print_error('"branch name" 3 argument is empty');
+                return 1;
+            }
+
+            if (!$commit)
+            {
+                print_error('"commit" 4 argument is empty');
+                return 1;
+            }
+
+            $build_slots = get_free_build_slots($projects);
+            while ($build_slots <= 0)
+            {
+                echo "wait free build slot\n";
+                $session->set_status('pending');
+                $build_slots = get_free_build_slots($projects);
+                sleep(10);
+            }
+
+            $rc = $session->checkout_src($commit);
+            if ($rc['rc'])
+            {
+                print_error('checkout fail');
+                return 1;
+            }
+
+            $rc = $session->build_src();
+            if ($rc['rc'])
+            {
+                print_error('build fail');
+                return 1;
+            }
+
+            $rc = $session->test_src();
+            if ($rc['rc'])
+            {
+                print_error('test fail');
+                return 1;
+            }
+
+            $rc = $session->make_report();
             break;
 
         case 'checkout':
@@ -258,6 +340,10 @@ function main()
             }
 
             $rc = $session->make_report();
+            break;
+
+        case 'pending':
+            dump($argv);
             break;
 
         default:

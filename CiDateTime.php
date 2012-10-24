@@ -9,8 +9,8 @@ class CiDateTime extends DateTime
 {
     function __construct()
     {
-	date_default_timezone_set('America/Los_Angeles');
-	parent::__construct();
+        date_default_timezone_set('America/Los_Angeles');
+        parent::__construct();
     }
 
     function to_string()

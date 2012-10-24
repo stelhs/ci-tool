@@ -59,36 +59,29 @@ class Target
     }
 
     /**
-     * Get name of repository for current target
-     * @return repository name
-     */
-    function get_repo_name()
-    {
-        return get_dot_file_content($this->dir . '/.repo_name');
-    }
-
-    /**
-     * Get list branches for current target
+     * Get branches linked with repository for current target
      * @return list of branches
      */
-    function get_list_branches()
+    function get_repo_branches($repo_name)
     {
-        $list_branches = array();
-        $content = get_dot_file_content($this->dir . '/.branches');
-        $rows = explode("\n", $content);
+        $rows = get_strings_from_file($this->dir . '/.repos');
         if (!$rows)
             return false;
 
+        // featch list repos
         foreach ($rows as $row)
         {
-            $clean_row = trim($row);
-            if (!$clean_row)
+            $words = split_string($row);
+            if (!$words)
                 continue;
 
-            $list_branches[] = $clean_row;
+            // if find needed repo
+            if ($words[0] == $repo_name)
+            {
+                unset($words[0]);
+                return $words;
+            }
         }
-
-        return $list_branches;
     }
 
     /**

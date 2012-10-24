@@ -1,0 +1,2 @@
+# list of repos with corresponding coma separated branches
+for_ci_test1.git    heads/master, heads/dev/*

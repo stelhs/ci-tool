@@ -134,6 +134,7 @@ class Session
         $stored_status = $this->get_stored_status();
         switch ($stored_status)
         {
+            case 'pending':
             case 'running_checkout':
             case 'running_build':
             case 'running_test':
@@ -254,6 +255,8 @@ class Session
 
     function make_report()
     {
+        global $this_server;
+
         $target = $this->get_target();
         $project = $target->get_project();
         $status = $this->get_state();
@@ -263,6 +266,7 @@ class Session
         $xml_data['project_name'] = $project->get_name();
         $xml_data['target_name'] = $target->get_name();
         $xml_data['session_name'] = $this->get_name();
+        $xml_data['server'] = $this_server['hostname'];
         $xml_data['commit'] = $this->get_commit();
         $xml_data['status'] = $status;
         $xml_data['path_to_checkout_log'] = $this->dir . '/checkout_log';

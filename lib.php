@@ -125,11 +125,74 @@ function get_dot_file_content($dot_file)
     if ($content == false)
         throw new Exception("can't open file: " . $dot_file);
 
-    // split comments
+    // strip comments
     $content = preg_replace('/^#.*/', '', $content);
 
     return trim($content);
 }
+
+/**
+ * get cleaned strings from file
+ * @param $file - file name
+ * @return array of strings
+ */
+function get_strings_from_file($file)
+{
+    $list = array();
+    $content = get_dot_file_content($file);
+    $rows = explode("\n", $content);
+    if (!$rows)
+        return false;
+
+    foreach ($rows as $row)
+    {
+        $clean_row = trim($row);
+        if (!$clean_row)
+            continue;
+
+        $list[] = $clean_row;
+    }
+
+    return $list;
+}
+
+/**
+ * Split string on words
+ * @param $str - string
+ * @return array of words
+ */
+function split_string($str)
+{
+    $cleaned_words = array();
+    $words = split("[ \t,]", $str);
+    if (!$words)
+        return false;
+
+    foreach ($words as $word)
+        $cleaned_words[] = trim($word);
+
+    return $cleaned_words;
+}
+
+
+/**
+ * Detect current ci server and return his config
+ * @return - ci server config or false
+ */
+function get_current_ci_server()
+{
+    global $_CONFIG;
+
+    $rc = run_cmd('hostname', false);
+    $hostname = trim($rc['log']);
+
+    foreach ($_CONFIG['ci_servers'] as $ci_server)
+        if ($ci_server['hostname'] == $hostname)
+            return $ci_server;
+
+    return false;
+}
+
 
 /**
  * get list of children PID
@@ -203,3 +266,4 @@ function delete_file($file_name)
     if ($rc === false)
         throw new Exception("can't remove file: " . $file_name);
 }
+

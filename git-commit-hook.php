@@ -8,6 +8,10 @@ require_once($_CONFIG['ci_dir'] . 'lib.php');
 require_once($_CONFIG['ci_dir'] . 'List_projects.php');
 require_once($_CONFIG['ci_dir'] . 'CiDateTime.php');
 
+$this_server = get_current_ci_server();
+
+
+
 
 function print_help()
 {
@@ -18,8 +22,42 @@ function print_help()
 
 function match_branch_with_mask($branch, $branch_mask)
 {
-    preg_match('/' . $branch_mask . '/', $branch, $matched);
-    return $matched ? true : false;
+    /*preg_match('/' . $branch_mask . '/', $branch, $matched);
+    return $matched ? true : false;**/
+
+    return fnmatch($branch_mask, $branch);
+}
+
+
+/**
+ * Run command on CI server
+ * @param $ci_server - config CI server
+ * @param $cmd - command
+ * @param $fork - true - run in new thread (not receive results), false - run in current thread
+ * @return return result array
+ */
+function ci_run_cmd($ci_server, $cmd, $fork = false)
+{
+    global $this_server;
+
+    if ($ci_server['hostname'] == $this_server['hostname'])
+        $rc = run_cmd($cmd);
+    else
+        $rc = run_remote_cmd($ci_server, $cmd, $fork);
+
+    return $rc;
+}
+
+function get_ci_free_build_slots($ci_server)
+{
+    $rc = ci_run_cmd($ci_server, 'ci get free_build_slots');
+
+    // if server not responce
+    if ($rc['rc'])
+        return false;
+
+    $build_slots = (int)$rc['log'];
+    return $build_slots;
 }
 
 
@@ -27,19 +65,27 @@ function match_branch_with_mask($branch, $branch_mask)
  * Get free ci server
  * @return ci_server settings array
  */
-function get_free_ci_server()
+function get_appropriate_ci_server()
 {
     global $_CONFIG;
+
     // get list of load overage ci servers
     $ci_servers = array();
     foreach ($_CONFIG['ci_servers'] as $ci_server)
     {
-        $build_slots = (int)run_remote_cmd($ci_server, 'ci get free_build_slots');
+        $build_slots = get_ci_free_build_slots($ci_server);
+        if ($build_slots === false)
+            continue;
+
         $ci_servers[$build_slots] = $ci_server;
     }
-    krsort($ci_servers);
 
-    foreach ($ci_servers as $first_ci_server) break;
+    if (!$ci_servers)
+        throw new Exception('CI servers not found');
+
+    krsort($ci_servers);
+    foreach ($ci_servers as $first_ci_server)break;
+
     return $first_ci_server;
 }
 
@@ -106,10 +152,7 @@ function main()
 
         foreach ($project->get_targets_list() as $target)
         {
-            if ($target->get_repo_name() != $git_repository)
-                continue;
-
-            $list_branches = $target->get_list_branches();
+            $list_branches = $target->get_repo_branches($git_repository);
             if (!$list_branches)
                 continue;
 
@@ -124,22 +167,25 @@ function main()
     }
 
     if (!$execute_targets)
-    {
-        print_error('no suitable targets to execute');
         return false;
-    }
 
-    // create command for run on CI servers
+    // create command and run his on CI servers
     foreach ($execute_targets as $target)
     {
-        $cmd = 'cd ' . $target->get_dir() . '; ' .
-            'cd $(ci create session git); ' .
-            'ci checkout ' . $git_commit . '; ' .
-            'ci build; ci test; ci report '
-            . $git_repository . ' ' . $git_branch . ' ' . $git_commit;
+        $ci_server = get_appropriate_ci_server();
+        $rc = ci_run_cmd($ci_server,
+            'cd ' . $target->get_dir() . ';' .
+            'ci create session git');
 
-        $ci_server = get_free_ci_server();
-        run_remote_cmd($ci_server, $cmd, true);
+        // TODO: return session name
+        $session_name = $rc['log'];
+
+        // run build
+        ci_run_cmd($ci_server,
+            'cd ' . $target->get_dir() . '/' . $session_name . ';' .
+            'ci all ' . $git_repository . ' ' . $git_branch . ' ' . $git_commit, true);
+
+        echo "Run target " . $target->get_name() . ", create session: " . $ci_server['hostname'] . "@" . $target->get_dir() . '/' . $session_name . "\n";
     }
 
     return 0;
