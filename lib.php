@@ -122,7 +122,7 @@ function run_remote_cmd(array $server, $cmd, $fork = false)
  */
 function get_dot_file_content($dot_file)
 {
-    $content = file_get_contents($dot_file);
+    @$content = file_get_contents($dot_file);
     if ($content == false)
         throw new Exception("can't open file: " . $dot_file);
 
