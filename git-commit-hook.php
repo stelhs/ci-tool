@@ -22,9 +22,6 @@ function print_help()
 
 function match_branch_with_mask($branch, $branch_mask)
 {
-    /*preg_match('/' . $branch_mask . '/', $branch, $matched);
-    return $matched ? true : false;**/
-
     return fnmatch($branch_mask, $branch);
 }
 
@@ -165,8 +162,6 @@ function main()
             }
         }
     }
-
-    dump($execute_targets);
 
     if (!$execute_targets)
         return false;
