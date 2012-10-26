@@ -101,7 +101,7 @@ function run_remote_cmd(array $server, $cmd, $fork = false)
 
     // New children process
     $ssh = 'ssh ' . $server['login'] .
-            '@' . $server['hostname'] .
+            '@' . $server['addr'] .
             ' -p' . $server['port'] . ' ';
 
     #dump($ssh . '"' . $cmd . '"');
