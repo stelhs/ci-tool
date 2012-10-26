@@ -233,7 +233,7 @@ function main()
             }
             break;
 
-        case 'all'
+        case 'all':
             if ($obj_type != 'session')
             {
                 print_error('This operation permited only from session dir');
