@@ -152,11 +152,11 @@ function main()
     {
         case 'get':
             {
-                if ($print_help)
+/*                if ($print_help)
                 {
 
                     return 0;
-                }
+                }*/
 
                 $param = isset($argv[2]) ? $argv[2] : NULL;
                 switch ($param)
