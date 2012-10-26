@@ -20,6 +20,14 @@ function print_help()
 }
 
 
+function error_exception($exception)
+{
+    echo 'Error: ' . $exception->getMessage() . "\n";
+    exit;
+}
+
+
+
 function match_branch_with_mask($branch, $branch_mask)
 {
     return fnmatch($branch_mask, $branch);
@@ -91,6 +99,8 @@ function main()
 {
     global $argv, $_CONFIG;
     $rc = NULL;
+
+    set_exception_handler('error_exception');
 
     $git_repository = isset($argv[1]) ? $argv[1] : NULL;
     $git_branch = isset($argv[2]) ? $argv[2] : NULL;
