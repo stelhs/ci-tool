@@ -166,6 +166,8 @@ function main()
         }
     }
 
+    dump($execute_targets);
+
     if (!$execute_targets)
         return false;
 
