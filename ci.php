@@ -33,6 +33,12 @@ function print_help_command($description)
 
 }
 
+function error_exception($exception)
+{
+    echo 'Error: ' . $exception->getMessage() . "\n";
+    exit;
+}
+
 
 function get_free_build_slots(List_projects $projects)
 {
@@ -61,6 +67,8 @@ function main()
 {
     global $argv, $_CONFIG;
     $rc = 0;
+
+    set_exception_handler('error_exception');
 
     // create list all projects
     $projects = new List_projects($_CONFIG['project_dir']);

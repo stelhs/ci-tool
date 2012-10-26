@@ -104,7 +104,7 @@ function run_remote_cmd(array $server, $cmd, $fork = false)
             '@' . $server['addr'] .
             ' -p' . $server['port'] . ' ';
 
-    
+
     #dump($ssh . '"' . $cmd . '"');
 
     $rc = run_cmd($ssh . '"' . $cmd . '" 2>&1 > /dev/null');
