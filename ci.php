@@ -39,7 +39,6 @@ function error_exception($exception)
     exit;
 }
 
-
 function get_free_build_slots(List_projects $projects)
 {
     global $this_server;
