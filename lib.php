@@ -54,7 +54,7 @@ function msg_log($msg_level, $text)
     if (!$enable)
         return;
 
-    syslog($utility_name . ': ' . $msg_level, $text);
+    syslog($msg_level, $utility_name . ': ' . $text);
     switch ($msg_level)
     {
         case LOG_ERR:
