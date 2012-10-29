@@ -71,8 +71,14 @@ class List_projects
 
         create_dir($project_dir);
         create_file($project_dir . '/.project_desc', $project_name);
-        run_cmd('git add ' . $this->dir .
+        $rc = run_cmd('git add ' . $this->dir .
             ' && git commit -m "add new project ' . $project_name . '" && git push origin master');
+        if ($rc['rc'])
+        {
+            delete_dir($project_dir);
+            msg_log(LOG_ERR, 'can\'t created project, can\'t commit new project');
+            return false;
+        }
 
         $project = new Project($project_dir, $project_name);
         $this->add_project($project);
