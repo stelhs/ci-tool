@@ -62,6 +62,8 @@ class List_projects
      */
     function add_new_project($project_name)
     {
+        global $_CONFIG;
+
         $project_dir = $this->dir . '/' . $project_name;
         if (is_dir($project_dir))
         {
@@ -71,7 +73,7 @@ class List_projects
 
         create_dir($project_dir);
         create_file($project_dir . '/.project_desc', $project_name);
-        $rc = run_cmd('git add ' . $this->dir .
+        $rc = run_cmd('cd ' . $_CONFIG['project_dir'] . '; git add ' . $this->dir .
             ' && git commit -m "add new project ' . $project_name . '" && git push origin master');
         if ($rc['rc'])
         {
