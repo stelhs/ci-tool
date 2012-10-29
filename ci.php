@@ -20,8 +20,8 @@ $this_server = get_current_ci_server();
  */
 function print_help_commands($cmd, $description, $sub_commands = array())
 {
-    echo "Usage: ci " . $cmd . ' ' . ($sub_commands ? '<command>' : '') . "\n";
     echo $description . "\n";
+    echo "Usage: ci " . $cmd . ' ' . ($sub_commands ? '[command]' : '') . "\n";
     if (!$sub_commands)
         return;
 
@@ -33,7 +33,7 @@ function print_help_commands($cmd, $description, $sub_commands = array())
 
 function error_exception($exception)
 {
-    echo 'Error: ' . $exception->getMessage() . "\n";
+    msg_log(LOG_ERR, $exception->getMessage());
     exit;
 }
 
@@ -82,12 +82,6 @@ function main()
     if (file_exists('.session_desc'))
         $obj_type = 'session';
 
-    /*    if (!$obj_type)
-    {
-        print_error('incorrect current directory');
-        return 1;
-    }*/
-
     // Parse path and detect $project_name and $target_name and $session_name
     $target_name = '';
     $project_name = '';
@@ -118,13 +112,14 @@ function main()
             break;
     }
 
+
     // get project object
     if ($project_name)
     {
         $project = $projects->find_project($project_name);
         if (!$project)
         {
-            print_error('project not found');
+            msg_log(LOG_ERR, 'project not found');
             return 1;
         }
     }
@@ -135,7 +130,7 @@ function main()
         $target = $project->find_target($target_name);
         if (!$target)
         {
-            print_error('target not found');
+            msg_log(LOG_ERR, 'target not found');
             return 1;
         }
     }
@@ -146,7 +141,7 @@ function main()
         $session = $target->find_session($session_name);
         if (!$session)
         {
-            print_error('session not found');
+            msg_log(LOG_ERR, 'session not found');
             return 1;
         }
     }
@@ -185,7 +180,7 @@ function main()
 
                         if ($obj_type != 'session')
                         {
-                            print_error('This operation permited only from session dir');
+                            msg_log(LOG_ERR, 'This operation permited only from session dir');
                             return 1;
                         }
 
@@ -193,7 +188,7 @@ function main()
                         return 0;
 
                     default:
-                        print_error('No parameter');
+                        msg_log(LOG_ERR, 'No parameter');
                         $print_help = true;
                 }
 
@@ -216,13 +211,13 @@ function main()
 
                 if (!$type)
                 {
-                    print_error('2 argument is empty');
+                    msg_log(LOG_ERR, '2 argument is empty');
                     $print_help = true;
                 }
 
                 if (!$param1)
                 {
-                    print_error('3 argument is empty');
+                    msg_log(LOG_ERR, '3 argument is empty');
                     $print_help = true;
                 }
 
@@ -231,7 +226,7 @@ function main()
                     case 'project':
                         if ($print_help)
                         {
-                            print_help_commands('create project <project name>', 'create new project');
+                            print_help_commands('create project [project name]', 'create new project');
                             return 0;
                         }
 
@@ -241,13 +236,13 @@ function main()
                     case 'target':
                         if ($print_help)
                         {
-                            print_help_commands('create target <target name>', 'create new target');
+                            print_help_commands('create target [target name]', 'create new target');
                             return 0;
                         }
 
                         if ($obj_type != 'project')
                         {
-                            print_error('This operation permited only from project dir');
+                            msg_log(LOG_ERR, 'This operation permited only from project dir');
                             return 1;
                         }
 
@@ -263,7 +258,7 @@ function main()
 
                         if ($obj_type != 'target')
                         {
-                            print_error('This operation permited only from project dir');
+                            msg_log(LOG_ERR, 'This operation permited only from project dir');
                             return 1;
                         }
 
@@ -272,7 +267,7 @@ function main()
                         return 0;
 
                     default:
-                        print_error('No specify entity of create');
+                        msg_log(LOG_ERR, 'No specify entity of create');
                         $print_help = true;
                 }
 
@@ -292,8 +287,8 @@ function main()
         case 'all':
             if ($obj_type != 'session')
             {
-                print_error('This operation permited only from session dir');
-                return 1;
+                msg_log(LOG_ERR, 'This operation permited only from session dir');
+                $print_help = true;
             }
 
             $repo = isset($argv[2]) ? $argv[2] : NULL;
@@ -302,25 +297,25 @@ function main()
 
             if (!$repo)
             {
-                print_error('"repo name" 2 argument is empty');
+                msg_log(LOG_ERR, '"repo name" 2 argument is empty');
                 $print_help = true;
             }
 
             if (!$branch)
             {
-                print_error('"branch name" 3 argument is empty');
+                msg_log(LOG_ERR, '"branch name" 3 argument is empty');
                 $print_help = true;
             }
 
             if (!$commit)
             {
-                print_error('"commit" 4 argument is empty');
+                msg_log(LOG_ERR, '"commit" 4 argument is empty');
                 $print_help = true;
             }
 
             if ($print_help)
             {
-                print_help_commands('all <repo name> <branch name> <commit>',
+                print_help_commands('all [repo name] [branch name] [commit]',
                     'waiting for free slot and run checkout, build and tests');
                 return 1;
             }
@@ -328,8 +323,11 @@ function main()
             $build_slots = get_free_build_slots($projects);
             while ($build_slots <= 0)
             {
-                echo "wait free build slot\n";
+                msg_log(LOG_NOTICE, "wait free build slot");
+
                 $session->set_status('pending');
+                // TODO:
+
                 $build_slots = get_free_build_slots($projects);
                 sleep(10);
             }
@@ -337,21 +335,21 @@ function main()
             $rc = $session->checkout_src($commit);
             if ($rc['rc'])
             {
-                print_error('checkout fail');
+                msg_log(LOG_ERR, 'checkout fail');
                 return 1;
             }
 
             $rc = $session->build_src();
             if ($rc['rc'])
             {
-                print_error('build fail');
+                msg_log(LOG_ERR, 'build fail');
                 return 1;
             }
 
             $rc = $session->test_src();
             if ($rc['rc'])
             {
-                print_error('test fail');
+                msg_log(LOG_ERR, 'test fail');
                 return 1;
             }
 
@@ -361,20 +359,20 @@ function main()
         case 'checkout':
             if ($obj_type != 'session')
             {
-                print_error('This operation permited only from session dir');
+                msg_log(LOG_ERR, 'This operation permited only from session dir');
                 return 1;
             }
 
             $commit = isset($argv[2]) ? $argv[2] : NULL;
             if (!$commit)
             {
-                print_error('2 argument is empty');
+                msg_log(LOG_ERR, '2 argument is empty');
                 $print_help = true;
             }
 
             if ($print_help)
             {
-                print_help_commands('checkout <commit>',
+                print_help_commands('checkout [commit]',
                     'run checkout sources');
                 return 1;
             }
@@ -392,7 +390,7 @@ function main()
 
             if ($obj_type != 'session')
             {
-                print_error('This operation permited only from session dir');
+                msg_log(LOG_ERR, 'This operation permited only from session dir');
                 return 1;
             }
 
@@ -409,7 +407,7 @@ function main()
 
             if ($obj_type != 'session')
             {
-                print_error('This operation permited only from session dir');
+                msg_log(LOG_ERR, 'This operation permited only from session dir');
                 return 1;
             }
 
@@ -426,7 +424,7 @@ function main()
 
             if ($obj_type != 'session')
             {
-                print_error('This operation permited only from session dir');
+                msg_log(LOG_ERR, 'This operation permited only from session dir');
                 return 1;
             }
 
@@ -434,7 +432,7 @@ function main()
             break;
 
         default:
-            print_error('No operation');
+            msg_log(LOG_ERR, 'No operation');
             print_help_commands('', 'CI-tool main utility',
                 array(
                     'get' => 'get various values',

@@ -65,7 +65,7 @@ class List_projects
         $project_dir = $this->dir . '/' . $project_name;
         if (is_dir($project_dir))
         {
-            print_error('project already exist');
+            msg_log(LOG_ERR, 'can\'t created project, project already exist');
             return false;
         }
 
@@ -76,6 +76,8 @@ class List_projects
 
         $project = new Project($project_dir, $project_name);
         $this->add_project($project);
+
+        msg_log(LOG_NOTICE, "added new project: " . $project->get_name());
     }
 
     /**

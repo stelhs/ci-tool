@@ -133,6 +133,8 @@ class Target
         $session = new Session($this, $this->dir . '/' . $dir_name, $curr_date, $index);
         $this->add_session($session);
         $session->set_status('created');
+
+        msg_log(LOG_NOTICE, "added new session: " . $session->get_name());
         return $session;
     }
 
@@ -164,5 +166,7 @@ class Target
                 unset($this->sessions[$id]);
             }
         }
+
+        msg_log(LOG_NOTICE, "removed session: " . $remove_session_name);
     }
 }

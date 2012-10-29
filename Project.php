@@ -78,7 +78,7 @@ class Project
         $target_dir = $this->dir . '/' . $target_name;
         if (is_dir($target_dir))
         {
-            print_error('target already exist');
+            msg_log(LOG_ERR, 'can\'t created target, target already exist');
             return false;
         }
 
@@ -90,6 +90,8 @@ class Project
 
         $target = new Target($this, $target_dir, $target_name);
         $this->add_target($target);
+
+        msg_log(LOG_NOTICE, "added new target: " . $target->get_name());
     }
 
     /**
