@@ -259,6 +259,7 @@ function kill_all($kill_pid)
             kill_all($child_pid);
 
     run_cmd('kill -9 ' . $kill_pid);
+    msg_log(LOG_NOTICE, "killed PID: " . $kill_pid);
 }
 
 function create_dir($dir)
@@ -266,6 +267,8 @@ function create_dir($dir)
     $rc = mkdir($dir);
     if ($rc === false)
         throw new Exception("can't create dir: " . $dir);
+
+    msg_log(LOG_NOTICE, "created directory: " . $dir);
 }
 
 function delete_dir($dir)
@@ -273,6 +276,8 @@ function delete_dir($dir)
     $rc = rmdir($dir);
     if ($rc === false)
         throw new Exception("can't remove dir: " . $dir);
+
+    msg_log(LOG_NOTICE, "deleted directory: " . $dir);
 }
 
 function create_file($file_name, $content = '')
@@ -280,6 +285,8 @@ function create_file($file_name, $content = '')
     $rc = file_put_contents($file_name, $content);
     if ($rc === false)
         throw new Exception("can't create file: " . $file_name);
+
+    msg_log(LOG_NOTICE, "created file: " . $file_name);
 }
 
 function delete_file($file_name)
@@ -287,5 +294,7 @@ function delete_file($file_name)
     $rc = unlink($file_name);
     if ($rc === false)
         throw new Exception("can't remove file: " . $file_name);
+
+    msg_log(LOG_NOTICE, "deleted file: " . $file_name);
 }
 
