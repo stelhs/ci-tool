@@ -202,7 +202,7 @@ function main()
 
     if (!$execute_targets)
     {
-        msg_log(LOG_WARNING, 'not found targets for ' . $git_repository . ' ' . $git_branch);
+        msg_log(LOG_WARNING, 'not found build targets for ' . $git_repository . ' ' . $git_branch);
         return false;
     }
 
