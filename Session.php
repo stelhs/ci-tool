@@ -39,6 +39,15 @@ class Session
     }
 
     /**
+     * Get info about session
+     */
+    function get_info()
+    {
+        $project = $this->target->get_project();
+        return $project->get_name() . '/' . $this->target->get_name() . '/' . $this->get_name();
+    }
+
+    /**
      * abort session
      */
     function abort()
@@ -175,6 +184,8 @@ class Session
      */
     private function run_script($bash_file, $args = '')
     {
+        msg_log(LOG_NOTICE, "run_script in session: " . $this->get_info());
+
         if (!is_file($this->target->get_dir() . '/' . $bash_file))
         {
             throw new Exception($bash_file . ' is not exist');
@@ -202,11 +213,14 @@ class Session
         create_file($this->dir . '/checkout_log', $ret['log']);
         if ($ret['rc'])
         {
+            msg_log(LOG_ERR, "failed checkout in session: " . $this->get_info());
             $this->set_status('failed_checkout');
             return false;
         }
 
         $this->set_status('finished_checkout');
+
+        msg_log(LOG_NOTICE, "finished checkout in session: " . $this->get_info());
         return true;
     }
 
@@ -221,6 +235,7 @@ class Session
         if ($ret['rc'])
         {
             $this->set_status('failed_build');
+            msg_log(LOG_ERR, "failed build in session: " . $this->get_info());
             return false;
         }
 
@@ -229,6 +244,7 @@ class Session
         //    $this->set_status('failed_build');
 
         $this->set_status('finished_build');
+        msg_log(LOG_NOTICE, "finished build in session: " . $this->get_info());
         return true;
     }
 
@@ -243,6 +259,7 @@ class Session
         if ($ret['rc'])
         {
             $this->set_status('failed_test');
+            msg_log(LOG_ERR, "failed tests in session: " . $this->get_info());
             return false;
         }
 
@@ -250,6 +267,8 @@ class Session
         // if (error)
         //    $this->set_status('failed_build');
         $this->set_status('finished_test');
+        msg_log(LOG_NOTICE, "finished tests in session: " . $this->get_info());
+
         return true;
     }
 
@@ -288,6 +307,8 @@ class Session
 
         $xml_content = create_xml($xml_data);
         create_file($this->dir . '/report.xml', $xml_content);
+
+        msg_log(LOG_NOTICE, "report successfully created in session: " . $this->get_info());
 
         // TODO:
         // scp to web report.xml to "<host>_<project>_<target>_<session>.xml"

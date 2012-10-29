@@ -37,14 +37,35 @@ function get_dirs($dir)
 }
 
 /**
- * Error text message output
- * @param $error_text
+ * Logging function
+ * @param $msg_level LOG_ERR or LOG_WARNING or LOG_NOTICE
+ * @param $text - error description
  */
-function print_error($error_text)
-{
-    echo $error_text . "\n";
-}
 
+function msg_log($msg_level, $text)
+{
+    global $_CONFIG;
+
+    $enable = false;
+    foreach ($_CONFIG['debug_level'] as $level)
+        if ($level == $msg_level)
+            $enable = true;
+
+    if (!$enable)
+        return;
+
+    syslog($msg_level, $text);
+    switch ($msg_level)
+    {
+        case LOG_ERR:
+            echo 'Error: ' . $text . "\n";
+            break;
+
+        case LOG_WARNING:
+            echo 'Warning: ' . $text . "\n";
+            break;
+    }
+}
 
 /**
  * Run command in console and return output
@@ -54,6 +75,8 @@ function print_error($error_text)
  */
 function run_cmd($cmd, $viewed = true)
 {
+    msg_log(LOG_NOTICE, 'run command: ' . $cmd);
+
     $fd = popen($cmd . ' 2>&1', 'r');
     if ($fd == false)
         throw new Exception("popen() error in run_cmd()");
@@ -83,6 +106,8 @@ function run_cmd($cmd, $viewed = true)
  */
 function run_remote_cmd(array $server, $cmd, $fork = false)
 {
+    msg_log(LOG_NOTICE, 'run command on remote server "' . $server['hostname'] . '": ' . $cmd);
+
     $cmd = str_replace('$', '\$', $cmd);
 
     if ($fork == true)
@@ -94,10 +119,6 @@ function run_remote_cmd(array $server, $cmd, $fork = false)
         if ($pid) // Current process return
             return;
     }
-
-    #fclose(STDIN);
-    #fclose(STDOUT);
-    #fclose(STDERR);
 
     // New children process
     $ssh = 'ssh ' . $server['login'] .

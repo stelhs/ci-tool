@@ -24,3 +24,4 @@ $_CONFIG['ci_servers'] = array(
                                 ),
                               );
 
+$_CONFIG['debug_level'] = array(LOG_ERR, LOG_WARNING, LOG_NOTICE);

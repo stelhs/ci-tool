@@ -125,19 +125,19 @@ function main()
 
     if (!$git_repository)
     {
-        print_error('incorrect argument 1');
+        msg_log(LOG_ERR, 'incorrect argument 1');
         $print_help = true;
     }
 
     if (!$git_branch)
     {
-        print_error('incorrect argument 2');
+        msg_log(LOG_ERR, 'incorrect argument 2');
         $print_help = true;
     }
 
     if (!$git_commit)
     {
-        print_error('incorrect argument 3');
+        msg_log(LOG_ERR, 'incorrect argument 3');
         $print_help = true;
     }
 
