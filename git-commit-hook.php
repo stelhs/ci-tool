@@ -13,19 +13,30 @@ $this_server = get_current_ci_server();
 
 
 
-function print_help()
+/**
+ * Formated help output
+ * @param $cmd - full command (text string)
+ * @param $description - help description about command
+ * @param array $sub_commands - list of sub commands
+ */
+function print_help_commands($cmd, $description, $sub_commands = array())
 {
-    // TODO:
-    // Нужно нарисовать красивый хэлп
-}
+    echo "Usage: git-commit-hook " . $cmd . ' ' . ($sub_commands ? '<command>' : '') . "\n";
+    echo $description . "\n";
+    if (!$sub_commands)
+        return;
 
+    foreach ($sub_commands as $command => $description)
+    {
+        echo "\t" . $command . " - " . $description . "\n";
+    }
+}
 
 function error_exception($exception)
 {
     echo 'Error: ' . $exception->getMessage() . "\n";
     exit;
 }
-
 
 
 function match_branch_with_mask($branch, $branch_mask)
@@ -106,24 +117,34 @@ function main()
     $git_branch = isset($argv[2]) ? $argv[2] : NULL;
     $git_commit = isset($argv[3]) ? $argv[3] : NULL;
 
+    // Detect print help mode
+    $print_help = false;
+    foreach ($argv as $arg)
+        if ($arg == '--help' || $arg == '-h')
+            $print_help = true;
+
     if (!$git_repository)
     {
         print_error('incorrect argument 1');
-        print_help();
-        return 1;
+        $print_help = true;
     }
 
     if (!$git_branch)
     {
         print_error('incorrect argument 2');
-        print_help();
-        return 1;
+        $print_help = true;
     }
 
     if (!$git_commit)
     {
         print_error('incorrect argument 3');
-        print_help();
+        $print_help = true;
+    }
+
+    if ($print_help)
+    {
+        print_help_commands('<repo name> <branch name> <commit>',
+            'git commit hook receiver, run by GIT');
         return 1;
     }
 

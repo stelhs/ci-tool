@@ -13,24 +13,22 @@ $this_server = get_current_ci_server();
 
 
 /**
- * ci get bla (--help)
- * Usage: ci get bla
- * CI tool purpose ...
- *     get   various CI parameters
- *     create
- *     delete
+ * Formated help output
+ * @param $cmd - full command (text string)
+ * @param $description - help description about command
+ * @param array $sub_commands - list of sub commands
  */
-
-/**
- * ci get --help
- *
- *
- */
-
-
-function print_help_command($description)
+function print_help_commands($cmd, $description, $sub_commands = array())
 {
+    echo "Usage: ci " . $cmd . ' ' . ($sub_commands ? '<command>' : '') . "\n";
+    echo $description . "\n";
+    if (!$sub_commands)
+        return;
 
+    foreach ($sub_commands as $command => $description)
+    {
+        echo "\t" . $command . " - " . $description . "\n";
+    }
 }
 
 function error_exception($exception)
@@ -153,26 +151,38 @@ function main()
         }
     }
 
+    // Detect print help mode
+    $print_help = false;
+    foreach ($argv as $arg)
+        if ($arg == '--help' || $arg == '-h')
+            $print_help = true;
+
     // analysis operation
     $op = isset($argv[1]) ? $argv[1] : NULL;
     switch ($op)
     {
         case 'get':
             {
-/*                if ($print_help)
-                {
-
-                    return 0;
-                }*/
-
                 $param = isset($argv[2]) ? $argv[2] : NULL;
                 switch ($param)
                 {
                     case 'free_build_slots':
+                        if ($print_help)
+                        {
+                            print_help_commands('get free_build_slots', 'get count of free build clots');
+                            return 0;
+                        }
+
                         echo get_free_build_slots($projects) . "\n";
                         return 0;
 
                     case 'session_status':
+                        if ($print_help)
+                        {
+                            print_help_commands('get session_status', 'return current session status');
+                            return 0;
+                        }
+
                         if ($obj_type != 'session')
                         {
                             print_error('This operation permited only from session dir');
@@ -184,7 +194,17 @@ function main()
 
                     default:
                         print_error('No parameter');
-                        print_help();
+                        $print_help = true;
+                }
+
+                if ($print_help)
+                {
+                    print_help_commands('get', 'get various values',
+                        array(
+                        'free_build_slots' => 'get count of free build clots',
+                        'session_status' => 'return current session status',
+                    ));
+                    return 0;
                 }
             }
             break;
@@ -197,22 +217,34 @@ function main()
                 if (!$type)
                 {
                     print_error('2 argument is empty');
-                    return 1;
+                    $print_help = true;
                 }
 
                 if (!$param1)
                 {
                     print_error('3 argument is empty');
-                    return 1;
+                    $print_help = true;
                 }
 
                 switch ($type)
                 {
                     case 'project':
+                        if ($print_help)
+                        {
+                            print_help_commands('create project <project name>', 'create new project');
+                            return 0;
+                        }
+
                         $rc = $projects->add_new_project($param1);
                         break;
 
                     case 'target':
+                        if ($print_help)
+                        {
+                            print_help_commands('create target <target name>', 'create new target');
+                            return 0;
+                        }
+
                         if ($obj_type != 'project')
                         {
                             print_error('This operation permited only from project dir');
@@ -223,6 +255,12 @@ function main()
                         break;
 
                     case 'session':
+                        if ($print_help)
+                        {
+                            print_help_commands('create session', 'create new session');
+                            return 0;
+                        }
+
                         if ($obj_type != 'target')
                         {
                             print_error('This operation permited only from project dir');
@@ -234,8 +272,19 @@ function main()
                         return 0;
 
                     default:
-                        print_error('No type of create');
-                        print_help();
+                        print_error('No specify entity of create');
+                        $print_help = true;
+                }
+
+                if ($print_help)
+                {
+                    print_help_commands('create', 'create entity',
+                        array(
+                            'project' => 'create new project',
+                            'target' => 'create new target',
+                            'session' => 'create new session',
+                        ));
+                    return 0;
                 }
             }
             break;
@@ -254,18 +303,25 @@ function main()
             if (!$repo)
             {
                 print_error('"repo name" 2 argument is empty');
-                return 1;
+                $print_help = true;
             }
 
             if (!$branch)
             {
                 print_error('"branch name" 3 argument is empty');
-                return 1;
+                $print_help = true;
             }
 
             if (!$commit)
             {
                 print_error('"commit" 4 argument is empty');
+                $print_help = true;
+            }
+
+            if ($print_help)
+            {
+                print_help_commands('all <repo name> <branch name> <commit>',
+                    'waiting for free slot and run checkout, build and tests');
                 return 1;
             }
 
@@ -313,6 +369,13 @@ function main()
             if (!$commit)
             {
                 print_error('2 argument is empty');
+                $print_help = true;
+            }
+
+            if ($print_help)
+            {
+                print_help_commands('checkout <commit>',
+                    'run checkout sources');
                 return 1;
             }
 
@@ -320,6 +383,13 @@ function main()
             break;
 
         case 'build':
+            if ($print_help)
+            {
+                print_help_commands('build',
+                    'run build sources');
+                return 1;
+            }
+
             if ($obj_type != 'session')
             {
                 print_error('This operation permited only from session dir');
@@ -330,6 +400,13 @@ function main()
             break;
             
         case 'test':
+            if ($print_help)
+            {
+                print_help_commands('test',
+                    'run tests');
+                return 1;
+            }
+
             if ($obj_type != 'session')
             {
                 print_error('This operation permited only from session dir');
@@ -340,6 +417,13 @@ function main()
             break;
 
         case 'report':
+            if ($print_help)
+            {
+                print_help_commands('report',
+                    'make report');
+                return 1;
+            }
+
             if ($obj_type != 'session')
             {
                 print_error('This operation permited only from session dir');
@@ -349,13 +433,18 @@ function main()
             $rc = $session->make_report();
             break;
 
-        case 'pending':
-            dump($argv);
-            break;
-
         default:
             print_error('No operation');
-            print_help();
+            print_help_commands('', 'CI-tool main utility',
+                array(
+                    'get' => 'get various values',
+                    'create' => 'create project or target',
+                    'checkout' => 'run checkout sources',
+                    'build' => 'run build sources',
+                    'test' => 'run tests',
+                    'report' => 'make report',
+                    'all' => 'waiting for free slot and run checkout, build and tests',
+                ));
             return 1;
     }
     
