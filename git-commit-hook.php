@@ -8,6 +8,7 @@ require_once($_CONFIG['ci_dir'] . 'lib.php');
 require_once($_CONFIG['ci_dir'] . 'List_projects.php');
 require_once($_CONFIG['ci_dir'] . 'CiDateTime.php');
 
+$utility_name = 'git-commit-hook';
 $this_server = get_current_ci_server();
 
 
@@ -151,20 +152,24 @@ function main()
     // update CI sources
     if ($git_repository == $_CONFIG['ci_repo'])
     {
+        msg_log(LOG_NOTICE, 'updating CI-tool sources');
         foreach ($_CONFIG['ci_servers'] as $ci_server)
             run_remote_cmd($ci_server, 'cd ' . $_CONFIG['ci_dir'] . ';' .
                 'git pull origin master');
 
+        msg_log(LOG_NOTICE, 'CI-tool sources update successfully');
         return 0;
     }
 
     // update projects configurations
     if ($git_repository == $_CONFIG['ci_projects_repo'])
     {
+        msg_log(LOG_NOTICE, 'updating projects configurations');
         foreach ($_CONFIG['ci_servers'] as $ci_server)
             run_remote_cmd($ci_server, 'cd ' . $_CONFIG['project_dir'] . ';' .
                 'git pull origin master');
 
+        msg_log(LOG_NOTICE, 'projects configurations update successfully');
         return 0;
     }
 
@@ -194,12 +199,18 @@ function main()
         }
     }
 
+
     if (!$execute_targets)
+    {
+        msg_log(LOG_WARNING, 'not found targets for ' . $git_repository . ' ' . $git_branch);
         return false;
+    }
 
     // create command and run his on CI servers
     foreach ($execute_targets as $target)
     {
+        msg_log(LOG_NOTICE, 'found target: ' . $target->get_info());
+
         $ci_server = get_appropriate_ci_server();
         $rc = ci_run_cmd($ci_server,
             'cd ' . $target->get_dir() . ';' .
@@ -208,12 +219,15 @@ function main()
         // TODO: return session name
         $session_name = $rc['log'];
 
+        msg_log(LOG_NOTICE, 'created new session: ' . $session_name . ' on target ' . $target->get_info());
+
         // run build
         ci_run_cmd($ci_server,
             'cd ' . $target->get_dir() . '/' . $session_name . ';' .
             'ci all ' . $git_repository . ' ' . $git_branch . ' ' . $git_commit, true);
 
-        echo "Run target " . $target->get_name() . ", create session: " . $ci_server['hostname'] . "@" . $target->get_dir() . '/' . $session_name . "\n";
+        echo "Run target " . $target->get_name() .
+            ", create session: " . $ci_server['hostname'] . "@" . $target->get_dir() . '/' . $session_name . "\n";
     }
 
     return 0;

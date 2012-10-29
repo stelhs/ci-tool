@@ -44,7 +44,7 @@ function get_dirs($dir)
 
 function msg_log($msg_level, $text)
 {
-    global $_CONFIG;
+    global $_CONFIG, $utility_name;
 
     $enable = false;
     foreach ($_CONFIG['debug_level'] as $level)
@@ -54,15 +54,15 @@ function msg_log($msg_level, $text)
     if (!$enable)
         return;
 
-    syslog($msg_level, $text);
+    syslog($utility_name . ': ' . $msg_level, $text);
     switch ($msg_level)
     {
         case LOG_ERR:
-            echo 'Error: ' . $text . "\n";
+            echo $utility_name . ': Error: ' . $text . "\n";
             break;
 
         case LOG_WARNING:
-            echo 'Warning: ' . $text . "\n";
+            echo $utility_name . ': Warning: ' . $text . "\n";
             break;
     }
 }
