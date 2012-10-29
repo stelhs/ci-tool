@@ -78,20 +78,29 @@ class Project
         $target_dir = $this->dir . '/' . $target_name;
         if (is_dir($target_dir))
         {
-            msg_log(LOG_ERR, 'can\'t created target, target already exist');
+            msg_log(LOG_ERR, 'can\'t created target: ' . $target_name . ', target already exist');
             return false;
         }
 
         create_dir($target_dir);
+        // copy default configs
         run_cmd('find ' . $_CONFIG['ci_dir'] . '/default_configs/target/ ' .
         ' -name ".*" -type f -exec cp {} ' . $target_dir . ' \;');
-        run_cmd('git add ' . $this->dir .
-            ' && git commit -m "add new target ' . $target_name . '" && git push origin master');
 
         $target = new Target($this, $target_dir, $target_name);
         $this->add_target($target);
 
-        msg_log(LOG_NOTICE, "added new target: " . $target->get_name());
+        // commit added target
+        $rc = run_cmd('cd ' . $_CONFIG['project_dir'] . '; git add ' . $this->dir .
+            ' && git commit -m "add new target ' . $target->get_info() . '" && git push origin master');
+        if ($rc['rc'])
+        {
+            delete_dir($target_dir);
+            msg_log(LOG_ERR, 'can\'t created target, can\'t commit new target:' . $target->get_info());
+            return false;
+        }
+
+        msg_log(LOG_NOTICE, "added new target: " . $target->get_info());
     }
 
     /**
