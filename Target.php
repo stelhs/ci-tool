@@ -41,6 +41,15 @@ class Target
     }
 
     /**
+     * Get info about target
+     */
+    function get_info()
+    {
+        $project = $this->get_project();
+        return $project->get_name() . '/' . $this->get_name();
+    }
+
+    /**
      * Get project object
      * @return string
      */

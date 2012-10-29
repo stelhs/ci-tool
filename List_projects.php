@@ -67,7 +67,7 @@ class List_projects
         $project_dir = $this->dir . '/' . $project_name;
         if (is_dir($project_dir))
         {
-            msg_log(LOG_ERR, 'can\'t created project, project already exist');
+            msg_log(LOG_ERR, 'can\'t created project: ' . $project_name . ', project already exist');
             return false;
         }
 
@@ -78,7 +78,7 @@ class List_projects
         if ($rc['rc'])
         {
             delete_dir($project_dir);
-            msg_log(LOG_ERR, 'can\'t created project, can\'t commit new project');
+            msg_log(LOG_ERR, 'can\'t created project, can\'t commit new project: ' . $project_name);
             return false;
         }
 
