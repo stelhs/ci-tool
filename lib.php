@@ -273,8 +273,8 @@ function create_dir($dir)
 
 function delete_dir($dir)
 {
-    $rc = rmdir($dir);
-    if ($rc === false)
+    $rc = run_cmd('rm -rf ' . $dir);
+    if ($rc['rc'])
         throw new Exception("can't remove dir: " . $dir);
 
     msg_log(LOG_NOTICE, "deleted directory: " . $dir);
