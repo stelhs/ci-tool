@@ -59,6 +59,14 @@ function ci_run_cmd($ci_server, $cmd, $fork = false)
 {
     global $this_server;
 
+    dump('!!!!!!!!!!!!!!!ci_server!!!!!!!!!!!!');
+    if (!$ci_server)
+    {
+        print_r(apd_callstack());
+    }
+
+    dump($ci_server);
+
     if ($ci_server['hostname'] == $this_server['hostname'])
         $rc = run_cmd($cmd);
     else
@@ -101,12 +109,10 @@ function get_appropriate_ci_server()
 
     if (!$ci_servers)
         throw new Exception('CI servers not found');
-dump($ci_servers);
-    dump('===================');
+
     krsort($ci_servers);
     foreach ($ci_servers as $first_ci_server)break;
-    dump($first_ci_server);
-    dump('-------------------');
+
     return $first_ci_server;
 }
 
