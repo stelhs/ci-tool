@@ -11,6 +11,8 @@ require_once($_CONFIG['ci_dir'] . 'CiDateTime.php');
 
 $utility_name = 'ci';
 $this_server = get_current_ci_server();
+if (!$this_server)
+    throw new Exception("Can't detect current server");
 
 
 
@@ -59,9 +61,6 @@ function get_free_build_slots(List_projects $projects)
 
     // count sessions in running mode
     $build_processes = count($list_sessions);
-
-    if (!$this_server)
-        throw new Exception("Can't detect current server");
 
     $free_build_slots = $this_server['max_build_slots'] - $build_processes;
     return $free_build_slots;

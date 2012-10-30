@@ -10,6 +10,8 @@ require_once($_CONFIG['ci_dir'] . 'CiDateTime.php');
 
 $utility_name = 'git-commit-hook';
 $this_server = get_current_ci_server();
+if (!$this_server)
+    throw new Exception("Can't detect current server");
 
 
 
