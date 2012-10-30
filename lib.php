@@ -75,9 +75,7 @@ function msg_log($msg_level, $text)
  */
 function run_cmd($cmd, $fork = false)
 {
-    global $this_server;
-
-    msg_log(LOG_NOTICE, 'run cmd on ' . $this_server['hostname'] . ': ' . $cmd);
+    msg_log(LOG_NOTICE, 'run cmd: ' . $cmd);
 
     if ($fork == true)
     {
