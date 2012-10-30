@@ -465,6 +465,23 @@ function main()
             $rc = $session->make_report();
             break;
 
+        case 'abort':
+            if ($print_help)
+            {
+                print_help_commands('abort',
+                    'abort current session');
+                return 1;
+            }
+
+            if ($obj_type != 'session')
+            {
+                msg_log(LOG_ERR, 'This operation permited only from session dir');
+                return 1;
+            }
+
+            $rc = $session->abort();
+            break;
+
         default:
             msg_log(LOG_ERR, 'No operation');
             print_help_commands('', 'CI-tool main utility',
