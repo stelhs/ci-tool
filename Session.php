@@ -166,7 +166,7 @@ class Session
                 }
 
                 // if process not nunning
-                if (!check_proc_running($pid))
+                if (!$this->check_proc_running($pid))
                 {
                     $this->set_status('aborted');
                     return 'aborted';
