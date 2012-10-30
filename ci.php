@@ -491,7 +491,8 @@ function main()
                     'checkout' => 'run checkout sources',
                     'build' => 'run build sources',
                     'test' => 'run tests',
-                    'report' => 'make report',
+                    'report' => 'make report',0
+                    'abort' => 'abort current session',
                     'all' => 'waiting for free slot and run checkout, build and tests',
                 ));
             return 1;
