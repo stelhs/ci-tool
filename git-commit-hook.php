@@ -235,7 +235,7 @@ function main()
             'ci all ' . $git_repository . ' ' . $git_branch . ' ' . $git_commit, true);
 
         echo "Run target " . $target->get_name() .
-            ", create session: " . $ci_server['hostname'] . "@" . $target->get_dir() . '/' . $session_name . "\n";
+            ", create session: " . $ci_server['addr'] . "@" . $target->get_dir() . '/' . $session_name . "\n";
     }
 
     return 0;
