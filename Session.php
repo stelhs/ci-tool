@@ -63,9 +63,12 @@ class Session
     function abort()
     {
         if($this->get_state() != 'running')
+        {
+            msg_log(LOG_WARNING, "current session not in running state");
             return;
-
+        }
         kill_all($this->get_pid());
+        msg_log(LOG_NOTICE, "session was aborted");
     }
 
     /**
