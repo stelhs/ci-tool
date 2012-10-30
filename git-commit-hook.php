@@ -76,6 +76,7 @@ function get_ci_free_build_slots($ci_server)
         return false;
 
     $build_slots = (int)$rc['log'];
+    msg_log(LOG_NOTICE, '$build_slots = ' . $build_slots);
     return $build_slots;
 }
 
