@@ -70,14 +70,12 @@ function ci_run_cmd($ci_server, $cmd, $fork = false)
 function get_ci_free_build_slots($ci_server)
 {
     $rc = ci_run_cmd($ci_server, 'ci get free_build_slots');
-    dump($rc);
 
     // if server not responce TODO: //
     if ($rc['rc'])
         return false;
 
     $build_slots = (int)$rc['log'];
-    msg_log(LOG_NOTICE, '$build_slots = ' . $build_slots);
     return $build_slots;
 }
 
