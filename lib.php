@@ -73,9 +73,25 @@ function msg_log($msg_level, $text)
  * @param $viewed - true or false. Display output yes or no
  * @return string
  */
-function run_cmd($cmd, $viewed = true)
+function run_cmd($cmd, $fork = false)
 {
-    msg_log(LOG_NOTICE, 'run command: ' . $cmd);
+    global $this_server;
+
+    msg_log(LOG_NOTICE, 'run cmd on ' . $this_server['hostname'] . ': ' . $cmd);
+
+    if ($fork == true)
+    {
+        $pid = pcntl_fork();
+        if ($pid == -1)
+            throw new Exception("can't fork() in run_cmd()");
+
+        if ($pid) // Current process return
+            return;
+
+        fclose(STDERR);
+        fclose(STDIN);
+        fclose(STDOUT);
+    }
 
     $fd = popen($cmd . ' 2>&1', 'r');
     if ($fd == false)
@@ -83,16 +99,14 @@ function run_cmd($cmd, $viewed = true)
 
     $log = '';
     while($str = fgets($fd))
-    {
-        if ($viewed)
-            echo $str;
-
         $log .= $str;
-    }
 
     $rc = pclose($fd);
     if ($rc == -1)
         throw new Exception("pclose() error in run_cmd()");
+
+    if ($fork == true)
+        exit;
 
     return array('log' => trim($log), 'rc' => $rc);
 }
@@ -106,33 +120,16 @@ function run_cmd($cmd, $viewed = true)
  */
 function run_remote_cmd(array $server, $cmd, $fork = false)
 {
-    msg_log(LOG_NOTICE, 'run command on remote server "' . $server['hostname'] . '": ' . $cmd);
-
     $cmd = str_replace('$', '\$', $cmd);
 
-    if ($fork == true)
-    {
-        $pid = pcntl_fork();
-        if ($pid == -1)
-            throw new Exception("can't fork() in run_remote_cmd()");
-
-        if ($pid) // Current process return
-            return;
-
-        fclose(STDERR);
-        fclose(STDIN);
-        fclose(STDOUT);
-    }
+    msg_log(LOG_NOTICE, 'run command on remote server "' . $server['hostname'] . '": ' . $cmd);
 
     // New children process
     $ssh = 'ssh ' . $server['login'] .
             '@' . $server['addr'] .
             ' -p' . $server['port'] . ' ';
 
-    $rc = run_cmd($ssh . '"' . $cmd . '" 2>&1', false);
-
-    if ($fork == true)
-        exit;
+    $rc = run_cmd($ssh . '"' . $cmd . '" 2>&1', $fork);
 
     return $rc;
 }
@@ -225,7 +222,7 @@ function get_current_ci_server()
  */
 function get_child_pids($parent_pid)
 {
-    $ret = run_cmd("ps -ax --format '%P %p'", false);
+    $ret = run_cmd("ps -ax --format '%P %p'");
     $rows = explode("\n", $ret['log']);
     if (!$rows)
         throw new Exception("incorrect output from command: ps -ax --format '%P %p'");
