@@ -59,9 +59,9 @@ function ci_run_cmd($ci_server, $cmd, $fork = false)
 {
     global $this_server;
 
-    if ($ci_server['hostname'] == $this_server['hostname'])
+  /*  if ($ci_server['hostname'] == $this_server['hostname'])
         $rc = run_cmd($cmd, false);
-    else
+    else*/
         $rc = run_remote_cmd($ci_server, $cmd, $fork);
 
     return $rc;
