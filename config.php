@@ -14,7 +14,7 @@ $_CONFIG['ci_servers'] = array(
                                       'description' => 'xz',
                                 ),
 
-                                array('hostname' => 'ws-002',
+                                array('hostname' => 'sp-build03-lo1.promwad.corp',
                                       'addr' => '192.168.10.2',
                                       'port' => 22,
                                       'login' => 'ci-tool',

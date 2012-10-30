@@ -207,12 +207,12 @@ function get_current_ci_server()
 
     $rc = run_cmd('hostname', false);
     $hostname = trim($rc['log']);
-    dump('$hostname = ' . $hostname);
 
     foreach ($_CONFIG['ci_servers'] as $ci_server)
         if ($ci_server['hostname'] == $hostname)
             return $ci_server;
 
+    msg_log(LOG_WARNING, "Server " . $hostname . " was not found in the ci servers list.");
     return false;
 }
 
