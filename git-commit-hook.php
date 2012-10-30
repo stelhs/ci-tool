@@ -234,11 +234,10 @@ function main()
             'cd ' . $target->get_dir() . '/' . $session_name . ';' .
             'ci all ' . $git_repository . ' ' . $git_branch . ' ' . $git_commit, true);
 
-        echo "Run target " . $target->get_name() .
+        echo "Run target " . $target->get_info() .
             ", create session: " . $ci_server['addr'] . "@" . $target->get_dir() . '/' . $session_name . "\n";
     }
 
-    dump('finished');
     return 0;
 }
 
