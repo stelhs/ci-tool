@@ -110,6 +110,8 @@ function run_remote_cmd(array $server, $cmd, $fork = false)
 
     $cmd = str_replace('$', '\$', $cmd);
 
+    dump('$fork = ' . $fork);
+
     if ($fork == true)
     {
         $pid = pcntl_fork();
