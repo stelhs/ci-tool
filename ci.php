@@ -65,7 +65,7 @@ function get_free_build_slots(List_projects $projects)
 
 function main()
 {
-    global $argv, $_CONFIG;
+    global $argv, $_CONFIG, $this_server;
     $rc = 0;
 
     set_exception_handler('error_exception');
