@@ -59,14 +59,6 @@ function ci_run_cmd($ci_server, $cmd, $fork = false)
 {
     global $this_server;
 
-    dump('!!!!!!!!!!!!!!!ci_server!!!!!!!!!!!!');
-    if (!$ci_server)
-    {
-        print_r(apd_callstack());
-    }
-
-    dump($ci_server);
-
     if ($ci_server['hostname'] == $this_server['hostname'])
         $rc = run_cmd($cmd);
     else
@@ -119,7 +111,7 @@ function get_appropriate_ci_server()
 
 function main()
 {
-    global $argv, $_CONFIG;
+    global $argv, $_CONFIG, $this_server;
     $rc = NULL;
 
     set_exception_handler('error_exception');
