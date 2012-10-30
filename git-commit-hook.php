@@ -63,7 +63,7 @@ function ci_run_cmd($ci_server, $cmd, $fork = false)
         $rc = run_cmd($cmd, false);
     else*/
         $rc = run_remote_cmd($ci_server, $cmd, $fork);
-dump("run_remote_cmd\n");
+
     return $rc;
 }
 
@@ -238,6 +238,7 @@ function main()
             ", create session: " . $ci_server['addr'] . "@" . $target->get_dir() . '/' . $session_name . "\n";
     }
 
+    dump('finished');
     return 0;
 }
 
