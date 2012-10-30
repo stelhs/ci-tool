@@ -111,7 +111,7 @@ class List_projects
     {
         $list_sessions = array();
 
-        foreach ($this->projects() as $project)
+        foreach ($this->projects as $project)
             if ($project->get_targets_list())
                 foreach ($project->get_targets_list() as $target)
                     if ($target->get_list_sessions())

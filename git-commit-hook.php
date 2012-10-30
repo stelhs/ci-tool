@@ -35,13 +35,15 @@ function print_help_commands($cmd, $description, $sub_commands = array())
 
 function error_exception($exception)
 {
-    echo 'Error: ' . $exception->getMessage() . "\n";
+    msg_log(LOG_ERR, $exception->getMessage());
     exit;
 }
 
 
 function match_branch_with_mask($branch, $branch_mask)
 {
+    // TODO: strip "refs/" from branch
+
     return fnmatch($branch_mask, $branch);
 }
 
@@ -69,7 +71,7 @@ function get_ci_free_build_slots($ci_server)
 {
     $rc = ci_run_cmd($ci_server, 'ci get free_build_slots');
 
-    // if server not responce
+    // if server not responce TODO: //
     if ($rc['rc'])
         return false;
 
