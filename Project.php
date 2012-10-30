@@ -23,6 +23,38 @@ class Project
     }
 
     /**
+     * Check for consistent target directory
+     * and out warning messages.
+     * @param $target_dir
+     * @return bool true - if target directory is correct
+     */
+    private function check_target_dir($target_dir)
+    {
+        $unexist_files = array();
+
+        $list_of_necessary_files = array('.target_desc',
+                                         '.repos',
+                                         '.recipe_checkout',
+                                         '.recipe_build',
+                                        );
+
+        foreach ($list_of_necessary_files as $file)
+            if(!file_exists($target_dir . '/' . $file))
+                $unexist_files[] = $file;
+
+        if (!$unexist_files)
+            return true;
+
+        $msg = 'incorrect target directory: ' . $target_dir . ". ";
+        $msg .= 'Not enought next mandatory files: ';
+        foreach ($unexist_files as $file)
+            $msg .= $file . ' ';
+
+        msg_log(LOG_WARNING, $msg);
+        return false;
+    }
+
+    /**
      * Scan directory and add targets objects
      */
     private function scan_targets()
@@ -33,7 +65,12 @@ class Project
 
         foreach ($list_dirs as $dir_name)
         {
-            //TODO: added ckeck .description
+            if (!$this->check_target_dir($this->dir . '/' . $dir_name))
+            {
+                msg_log(LOG_WARNING, 'ignoring target dir:' . $this->dir . '/' . $dir_name);
+                continue;
+            }
+
             $target = new Target($this, $this->dir . '/' . $dir_name, $dir_name);
             $this->add_target($target);
         }

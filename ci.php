@@ -41,20 +41,24 @@ function error_exception($exception)
     exit;
 }
 
+/**
+ * function returned count of free build slots,
+ * if server allocated all build slots - return negative counter
+ * @param List_projects $projects
+ * @return mixed
+ * @throws Exception
+ */
 function get_free_build_slots(List_projects $projects)
 {
     global $this_server;
 
-    // calculate count sessions in running mode
-    $build_processes = 0;
-    foreach ($projects->get_list() as $project)
-        if ($project->get_targets_list())
-            foreach ($project->get_targets_list() as $target)
-                if ($target->get_list_sessions())
-                    foreach ($target->get_list_sessions() as $session)
-                        if ($session)
-                            if ($session->get_state() == 'running')
-                                $build_processes++;
+    $list_sessions = $projects->get_all_sessions(array('running_checkout',
+                                                       'running_build',
+                                                       'running_test',
+                                                       'pending'));
+
+    // count sessions in running mode
+    $build_processes = count($list_sessions);
 
     if (!$this_server)
         throw new Exception("Can't detect current server");
@@ -324,17 +328,43 @@ function main()
                 return 1;
             }
 
-            $build_slots = get_free_build_slots($projects);
-            while ($build_slots <= 0)
+            $pending_sessions = $projects->get_all_sessions('pending');
+
+            /*
+             * if found pending sessions - switch current session to 'pending' state,
+             * and waiting while all pending sessions before current sessions go to build state
+             */
+            while(count($pending_sessions))
             {
-                msg_log(LOG_NOTICE, "wait free build slot");
-
                 $session->set_status('pending');
-                // TODO:
 
-                $build_slots = get_free_build_slots($projects);
+                msg_log(LOG_NOTICE, "waiting while all pending sessions before current session: " .
+                    $session->get_info() . " go to build state");
+
                 sleep(10);
+
+                $pending_sessions = $projects->get_all_sessions('pending');
+                if (!count($pending_sessions))
+                {
+                    msg_log(LOG_NOTICE, "end of all pending sessions");
+                    break;
+                }
+
+                // calculate count sessions runned before current session
+                $waiting_count_sessions = 0;
+                foreach ($pending_sessions as $pending_session)
+                    if ($pending_session->get_date() < $session->get_date())
+                        $waiting_count_sessions++;
+
+                if (!$waiting_count_sessions)
+                {
+                    msg_log(LOG_NOTICE, "end of pending sessions before current session: " . $session->get_info());
+                    break;
+                }
             }
+
+            msg_log(LOG_NOTICE, "go to run session: " . $session->get_info());
+
 
             $rc = $session->checkout_src($commit);
             if ($rc['rc'])

@@ -29,6 +29,16 @@ class Session
         return 'build_session_' . $this->index . '_' . $this->date->to_string();
     }
 
+
+    /**
+     * Get session date
+     * @return CiDateTime
+     */
+    function get_date()
+    {
+        return $this->date;
+    }
+
     /**
      * Get target object
      * @return string

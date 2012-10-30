@@ -100,4 +100,41 @@ class List_projects
 
         return false;
     }
+
+    /**
+     * get all sessions in all projects
+     * @param array of strings $states - filter by current session state,
+     * contain array of all possible states,
+     * return all sessions if this variable is NULL
+     */
+    function get_all_sessions($states = array())
+    {
+        $list_sessions = array();
+
+        foreach ($this->projects() as $project)
+            if ($project->get_targets_list())
+                foreach ($project->get_targets_list() as $target)
+                    if ($target->get_list_sessions())
+                        foreach ($target->get_list_sessions() as $session)
+                            if ($session)
+                            {
+                                if (!$states)
+                                {
+                                    $list_sessions[] = $session;
+                                    continue;
+                                }
+
+                                // if used filter by states
+                                foreach ($states as $state)
+                                {
+                                    if ($session->get_state() == $state)
+                                    {
+                                        $list_sessions[] = $session;
+                                        break;
+                                    }
+                                }
+                            }
+
+        return $list_sessions;
+    }
 }
