@@ -12,7 +12,7 @@ require_once($_CONFIG['ci_dir'] . 'CiDateTime.php');
 $params = '';
 foreach ($argv as $arg)
     $params .= $arg . ' ';
-$utility_name = 'ci ' . $params;
+$utility_name = $params;
 
 $this_server = array();
 

@@ -12,7 +12,7 @@ $params = '';
 foreach ($argv as $arg)
     $params .= $arg . ' ';
 
-$utility_name = 'git-commit-hook ' . $params;
+$utility_name = $params;
 $this_server = array();
 
 
