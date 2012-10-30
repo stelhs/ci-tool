@@ -94,7 +94,7 @@ function run_cmd($cmd, $viewed = true)
     if ($rc == -1)
         throw new Exception("pclose() error in run_cmd()");
 
-    return array('log' => $log, 'rc' => $rc);
+    return array('log' => trim($log), 'rc' => $rc);
 }
 
 /**
