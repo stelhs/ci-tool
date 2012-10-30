@@ -88,6 +88,7 @@ function run_cmd($cmd, $fork = false)
         if ($pid) // Current process return
             return;
 
+        // new process continue
         fclose(STDERR);
         fclose(STDIN);
         fclose(STDOUT);
