@@ -216,10 +216,10 @@ function main()
             'cd ' . $target->get_dir() . ';' .
             'ci create session git');
 
-        // TODO: return session name
         $session_name = $rc['log'];
 
-        msg_log(LOG_NOTICE, 'created new session: ' . $session_name . ' on target ' . $target->get_info());
+        msg_log(LOG_NOTICE, 'run build on session: ' . $ci_server['hostname'] .
+            '@' . $target->get_info() . '/' . $session_name);
 
         // run build
         ci_run_cmd($ci_server,
