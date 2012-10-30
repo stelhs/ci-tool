@@ -9,7 +9,11 @@ require_once($_CONFIG['ci_dir'] . 'xml.php');
 require_once($_CONFIG['ci_dir'] . 'List_projects.php');
 require_once($_CONFIG['ci_dir'] . 'CiDateTime.php');
 
-$utility_name = 'ci';
+$params = '';
+foreach ($argv as $arg)
+    $params .= $arg . ' ';
+$utility_name = $params;
+
 $this_server = array();
 
 
