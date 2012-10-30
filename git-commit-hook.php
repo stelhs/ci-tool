@@ -101,10 +101,12 @@ function get_appropriate_ci_server()
 
     if (!$ci_servers)
         throw new Exception('CI servers not found');
-
+dump($ci_servers);
+    dump('===================');
     krsort($ci_servers);
     foreach ($ci_servers as $first_ci_server)break;
-
+    dump($first_ci_server);
+    dump('-------------------');
     return $first_ci_server;
 }
 
@@ -218,6 +220,8 @@ function main()
         msg_log(LOG_NOTICE, 'found target: ' . $target->get_info());
 
         $ci_server = get_appropriate_ci_server();
+        msg_log(LOG_NOTICE, 'server ' . $ci_server['hostname'] . ' was selected for the build');
+
         $rc = ci_run_cmd($ci_server,
             'cd ' . $target->get_dir() . ';' .
             'ci create session git');
