@@ -194,7 +194,7 @@ class Session
      */
     private function run_script($bash_file, $args = '')
     {
-        msg_log(LOG_NOTICE, "run_script in session: " . $this->get_info());
+        msg_log(LOG_NOTICE, "run_script " . $bash_file . " in session: " . $this->get_info());
 
         if (!is_file($this->target->get_dir() . '/' . $bash_file))
         {
@@ -216,6 +216,8 @@ class Session
      */
     function checkout_src($commit)
     {
+        msg_log(LOG_NOTICE, "start checkout in session: " . $this->get_info());
+
         $this->set_status('running_checkout');
         create_file($this->dir . '/.commit', $commit);
 
@@ -239,6 +241,8 @@ class Session
      */
     function build_src()
     {
+        msg_log(LOG_NOTICE, "start build in session: " . $this->get_info());
+
         $this->set_status('running_build');
         $ret = $this->run_script('.recipe_build');
         create_file($this->dir . '/build_log', $ret['log']);
@@ -263,6 +267,8 @@ class Session
      */
     function test_src()
     {
+        msg_log(LOG_NOTICE, "start tests in session: " . $this->get_info());
+
         $this->set_status('running_test');
         $ret = $this->run_script('.recipe_test');
         create_file($this->dir . '/test_log', $ret['log']);
@@ -285,6 +291,8 @@ class Session
     function make_report()
     {
         global $this_server;
+
+        msg_log(LOG_NOTICE, "start report creation in session: " . $this->get_info());
 
         $target = $this->get_target();
         $project = $target->get_project();
