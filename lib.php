@@ -128,7 +128,7 @@ function run_remote_cmd(array $server, $cmd, $fork = false)
     
     #dump($ssh . '"' . $cmd . '"');
 
-    $rc = run_cmd($ssh . '"' . $cmd . '" 2>&1 > /dev/null', false);
+    $rc = run_cmd($ssh . '"' . $cmd . '" 2>&1', false);
 
     if ($fork == true)
         exit;
