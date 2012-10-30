@@ -118,11 +118,11 @@ function run_remote_cmd(array $server, $cmd, $fork = false)
 
         if ($pid) // Current process return
             return;
-    }
 
-    fclose(STDERR);
-    fclose(STDIN);
-    fclose(STDOUT);
+        fclose(STDERR);
+        fclose(STDIN);
+        fclose(STDOUT);
+    }
 
     // New children process
     $ssh = 'ssh ' . $server['login'] .
