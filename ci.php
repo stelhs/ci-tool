@@ -10,11 +10,7 @@ require_once($_CONFIG['ci_dir'] . 'List_projects.php');
 require_once($_CONFIG['ci_dir'] . 'CiDateTime.php');
 
 $utility_name = 'ci';
-$this_server = get_current_ci_server();
-if (!$this_server)
-    throw new Exception("Can't detect current server");
-
-
+$this_server = array();
 
 
 
@@ -73,6 +69,11 @@ function main()
     $rc = 0;
 
     set_exception_handler('error_exception');
+
+    $this_server = get_current_ci_server();
+    if (!$this_server)
+        throw new Exception("Can't detect current server");
+
 
     // create list all projects
     $projects = new List_projects($_CONFIG['project_dir']);

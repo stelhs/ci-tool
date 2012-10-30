@@ -9,9 +9,7 @@ require_once($_CONFIG['ci_dir'] . 'List_projects.php');
 require_once($_CONFIG['ci_dir'] . 'CiDateTime.php');
 
 $utility_name = 'git-commit-hook';
-$this_server = get_current_ci_server();
-if (!$this_server)
-    throw new Exception("Can't detect current server");
+$this_server = array();
 
 
 
@@ -117,6 +115,10 @@ function main()
     $rc = NULL;
 
     set_exception_handler('error_exception');
+
+    $this_server = get_current_ci_server();
+    if (!$this_server)
+        throw new Exception("Can't detect current server");
 
     $git_repository = isset($argv[1]) ? $argv[1] : NULL;
     $git_branch = isset($argv[2]) ? $argv[2] : NULL;
