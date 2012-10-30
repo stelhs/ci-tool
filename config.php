@@ -19,7 +19,7 @@ $_CONFIG['ci_servers'] = array(
                                       'port' => 22,
                                       'login' => 'ci-tool',
                                       'role' => 'build',
-                                      'max_build_slots' => 5,
+                                      'max_build_slots' => 0,
                                       'description' => 'xz',
                                 ),
                               );
