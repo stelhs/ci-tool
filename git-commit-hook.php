@@ -224,6 +224,8 @@ function main()
             'cd ' . $target->get_dir() . ';' .
             'ci create session git');
 
+        dump($rc);
+
         $session_name = $rc['log'];
 
         msg_log(LOG_NOTICE, 'run build on session: ' . $ci_server['hostname'] .
