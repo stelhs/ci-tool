@@ -278,12 +278,9 @@ function main()
                             return 0;
                         }
 
+                        echo "list of sessions:\n";
                         foreach ($sessions as $session)
-                        {
-                            echo "list of sessions:\n";
                             echo $session->get_dir() . "\n";
-
-                        }
 
                         return 0;
                     }
