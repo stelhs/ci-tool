@@ -605,7 +605,7 @@ function main()
                     'make report');
                 return 1;
             }
-            
+
             $rc = $session->make_report($email_addr);
             break;
 
