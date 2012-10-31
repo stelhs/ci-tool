@@ -603,7 +603,7 @@ function main()
             $rc = $session->abort();
             if (!$rc)
             {
-                msg_log(LOG_ERR, 'session not runned');
+                msg_log(LOG_ERR, 'session not run');
                 break;
             }
 
