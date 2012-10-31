@@ -50,7 +50,8 @@ function get_free_build_slots(List_projects $projects)
 {
     global $this_server;
 
-    $list_sessions = $projects->get_all_sessions(array('running_checkout',
+    $list_sessions = $projects->get_all_sessions(array('created',
+                                                       'running_checkout',
                                                        'running_build',
                                                        'running_test',
                                                        'pending'));
