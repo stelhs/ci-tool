@@ -282,10 +282,9 @@ function main()
                             return 0;
                         }
 
-
                         if (!$sessions)
                         {
-                            echo 'no sessions';
+                            echo "no sessions\n";
                             return 0;
                         }
 
