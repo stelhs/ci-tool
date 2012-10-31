@@ -124,6 +124,7 @@ function main()
     $git_branch = isset($argv[2]) ? $argv[2] : NULL;
     $git_commit = isset($argv[3]) ? $argv[3] : NULL;
     $git_base_commit = isset($argv[4]) ? $argv[4] : NULL;
+    $git_email = isset($argv[5]) ? $argv[5] : NULL;
 
     // Detect print help mode
     $print_help = false;
@@ -149,9 +150,21 @@ function main()
         $print_help = true;
     }
 
+    if (!$git_base_commit)
+    {
+        msg_log(LOG_ERR, 'incorrect argument 4');
+        $print_help = true;
+    }
+
+    if (!$git_email)
+    {
+        msg_log(LOG_ERR, 'incorrect argument 5');
+        $print_help = true;
+    }
+
     if ($print_help)
     {
-        print_help_commands('[repo name] [branch name] [commit] <base_commit>',
+        print_help_commands('[repo name] [branch name] [commit] [base_commit] [email]',
             'git commit hook receiver, run by GIT');
         return 1;
     }
@@ -233,7 +246,8 @@ function main()
         // run build
         ci_run_cmd($ci_server,
             'cd ' . $target->get_dir() . '/' . $session_name . ';' .
-            'ci all ' . $git_repository . ' ' . $git_branch . ' ' . $git_commit . ' ' . $git_base_commit, true);
+            'ci all "' . $git_repository . '" "' . $git_branch .
+            '" "' . $git_commit . '" "' . $git_base_commit . '" "' . $git_email . '"', true);
 
         echo "Run target " . $target->get_info() .
             ", create session: " . $ci_server['addr'] . ":" . $target->get_dir() . '/' . $session_name . "\n";

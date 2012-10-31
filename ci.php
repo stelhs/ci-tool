@@ -413,6 +413,7 @@ function main()
             $branch = isset($argv[3]) ? $argv[3] : NULL;
             $commit = isset($argv[4]) ? $argv[4] : NULL;
             $base_commit = isset($argv[5]) ? $argv[5] : NULL;
+            $email = isset($argv[6]) ? $argv[6] : NULL;
 
             if (!$repo)
             {
@@ -432,9 +433,21 @@ function main()
                 $print_help = true;
             }
 
+            if (!$base_commit)
+            {
+                msg_log(LOG_ERR, '"commit" 5 argument is empty');
+                $print_help = true;
+            }
+
+            if (!$email)
+            {
+                msg_log(LOG_ERR, '"commit" 6 argument is empty');
+                $print_help = true;
+            }
+
             if ($print_help)
             {
-                print_help_commands('all [repo name] [branch name] [commit] <base_commit>',
+                print_help_commands('all [repo name] [branch name] [commit] [base_commit] [email]',
                     'waiting for free slot and run checkout, build and tests');
                 return 1;
             }
@@ -488,7 +501,7 @@ function main()
             msg_log(LOG_NOTICE, "go to run session: " . $session->get_info());
 
 
-            $rc = $session->checkout_src($commit);
+            $rc = $session->checkout_src($commit, $base_commit);
             if ($rc['rc'])
             {
                 msg_log(LOG_ERR, 'checkout fail');
@@ -509,7 +522,7 @@ function main()
                 return 1;
             }
 
-            $rc = $session->make_report($base_commit);
+            $rc = $session->make_report($email);
             break;
 
         case 'checkout':
@@ -520,20 +533,27 @@ function main()
             }
 
             $commit = isset($argv[2]) ? $argv[2] : NULL;
+            $base_commit = isset($argv[3]) ? $argv[3] : NULL;
             if (!$commit)
             {
                 msg_log(LOG_ERR, '2 argument is empty');
                 $print_help = true;
             }
 
+            if (!$base_commit)
+            {
+                msg_log(LOG_ERR, '3 argument is empty');
+                $print_help = true;
+            }
+
             if ($print_help)
             {
-                print_help_commands('checkout [commit]',
+                print_help_commands('checkout [commit] [base commit]',
                     'run checkout sources');
                 return 1;
             }
 
-            $rc = $session->checkout_src($commit);
+            $rc = $session->checkout_src($commit, $base_commit);
             break;
 
         case 'build':
@@ -571,20 +591,22 @@ function main()
             break;
 
         case 'report':
-            if ($print_help)
-            {
-                print_help_commands('report',
-                    'make report');
-                return 1;
-            }
-
             if ($obj_type != 'session')
             {
                 msg_log(LOG_ERR, 'This operation permited only from session dir');
                 return 1;
             }
 
-            $rc = $session->make_report();
+            $email_addr = isset($argv[2]) ? $argv[2] : NULL;
+
+            if ($print_help)
+            {
+                print_help_commands('report {email address}',
+                    'make report');
+                return 1;
+            }
+            
+            $rc = $session->make_report($email_addr);
             break;
 
         case 'abort':

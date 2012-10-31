@@ -140,6 +140,19 @@ class Session
     }
 
     /**
+     * Get base commit number
+     * @return status name
+     */
+    private function get_base_commit()
+    {
+        if (!file_exists($this->dir . '/.base_commit'))
+            return false;
+
+        return get_dot_file_content($this->dir . '/.base_commit');
+    }
+
+
+    /**
      * Store status into a file .status
      * and check for valid session
      */
@@ -263,12 +276,13 @@ class Session
     /**
      * run checkout sources
      */
-    function checkout_src($commit)
+    function checkout_src($commit, $base_commit)
     {
         msg_log(LOG_NOTICE, "start checkout in session: " . $this->get_info());
 
         $this->set_status('running_checkout');
         create_file($this->dir . '/.commit', $commit);
+        create_file($this->dir . '/.base_commit', $base_commit);
 
         $ret = $this->run_script('.recipe_checkout');
         create_file($this->dir . '/checkout_log', $ret['log']);
@@ -343,7 +357,7 @@ class Session
         return true;
     }
 
-    function make_report($base_commit = '')
+    function make_report($email_addr = '')
     {
         global $_CONFIG, $this_server;
 
@@ -360,9 +374,7 @@ class Session
         $report_data['server'] = $this_server['hostname'];
         $report_data['commit'] = $this->get_commit();
         $report_data['status'] = $status;
-
-        if ($base_commit)
-            $report_data['base_commit'] = $base_commit;
+        $report_data['base_commit'] = $this->get_base_commit();
 
         if (file_exists($this->dir . '/checkout_log'))
             $report_data['path_to_checkout_log'] = $this->dir . '/checkout_log';
@@ -411,7 +423,43 @@ class Session
 
         create_file($this->dir . '/report.html', $tpl->make_result());
 
+        /*
+         * generate and send email
+         */
+
+
+
+        $tpl = new Tpl($_CONFIG['ci_dir'] . '/templates/email_report.html');
+        $subject_template = trim($tpl->load_block('build_result_subject'));
+        $email_template = $tpl->load_block('build_result');
+
+        $subject_tpl = new Tpl();
+        $subject_tpl->open_buffer($subject_template);
+        $subject_tpl->assign(0, $report_data);
+        $subject = $subject_tpl->make_result();
+
+        $email_tpl = new Tpl();
+        $email_tpl->open_buffer($email_template);
+        $email_tpl->assign(0, $report_data);
+
+        if ($build_result_paths)
+            foreach($build_result_paths as $path)
+                $email_tpl->assign("build_result", $path);
+
+        $email_body = $email_tpl->make_result();
+
+
+        $target = $this->get_target();
+        $email_list = $target->get_email_list();
+        if ($email_addr)
+            $email_list[] = $email_addr;
+
+        if ($email_list)
+            foreach ($email_list as $m_addr)
+                mail($m_addr, $subject, $email_body, $_CONFIG['email_header']); // Отправляем письмо
+
         msg_log(LOG_NOTICE, "report successfully created in session: " . $this->get_info());
+
 
         return 0;
         // TODO:

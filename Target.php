@@ -50,6 +50,17 @@ class Target
     }
 
     /**
+     * Get email addresses
+     */
+    function get_email_list()
+    {
+        if (!file_exists($this->dir . '/.mail'))
+            return false;
+
+        return get_dot_file_content($this->dir . '/.mail');
+    }
+
+    /**
      * Get project object
      * @return string
      */
