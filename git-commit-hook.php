@@ -101,6 +101,8 @@ function get_appropriate_ci_server()
     if (!$ci_servers)
         throw new Exception('CI servers not found');
 
+    dump($ci_servers);
+
     krsort($ci_servers);
     foreach ($ci_servers as $first_ci_server)break;
 
