@@ -357,6 +357,13 @@ class Session
         return true;
     }
 
+    /**
+     * Make finalization report.
+     * create report.xml
+     * create report.html
+     * send report by email
+     * @param string $email_addr - report recepient email address
+     */
     function make_report($email_addr = '')
     {
         global $_CONFIG, $this_server;
