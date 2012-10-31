@@ -122,6 +122,7 @@ function main()
     $git_repository = isset($argv[1]) ? $argv[1] : NULL;
     $git_branch = isset($argv[2]) ? $argv[2] : NULL;
     $git_commit = isset($argv[3]) ? $argv[3] : NULL;
+    $git_base_commit = isset($argv[4]) ? $argv[4] : NULL;
 
     // Detect print help mode
     $print_help = false;
@@ -149,7 +150,7 @@ function main()
 
     if ($print_help)
     {
-        print_help_commands('<repo name> <branch name> <commit>',
+        print_help_commands('[repo name] [branch name] [commit] <base_commit>',
             'git commit hook receiver, run by GIT');
         return 1;
     }
@@ -231,7 +232,7 @@ function main()
         // run build
         ci_run_cmd($ci_server,
             'cd ' . $target->get_dir() . '/' . $session_name . ';' .
-            'ci all ' . $git_repository . ' ' . $git_branch . ' ' . $git_commit, true);
+            'ci all ' . $git_repository . ' ' . $git_branch . ' ' . $git_commit . ' ' . $git_base_commit, true);
 
         echo "Run target " . $target->get_info() .
             ", create session: " . $ci_server['addr'] . ":" . $target->get_dir() . '/' . $session_name . "\n";

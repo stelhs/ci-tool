@@ -332,7 +332,7 @@ class Session
         return true;
     }
 
-    function make_report()
+    function make_report($base_commit = '')
     {
         global $this_server;
 
@@ -350,6 +350,9 @@ class Session
         $xml_data['server'] = $this_server['hostname'];
         $xml_data['commit'] = $this->get_commit();
         $xml_data['status'] = $status;
+
+        if ($base_commit)
+            $xml_data['base_commit'] = $base_commit;
 
         if (file_exists($this->dir . '/checkout_log'))
             $xml_data['path_to_checkout_log'] = $this->dir . '/checkout_log';

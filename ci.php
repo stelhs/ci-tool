@@ -422,6 +422,7 @@ function main()
             $repo = isset($argv[2]) ? $argv[2] : NULL;
             $branch = isset($argv[3]) ? $argv[3] : NULL;
             $commit = isset($argv[4]) ? $argv[4] : NULL;
+            $base_commit = isset($argv[5]) ? $argv[5] : NULL;
 
             if (!$repo)
             {
@@ -443,7 +444,7 @@ function main()
 
             if ($print_help)
             {
-                print_help_commands('all [repo name] [branch name] [commit]',
+                print_help_commands('all [repo name] [branch name] [commit] <base_commit>',
                     'waiting for free slot and run checkout, build and tests');
                 return 1;
             }
@@ -507,7 +508,7 @@ function main()
                 return 1;
             }
 
-            $rc = $session->make_report();
+            $rc = $session->make_report($base_commit);
             break;
 
         case 'checkout':
