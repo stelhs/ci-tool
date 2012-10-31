@@ -59,22 +59,43 @@ class Session
 
     /**
      * abort session
+     * return session status or false if session was not aborted
      */
     function abort()
     {
-        if($this->get_state() != 'running_checkout' &&
-           $this->get_state() != 'running_build' &&
-           $this->get_state() != 'running_test' &&
-           $this->get_state() != 'pending')
+        $current_state = $this->get_state();
+
+        switch ($current_state)
         {
-            msg_log(LOG_WARNING, "current session not in running state");
-            return 1;
+            case 'running_checkout':
+                $need_status = 'aborted_checkout';
+                break;
+
+            case 'running_build':
+                $need_status = 'aborted_build';
+                break;
+
+            case 'running_test':
+                $need_status = 'aborted_test';
+                break;
+
+            case 'pending':
+                $need_status = 'aborted_pending';
+                break;
+
+            default:
+                msg_log(LOG_WARNING, "current session not in running state");
+                return false;
         }
 
-        kill_all($this->get_pid());
-        $this->set_status('aborted');
+        $this->set_status($need_status);
+
+        $pid = $this->get_pid();
+        if ($pid)
+            kill_all($pid);
+
         msg_log(LOG_NOTICE, "session was aborted");
-        return 0;
+        return $need_status;
     }
 
     /**
@@ -88,15 +109,6 @@ class Session
             $session_pid = (int)get_dot_file_content($this->dir . '/.pid');
 
         return $session_pid;
-    }
-
-    /**
-     * Get stored session status
-     * @return status name
-     */
-    private function get_stored_status()
-    {
-        return get_dot_file_content($this->dir . '/.status');
     }
 
     /**
@@ -162,7 +174,7 @@ class Session
     function get_state()
     {
         $pid = $this->get_pid();
-        $stored_status = $this->get_stored_status();
+        $stored_status = get_dot_file_content($this->dir . '/.status');
         switch ($stored_status)
         {
             case 'pending':
@@ -170,21 +182,18 @@ class Session
             case 'running_build':
             case 'running_test':
                 if (!$pid)
-                {
                     throw new Exception('file .pid not exist');
-                }
 
                 // if process not nunning
                 if (!$this->check_proc_running($pid))
-                {
-                    $this->set_status('aborted');
-                    return 'aborted';
-                }
+                    return $this->abort();
+
                 return $stored_status;
 
             case 'aborted_checkout':
             case 'aborted_build':
             case 'aborted_test':
+            case 'aborted_pending':
             case 'failed_checkout':
             case 'failed_build':
             case 'failed_test':
@@ -192,11 +201,12 @@ class Session
             case 'finished_build':
             case 'finished_test':
                 if ($pid)
-                {
                     throw new Exception("file .pid must be deleted");
-                }
+
                 return $stored_status;
         }
+
+        return false;
     }
 
     /**
