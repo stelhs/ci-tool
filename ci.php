@@ -294,7 +294,7 @@ function main()
                             echo $session->get_dir() . "\n";
 
                         }
-                    
+
                         return 0;
                     }
 
@@ -325,6 +325,7 @@ function main()
                         array(
                         'free_build_slots' => 'get count of free build clots',
                         'session_status' => 'return current session status',
+                        'sessions' => 'get information about all sessions',
                     ));
                     return 0;
                 }
