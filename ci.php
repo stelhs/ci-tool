@@ -450,40 +450,42 @@ function main()
                 return 1;
             }
 
-            $pending_sessions = $projects->get_all_sessions('pending');
+
 
             /*
              * if found pending sessions - switch current session to 'pending' state,
              * and waiting while all pending sessions before current sessions go to build state
              */
-            while(count($pending_sessions))
-            {
-                $session->set_status('pending');
-
-                msg_log(LOG_NOTICE, "waiting while all pending sessions before current session: " .
-                    $session->get_info() . " go to build state");
-
-                sleep(10);
-
-                $pending_sessions = $projects->get_all_sessions('pending');
-                if (!count($pending_sessions))
+            $free_build_slots = get_free_build_slots($projects);
+            if ($free_build_slots <= 0)
+                while(true)
                 {
-                    msg_log(LOG_NOTICE, "end of all pending sessions");
-                    break;
-                }
+                    $session->set_status('pending');
 
-                // calculate count sessions runned before current session
-                $waiting_count_sessions = 0;
-                foreach ($pending_sessions as $pending_session)
-                    if ($pending_session->get_date() < $session->get_date())
-                        $waiting_count_sessions++;
+                    msg_log(LOG_NOTICE, "waiting while all pending sessions before current session: " .
+                        $session->get_info() . " go to build state");
 
-                if (!$waiting_count_sessions)
-                {
-                    msg_log(LOG_NOTICE, "end of pending sessions before current session: " . $session->get_info());
-                    break;
+                    sleep(10);
+
+                    $pending_sessions = $projects->get_all_sessions('pending');
+                    if (!count($pending_sessions))
+                    {
+                        msg_log(LOG_NOTICE, "end of all pending sessions");
+                        break;
+                    }
+
+                    // calculate count sessions runned before current session
+                    $waiting_count_sessions = 0;
+                    foreach ($pending_sessions as $pending_session)
+                        if ($pending_session->get_date() < $session->get_date())
+                            $waiting_count_sessions++;
+
+                    if (!$waiting_count_sessions)
+                    {
+                        msg_log(LOG_NOTICE, "end of pending sessions before current session: " . $session->get_info());
+                        break;
+                    }
                 }
-            }
 
             msg_log(LOG_NOTICE, "go to run session: " . $session->get_info());
 
