@@ -71,9 +71,10 @@ function get_ci_free_build_slots($ci_server)
 
     // if server not responce TODO: //
     if ($rc['rc'])
-        return false;
+        throw new Exception('"ci get free_build_slots" - return error');
 
     $build_slots = (int)$rc['log'];
+    msg_log(LOG_NOTICE, 'detect ' . $build_slots . ' free build slots on server: ' . $ci_server['hostname']);
     return $build_slots;
 }
 
