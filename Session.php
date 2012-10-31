@@ -313,6 +313,12 @@ class Session
     {
         msg_log(LOG_NOTICE, "start tests in session: " . $this->get_info());
 
+        if (!file_exists($this->dir . '/.recipe_test'))
+        {
+            msg_log(LOG_NOTICE, "ignore tests in session: " . $this->get_info() . ' because .recipe_test is not exist');
+            return true;
+        }
+
         $this->set_status('running_test');
         $ret = $this->run_script('.recipe_test');
         create_file($this->dir . '/test_log', $ret['log']);
