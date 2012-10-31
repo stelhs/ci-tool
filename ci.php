@@ -53,8 +53,7 @@ function get_free_build_slots(List_projects $projects)
     $list_sessions = $projects->get_all_sessions(array('created',
                                                        'running_checkout',
                                                        'running_build',
-                                                       'running_test',
-                                                       'pending'));
+                                                       'running_test'));
 
     // count sessions in running mode
     $build_processes = count($list_sessions);
@@ -177,7 +176,10 @@ function main()
                             return 0;
                         }
 
-                        echo get_free_build_slots($projects) . "\n";
+                        $list_pending_sessions = $projects->get_all_sessions(array('pending'));
+                        $free_build_slots = get_free_build_slots($projects);
+                        $free_build_slots -= count($list_pending_sessions);
+                        echo $free_build_slots . "\n";
                         return 0;
 
                     case 'sessions':
@@ -455,6 +457,11 @@ function main()
                     if ($free_build_slots <= 0)
                         continue;
 
+                    /*
+                     * if found free build slot
+                     * find pending sessions where date less then current session
+                     */
+
                     $pending_sessions = $projects->get_all_sessions('pending');
                     if (!count($pending_sessions))
                     {
@@ -468,6 +475,7 @@ function main()
                         if ($pending_session->get_date() < $session->get_date())
                             $waiting_count_sessions++;
 
+                    // if not found pending sessions
                     if (!$waiting_count_sessions)
                     {
                         msg_log(LOG_NOTICE, "end of pending sessions before current session: " . $session->get_info());
