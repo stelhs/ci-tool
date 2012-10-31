@@ -57,7 +57,7 @@ class Target
         if (!file_exists($this->dir . '/.mail'))
             return false;
 
-        return get_dot_file_content($this->dir . '/.mail');
+        return get_strings_from_file($this->dir . '/.mail');
     }
 
     /**
