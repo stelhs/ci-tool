@@ -185,20 +185,17 @@ function main()
 
                     case 'sessions':
                     {
-                        $sessions = array();
                         $command = isset($argv[3]) ? $argv[3] : NULL;
                         switch ($command)
                         {
-                            case 'running':
+                            case 'all':
                                 if ($print_help)
                                 {
-                                    print_help_commands('get sessions running', 'get list of running sessions');
+                                    print_help_commands('get sessions all', 'get list of all sessions');
                                     return 0;
                                 }
 
-                                $sessions = $projects->get_all_sessions(array('running_checkout',
-                                                                              'running_build',
-                                                                              'running_tests'));
+                                $sessions = $projects->get_all_sessions();
                                 break;
 
                             case 'pending':
@@ -258,13 +255,24 @@ function main()
                                 break;
 
                             default:
-                                $sessions = $projects->get_all_sessions();
+                            case 'running':
+                                if ($print_help)
+                                {
+                                    print_help_commands('get sessions running', 'get list of running sessions');
+                                    return 0;
+                                }
+
+                                $sessions = $projects->get_all_sessions(array('running_checkout',
+                                    'running_build',
+                                    'running_tests'));
+                                break;
                         }
 
                         if ($print_help)
                         {
                             print_help_commands('get sessions', 'get information about all sessions',
                                 array(
+                                    'all' => 'get list of all sessions',
                                     'running' => 'get list of running sessions',
                                     'pending' => 'get list of pending sessions',
                                     'created' => 'get list of created sessions',
