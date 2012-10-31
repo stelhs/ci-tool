@@ -411,10 +411,10 @@ class Session
         $xml_content = create_xml($xml_data);
         create_file($this->dir . '/report.xml', $xml_content);
 
+
         /*
          * generate html file
          */
-
         $tpl = new Tpl($_CONFIG['ci_dir'] . '/templates/report.html');
         $tpl->assign(0, $report_data);
         if ($build_result_paths)
@@ -423,12 +423,10 @@ class Session
 
         create_file($this->dir . '/report.html', $tpl->make_result());
 
+
         /*
          * generate and send email
          */
-
-
-
         $tpl = new Tpl($_CONFIG['ci_dir'] . '/templates/email_report.html');
         $subject_template = trim($tpl->load_block('build_result_subject'));
         $email_template = $tpl->load_block('build_result');
@@ -461,9 +459,8 @@ class Session
             foreach ($email_list as $m_addr)
                 mail($m_addr, $subject, $email_body, $_CONFIG['email_header']); // Отправляем письмо
 
+
         msg_log(LOG_NOTICE, "report successfully created in session: " . $this->get_info());
-
-
         return 0;
     }
 }
