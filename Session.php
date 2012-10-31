@@ -152,6 +152,7 @@ class Session
         }
 
         create_file($this->dir .'/.status', $status);
+        msg_log(LOG_NOTICE, "status has been changed to: " . $status);
     }
 
     /**
