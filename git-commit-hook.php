@@ -5,6 +5,7 @@ $Ci_dir = '/opt/ci-tool/';
 require_once($Ci_dir . 'config.php');
 
 require_once($_CONFIG['ci_dir'] . 'lib.php');
+require_once($_CONFIG['ci_dir'] . 'tpl.php');
 require_once($_CONFIG['ci_dir'] . 'List_projects.php');
 require_once($_CONFIG['ci_dir'] . 'CiDateTime.php');
 
