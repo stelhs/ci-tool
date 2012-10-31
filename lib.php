@@ -60,10 +60,6 @@ function msg_log($msg_level, $text)
         case LOG_ERR:
             echo $utility_name . ': Error: ' . $text . "\n";
             break;
-
-        case LOG_WARNING:
-            echo $utility_name . ': Warning: ' . $text . "\n";
-            break;
     }
 }
 
