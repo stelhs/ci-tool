@@ -451,6 +451,9 @@ class Session
 
         $target = $this->get_target();
         $email_list = $target->get_email_list();
+        if (!$email_list)
+            $email_list = array();
+
         if ($email_addr)
             $email_list[] = $email_addr;
 
@@ -462,7 +465,5 @@ class Session
 
 
         return 0;
-        // TODO:
-        // scp to web report.xml to "<host>_<project>_<target>_<session>.xml"
     }
 }
