@@ -36,7 +36,7 @@ class Session
      */
     function get_dir()
     {
-        return $this->dir;
+        return strip_duplicate_slashes($this->dir);
     }
 
     /**
@@ -440,25 +440,25 @@ class Session
         $email_tpl = new Tpl();
         $email_tpl->open_buffer($email_template);
         $email_tpl->assign(0, $report_data);
-
         if ($build_result_paths)
             foreach($build_result_paths as $path)
                 $email_tpl->assign("result", $path);
-
         $email_body = $email_tpl->make_result();
 
-
+        // get list email addresses from target settings
         $target = $this->get_target();
         $email_list = $target->get_email_list();
         if (!$email_list)
             $email_list = array();
 
+        // added personal address to list addresses
         if ($email_addr)
             $email_list[] = $email_addr;
 
+        // send email to all address list
         if ($email_list)
             foreach ($email_list as $m_addr)
-                mail($m_addr, $subject, $email_body, $_CONFIG['email_header']); // Отправляем письмо
+                mail($m_addr, $subject, $email_body, $_CONFIG['email_header']);
 
 
         msg_log(LOG_NOTICE, "report successfully created in session: " . $this->get_info());

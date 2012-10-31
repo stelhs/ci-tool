@@ -34,7 +34,7 @@ class List_projects
      */
     function get_dir()
     {
-        return $this->dir;
+        return strip_duplicate_slashes($this->dir);
     }
 
     /**

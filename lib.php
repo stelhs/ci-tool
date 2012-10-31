@@ -292,3 +292,7 @@ function delete_file($file_name)
     msg_log(LOG_NOTICE, "deleted file: " . $file_name);
 }
 
+function strip_duplicate_slashes($str)
+{
+    return preg_replace('/\/+/', '/', $str);
+}
