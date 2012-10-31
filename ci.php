@@ -182,7 +182,8 @@ function main()
                     case 'sessions':
                     {
                         $sessions = array();
-                        switch ($param)
+                        $command = isset($argv[3]) ? $argv[3] : NULL;
+                        switch ($command)
                         {
                             case 'all':
                                 if ($print_help)
@@ -268,7 +269,7 @@ function main()
 
                         if ($print_help)
                         {
-                            print_help_commands('get sessions [type]', 'get information about all sessions',
+                            print_help_commands('get sessions', 'get information about all sessions',
                                 array(
                                     'all' => 'get list of all sessions',
                                     'running' => 'get list of running sessions',
