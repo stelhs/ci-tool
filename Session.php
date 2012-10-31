@@ -204,7 +204,7 @@ class Session
             case 'finished_build':
             case 'finished_test':
                 if ($pid)
-                    throw new Exception("file .pid must be deleted");
+                    msg_log(LOG_WARNING, "file .pid must be deleted from directory: " . $this->dir);
 
                 return $stored_status;
         }
