@@ -377,7 +377,7 @@ class Session
         {
             $content = get_dot_file_content($this->dir . '/.build_result');
             $paths = explode("\n", $content);
-            foreach($paths as $i => $path)
+            foreach($paths as $path)
             {
                 if (!trim($path))
                     continue;
@@ -391,8 +391,9 @@ class Session
         * generate XML report file
         */
         $xml_data = $report_data;
-        foreach($build_result_paths as $i => $path)
-            $xml_data['build_result%' . $i] = $path;
+        if ($build_result_paths)
+            foreach($build_result_paths as $i => $path)
+                $xml_data['build_result%' . $i] = $path;
 
         $xml_content = create_xml($xml_data);
         create_file($this->dir . '/report.xml', $xml_content);
@@ -403,8 +404,9 @@ class Session
 
         $tpl = new Tpl($_CONFIG['ci_dir'] . '/templates/report.html');
         $tpl->assign(0, $report_data);
-        foreach($build_result_paths as $path)
-            $tpl->assign("build_result", $path);
+        if ($build_result_paths)
+            foreach($build_result_paths as $path)
+                $tpl->assign("build_result", $path);
 
         create_file($this->dir . '/report.html', $tpl->make_result());
 
