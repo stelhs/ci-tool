@@ -149,6 +149,9 @@ class Session
         {
             case 'aborted':
                 delete_file($this->dir . '/.pid');
+
+            case 'pending':
+                create_file($this->dir . '/.pid', getmypid());
         }
 
         create_file($this->dir .'/.status', $status);

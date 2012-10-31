@@ -443,7 +443,6 @@ function main()
             $free_build_slots = get_free_build_slots($projects);
             if ($free_build_slots <= 0)
             {
-                create_file($this->dir . '/.pid', getmypid());
                 $session->set_status('pending');
                 while(true)
                 {
