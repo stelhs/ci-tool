@@ -5,15 +5,6 @@ $_CONFIG['web'] = '/home/stelhs/projects/ci/web/';
 $_CONFIG['ci_repo'] = 'ci-tool.git';
 $_CONFIG['ci_projects_repo'] = 'ci-projects.git';
 $_CONFIG['ci_servers'] = array(
-                                array('hostname' => 'ws-127',
-                                      'addr' => '192.168.10.244',
-                                      'port' => 22,
-                                      'login' => 'ci-tool',
-                                      'role' => 'web',
-                                      'max_build_slots' => 1,
-                                      'description' => 'xz',
-                                ),
-
                                 array('hostname' => 'sp-build03-lo1.promwad.corp',
                                       'addr' => '192.168.10.2',
                                       'port' => 22,
@@ -22,6 +13,15 @@ $_CONFIG['ci_servers'] = array(
                                       'max_build_slots' => 1,
                                       'description' => 'xz',
                                 ),
-                              );
+
+                                array('hostname' => 'ws-127',
+                                    'addr' => '192.168.10.244',
+                                    'port' => 22,
+                                    'login' => 'ci-tool',
+                                    'role' => 'web',
+                                    'max_build_slots' => 1,
+                                    'description' => 'xz',
+                                ),
+                        );
 
 $_CONFIG['debug_level'] = array(LOG_ERR, LOG_WARNING, LOG_NOTICE);
