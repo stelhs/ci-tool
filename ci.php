@@ -454,7 +454,7 @@ function main()
                     sleep(10);
 
                     $free_build_slots = get_free_build_slots($projects);
-                    if ($free_build_slots <= 0)
+                    if ($free_build_slots <= 1)
                         continue;
 
                     /*
