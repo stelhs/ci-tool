@@ -444,7 +444,7 @@ class Session
 
         if ($build_result_paths)
             foreach($build_result_paths as $path)
-                $email_tpl->assign("build_result", $path);
+                $email_tpl->assign("result", $path);
 
         $email_body = $email_tpl->make_result();
 
