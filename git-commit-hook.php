@@ -95,7 +95,8 @@ function get_appropriate_ci_server()
         if ($build_slots === false)
             continue;
 
-        $ci_servers[$build_slots] = $ci_server;
+        if (!isset($ci_servers[$build_slots]))
+            $ci_servers[$build_slots] = $ci_server;
     }
 
     if (!$ci_servers)
