@@ -377,12 +377,13 @@ class Session
         {
             $content = get_dot_file_content($this->dir . '/.build_result');
             $paths = explode("\n", $content);
+            $build_result_paths = array();
             foreach($paths as $path)
             {
                 if (!trim($path))
                     continue;
 
-                $build_result_paths = $this->dir . '/' . $path;
+                $build_result_paths[] = $this->dir . '/' . $path;
             }
         }
 
