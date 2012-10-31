@@ -442,14 +442,19 @@ function main()
              */
             $free_build_slots = get_free_build_slots($projects);
             if ($free_build_slots <= 0)
+            {
+                create_file($this->dir . '/.pid', getmypid());
+                $session->set_status('pending');
                 while(true)
                 {
-                    $session->set_status('pending');
-
                     msg_log(LOG_NOTICE, "waiting while all pending sessions before current session: " .
-                        $session->get_info() . " go to build state");
+                        $session->get_info());
 
                     sleep(10);
+
+                    $free_build_slots = get_free_build_slots($projects);
+                    if ($free_build_slots <= 0)
+                        continue;
 
                     $pending_sessions = $projects->get_all_sessions('pending');
                     if (!count($pending_sessions))
@@ -470,6 +475,7 @@ function main()
                         break;
                     }
                 }
+            }
 
             msg_log(LOG_NOTICE, "go to run session: " . $session->get_info());
 
