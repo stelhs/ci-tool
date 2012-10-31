@@ -454,7 +454,7 @@ function main()
                     sleep(10);
 
                     $free_build_slots = get_free_build_slots($projects);
-                    if ($free_build_slots <= 1)
+                    if ($free_build_slots <= 0)
                         continue;
 
                     /*
@@ -602,7 +602,10 @@ function main()
 
             $rc = $session->abort();
             if (!$rc)
+            {
+                msg_log(LOG_ERR, 'session not runned');
                 break;
+            }
 
             $session->make_report();
             break;
