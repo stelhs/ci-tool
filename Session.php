@@ -185,9 +185,13 @@ class Session
             case 'running_build':
             case 'running_test':
                 if (!$pid)
-                    throw new Exception('session: ' . $this->dir .
-                        ' stand in status: ' . $stored_status .
-                        ' but .pid file was not found');
+                {
+                    msg_log(LOG_WARNING, 'session: ' . $this->dir .
+                        ' stand in status: "' . $stored_status .
+                        '" but .pid file was not found');
+
+                    return $this->abort();
+                }
 
                 // if process not nunning
                 if (!$this->check_proc_running($pid))
