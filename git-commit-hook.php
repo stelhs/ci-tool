@@ -42,9 +42,7 @@ function error_exception($exception)
 
 function match_branch_with_mask($branch, $branch_mask)
 {
-    // TODO: strip "refs/" from branch
-
-    return fnmatch($branch_mask, $branch);
+    return fnmatch('refs/' . $branch_mask, $branch);
 }
 
 
