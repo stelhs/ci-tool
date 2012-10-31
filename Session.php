@@ -345,7 +345,7 @@ class Session
 
     function make_report($base_commit = '')
     {
-        global $this_server;
+        global $_CONFIG, $this_server;
 
         msg_log(LOG_NOTICE, "start report creation in session: " . $this->get_info());
 
@@ -353,26 +353,25 @@ class Session
         $project = $target->get_project();
         $status = $this->get_state();
 
-        // generate XML report file
-        $xml_data = array();
-        $xml_data['project_name'] = $project->get_name();
-        $xml_data['target_name'] = $target->get_name();
-        $xml_data['session_name'] = $this->get_name();
-        $xml_data['server'] = $this_server['hostname'];
-        $xml_data['commit'] = $this->get_commit();
-        $xml_data['status'] = $status;
+        $report_data = array();
+        $report_data['project_name'] = $project->get_name();
+        $report_data['target_name'] = $target->get_name();
+        $report_data['session_name'] = $this->get_name();
+        $report_data['server'] = $this_server['hostname'];
+        $report_data['commit'] = $this->get_commit();
+        $report_data['status'] = $status;
 
         if ($base_commit)
-            $xml_data['base_commit'] = $base_commit;
+            $report_data['base_commit'] = $base_commit;
 
         if (file_exists($this->dir . '/checkout_log'))
-            $xml_data['path_to_checkout_log'] = $this->dir . '/checkout_log';
+            $report_data['path_to_checkout_log'] = $this->dir . '/checkout_log';
 
         if (file_exists($this->dir . '/build_log'))
-            $xml_data['path_to_build_log'] = $this->dir . '/build_log';
+            $report_data['path_to_build_log'] = $this->dir . '/build_log';
 
         if (file_exists($this->dir . '/test_log'))
-            $xml_data['path_to_test_log'] = $this->dir . '/test_log';
+            $report_data['path_to_test_log'] = $this->dir . '/test_log';
 
         if (file_exists($this->dir . '/.build_result'))
         {
@@ -383,12 +382,31 @@ class Session
                 if (!trim($path))
                     continue;
 
-                $xml_data['build_result%' . $i] = $this->dir . '/' . $path;
+                $build_result_paths = $this->dir . '/' . $path;
             }
         }
 
+
+        /*
+        * generate XML report file
+        */
+        $xml_data = $report_data;
+        foreach($build_result_paths as $i => $path)
+            $xml_data['build_result%' . $i] = $path;
+
         $xml_content = create_xml($xml_data);
         create_file($this->dir . '/report.xml', $xml_content);
+
+        /*
+         * generate html file
+         */
+
+        $tpl = new Tpl($_CONFIG['ci_dir'] . '/templates/report.html');
+        $tpl->assign(0, $report_data);
+        foreach($build_result_paths as $path)
+            $tpl->assign("build_result", $path);
+
+        create_file($this->dir . '/report.html', $tpl->make_result());
 
         msg_log(LOG_NOTICE, "report successfully created in session: " . $this->get_info());
 
