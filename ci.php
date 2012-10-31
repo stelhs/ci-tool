@@ -186,16 +186,6 @@ function main()
                         $command = isset($argv[3]) ? $argv[3] : NULL;
                         switch ($command)
                         {
-                            case 'all':
-                                if ($print_help)
-                                {
-                                    print_help_commands('get sessions all', 'get list of all sessions');
-                                    return 0;
-                                }
-
-                                $sessions = $projects->get_all_sessions();
-                                break;
-
                             case 'running':
                                 if ($print_help)
                                 {
@@ -265,14 +255,13 @@ function main()
                                 break;
 
                             default:
-                                $print_help = true;
+                                $sessions = $projects->get_all_sessions();
                         }
 
                         if ($print_help)
                         {
                             print_help_commands('get sessions', 'get information about all sessions',
                                 array(
-                                    'all' => 'get list of all sessions',
                                     'running' => 'get list of running sessions',
                                     'pending' => 'get list of pending sessions',
                                     'created' => 'get list of created sessions',
