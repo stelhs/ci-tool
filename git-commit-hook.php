@@ -250,7 +250,8 @@ function main()
             '" "' . $git_commit . '" "' . $git_base_commit . '" "' . $git_email . '"', true);
 
         echo "Run target " . $target->get_info() .
-            ", create session: " . $ci_server['addr'] . ":" . $target->get_dir() . '/' . $session_name . "\n";
+            ", create session: " . $ci_server['addr'] . ":" .
+            strip_duplicate_slashes($target->get_dir() . '/' . $session_name) . "\n";
     }
 
     return 0;

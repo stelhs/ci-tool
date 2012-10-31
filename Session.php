@@ -378,13 +378,13 @@ class Session
         $report_data['base_commit'] = $this->get_base_commit();
 
         if (file_exists($this->dir . '/checkout_log'))
-            $report_data['path_to_checkout_log'] = $this->dir . '/checkout_log';
+            $report_data['path_to_checkout_log'] = strip_duplicate_slashes($this->dir . '/checkout_log');
 
         if (file_exists($this->dir . '/build_log'))
-            $report_data['path_to_build_log'] = $this->dir . '/build_log';
+            $report_data['path_to_build_log'] = strip_duplicate_slashes($this->dir . '/build_log');
 
         if (file_exists($this->dir . '/test_log'))
-            $report_data['path_to_test_log'] = $this->dir . '/test_log';
+            $report_data['path_to_test_log'] = strip_duplicate_slashes($this->dir . '/test_log');
 
         if (file_exists($this->dir . '/.build_result'))
         {
@@ -396,7 +396,7 @@ class Session
                 if (!trim($path))
                     continue;
 
-                $build_result_paths[] = $this->dir . '/' . $path;
+                $build_result_paths[] = strip_duplicate_slashes($this->dir . '/' . $path);
             }
         }
 
