@@ -370,7 +370,7 @@ function main()
                     case 'session':
                         if ($print_help)
                         {
-                            print_help_commands('create session', 'create new session');
+                            print_help_commands('create session [description]', 'create new session');
                             return 0;
                         }
 

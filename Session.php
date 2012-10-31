@@ -222,6 +222,7 @@ class Session
             case 'finished_checkout':
             case 'finished_build':
             case 'finished_test':
+            case 'created':
                 if ($pid)
                     msg_log(LOG_WARNING, "file .pid must be deleted from directory: " . $this->dir);
 
