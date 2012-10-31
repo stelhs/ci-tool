@@ -128,6 +128,9 @@ class Session
     private function check_proc_running($pid)
     {
         $rc = run_cmd('ps -ax');
+        if ($rc['rc'])
+            throw new Exception("run 'ps -ax': return code - failure");
+
         $rows = explode("\n", $rc['log']);
         if (!$rows)
             throw new Exception("incorrect output from command: ps -ax");
