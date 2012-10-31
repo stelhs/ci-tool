@@ -458,7 +458,7 @@ function main()
                         continue;
 
                     /*
-                     * if found free build slot
+                     * if found 1 free build slot
                      * find pending sessions where date less then current session
                      */
 
