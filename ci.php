@@ -450,8 +450,6 @@ function main()
                 return 1;
             }
 
-
-
             /*
              * if found pending sessions - switch current session to 'pending' state,
              * and waiting while all pending sessions before current sessions go to build state
