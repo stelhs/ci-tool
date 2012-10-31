@@ -92,7 +92,10 @@ class Session
 
         $pid = $this->get_pid();
         if ($pid)
+        {
+            delete_file($this->dir . '/.pid');
             kill_all($pid);
+        }
 
         msg_log(LOG_NOTICE, "session was aborted");
         return $need_status;
