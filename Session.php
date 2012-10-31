@@ -31,6 +31,15 @@ class Session
 
 
     /**
+     * Get session directory
+     * @return CiDateTime
+     */
+    function get_dir()
+    {
+        return $this->dir;
+    }
+
+    /**
      * Get session date
      * @return CiDateTime
      */

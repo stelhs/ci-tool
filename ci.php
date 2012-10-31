@@ -179,6 +179,125 @@ function main()
                         echo get_free_build_slots($projects) . "\n";
                         return 0;
 
+                    case 'sessions':
+                    {
+                        $sessions = array();
+                        switch ($param)
+                        {
+                            case 'all':
+                                if ($print_help)
+                                {
+                                    print_help_commands('get sessions all', 'get list of all sessions');
+                                    return 0;
+                                }
+
+                                $sessions = $projects->get_all_sessions();
+                                break;
+
+                            case 'running':
+                                if ($print_help)
+                                {
+                                    print_help_commands('get sessions running', 'get list of running sessions');
+                                    return 0;
+                                }
+
+                                $sessions = $projects->get_all_sessions(array('running_checkout',
+                                                                              'running_build',
+                                                                              'running_tests'));
+                                break;
+
+                            case 'pending':
+                                if ($print_help)
+                                {
+                                    print_help_commands('get sessions pending', 'get list of pending sessions');
+                                    return 0;
+                                }
+
+                                $sessions = $projects->get_all_sessions(array('pending'));
+                                break;
+
+                            case 'created':
+                                if ($print_help)
+                                {
+                                    print_help_commands('get sessions created', 'get list of created sessions');
+                                    return 0;
+                                }
+
+                                $sessions = $projects->get_all_sessions(array('created'));
+                                break;
+
+                            case 'finished':
+                                if ($print_help)
+                                {
+                                    print_help_commands('get sessions finished', 'get list of finished sessions');
+                                    return 0;
+                                }
+
+                                $sessions = $projects->get_all_sessions(array('finished_checkout',
+                                    'finished_build',
+                                    'finished_tests'));
+                                break;
+
+                            case 'failed':
+                                if ($print_help)
+                                {
+                                    print_help_commands('get sessions failed', 'get list of failed sessions');
+                                    return 0;
+                                }
+
+                                $sessions = $projects->get_all_sessions(array('failed_checkout',
+                                                                              'failed_build',
+                                                                              'failed_tests'));
+                                break;
+
+                            case 'aborted':
+                                if ($print_help)
+                                {
+                                    print_help_commands('get sessions aborted', 'get list of aborted sessions');
+                                    return 0;
+                                }
+
+                                $sessions = $projects->get_all_sessions(array('aborted_checkout',
+                                                                              'aborted_build',
+                                                                              'aborted_tests'));
+                                break;
+
+                            default:
+                                $print_help = true;
+                        }
+
+                        if ($print_help)
+                        {
+                            print_help_commands('get sessions [type]', 'get information about all sessions',
+                                array(
+                                    'all' => 'get list of all sessions',
+                                    'running' => 'get list of running sessions',
+                                    'pending' => 'get list of pending sessions',
+                                    'created' => 'get list of created sessions',
+                                    'finished' => 'get list of finished sessions',
+                                    'failed' => 'get list of failed sessions',
+                                    'aborted' => 'get list of aborted sessions',
+                                ));
+                            return 0;
+                        }
+
+
+                        if (!$sessions)
+                        {
+                            echo 'no sessions';
+                            return 0;
+                        }
+
+                        foreach ($sessions as $session)
+                        {
+                            echo "list of sessions:\n";
+                            echo $session->get_dir() . "\n";
+
+                        }
+                    
+                        return 0;
+                    }
+
                     case 'session_status':
                         if ($print_help)
                         {
