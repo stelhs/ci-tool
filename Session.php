@@ -371,6 +371,7 @@ class Session
         $report_data['project_name'] = $project->get_name();
         $report_data['target_name'] = $target->get_name();
         $report_data['session_name'] = $this->get_name();
+        $report_data['session_dir'] = $this->get_dir();
         $report_data['server'] = $this_server['hostname'];
         $report_data['commit'] = $this->get_commit();
         $report_data['status'] = $status;

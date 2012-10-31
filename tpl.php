@@ -274,7 +274,7 @@
 						if($finded_quote || $finded_doble_quote) // Если этот символ встретился внутри одинарной или двойной ковычки
 							break;
 							
-						if($found_star && $comment_opened && !$one_string_comment_opened) // Если предыдущий символ * а следующий / и было найдено начало комментария, то значит это конец этого комментария
+						if($comment_opened && !$one_string_comment_opened) // Если предыдущий символ * а следующий / и было найдено начало комментария, то значит это конец этого комментария
 						{
 							$end_comment = $p + 1; // конец комментария
 							$found_star = 0; // опускаем флаг нахождения *
@@ -566,6 +566,7 @@
 			$this -> result_content = $this -> source_content = $tpl_content; // Сохраняем шаблон для дальнейшей обработки
 			
 			$blocks = $this -> find_blocks('BLOCK', $this -> result_content); // Заменяем все блоки на временные позывные метки
+            $list_blocks = array();
 			foreach($blocks as $block) // Перебираем все блоки
 			{
 				foreach($block as $block_name => $block_data);
