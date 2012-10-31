@@ -254,7 +254,6 @@ function main()
                                                                               'aborted_tests'));
                                 break;
 
-                            default:
                             case 'running':
                                 if ($print_help)
                                 {
@@ -266,11 +265,19 @@ function main()
                                     'running_build',
                                     'running_tests'));
                                 break;
+
+                            default:
+                                $sessions = $projects->get_all_sessions(array('running_checkout',
+                                    'running_build',
+                                    'running_tests',
+                                    'pending',
+                                    'created'));
                         }
 
                         if ($print_help)
                         {
-                            print_help_commands('get sessions', 'get information about all sessions',
+                            print_help_commands('get sessions', "get information about all sessions.\n" .
+                                "ci get sessions - without command return running, pending and created sessions",
                                 array(
                                     'all' => 'get list of all sessions',
                                     'running' => 'get list of running sessions',
