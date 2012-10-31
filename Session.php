@@ -72,6 +72,7 @@ class Session
         }
 
         kill_all($this->get_pid());
+        $this->set_status('aborted');
         msg_log(LOG_NOTICE, "session was aborted");
     }
 
