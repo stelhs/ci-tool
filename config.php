@@ -10,7 +10,7 @@ $_CONFIG['ci_servers'] = array(
                                       'port' => 22,
                                       'login' => 'ci-tool',
                                       'role' => 'web',
-                                      'max_build_slots' => 6,
+                                      'max_build_slots' => 2,
                                       'description' => 'xz',
                                 ),
 
@@ -19,7 +19,7 @@ $_CONFIG['ci_servers'] = array(
                                       'port' => 22,
                                       'login' => 'ci-tool',
                                       'role' => 'build',
-                                      'max_build_slots' => 6,
+                                      'max_build_slots' => 2,
                                       'description' => 'xz',
                                 ),
                               );
