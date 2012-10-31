@@ -57,14 +57,8 @@ class Session
         return $project->get_name() . '/' . $this->target->get_name() . '/' . $this->get_name();
     }
 
-    /**
-     * abort session
-     * return session status or false if session was not aborted
-     */
-    function abort()
+    private function set_abort_status($current_state)
     {
-        $current_state = $this->get_state();
-
         switch ($current_state)
         {
             case 'running_checkout':
@@ -89,6 +83,16 @@ class Session
         }
 
         $this->set_status($need_status);
+        return $need_status;
+    }
+        /**
+     * abort session
+     * return session status or false if session was not aborted
+     */
+    function abort()
+    {
+        $current_state = $this->get_state();
+        $aborted_state = $this->set_abort_status($current_state);
 
         $pid = $this->get_pid();
         if ($pid)
@@ -98,7 +102,7 @@ class Session
         }
 
         msg_log(LOG_NOTICE, "session was aborted");
-        return $need_status;
+        return $aborted_state;
     }
 
     /**
@@ -190,12 +194,12 @@ class Session
                         ' stand in status: "' . $stored_status .
                         '" but .pid file was not found');
 
-                    return $this->abort();
+                    return $this->set_abort_status($stored_status);
                 }
 
                 // if process not nunning
                 if (!$this->check_proc_running($pid))
-                    return $this->abort();
+                    return $this->set_abort_status($stored_status);
 
                 return $stored_status;
 
