@@ -480,6 +480,10 @@ function main()
             }
 
             $rc = $session->abort();
+            if ($rc)
+                break;
+
+            $session->make_report();
             break;
 
         default:

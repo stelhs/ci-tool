@@ -68,12 +68,13 @@ class Session
            $this->get_state() != 'pending')
         {
             msg_log(LOG_WARNING, "current session not in running state");
-            return;
+            return 1;
         }
 
         kill_all($this->get_pid());
         $this->set_status('aborted');
         msg_log(LOG_NOTICE, "session was aborted");
+        return 0;
     }
 
     /**
@@ -317,9 +318,15 @@ class Session
         $xml_data['server'] = $this_server['hostname'];
         $xml_data['commit'] = $this->get_commit();
         $xml_data['status'] = $status;
-        $xml_data['path_to_checkout_log'] = $this->dir . '/checkout_log';
-        $xml_data['path_to_build_log'] = $this->dir . '/build_log';
-        $xml_data['path_to_test_log'] = $this->dir . '/test_log';
+
+        if (file_exists($this->dir . '/checkout_log'))
+            $xml_data['path_to_checkout_log'] = $this->dir . '/checkout_log';
+
+        if (file_exists($this->dir . '/build_log'))
+            $xml_data['path_to_build_log'] = $this->dir . '/build_log';
+
+        if (file_exists($this->dir . '/test_log'))
+            $xml_data['path_to_test_log'] = $this->dir . '/test_log';
 
         if (file_exists($this->dir . '/.build_result'))
         {
@@ -339,6 +346,7 @@ class Session
 
         msg_log(LOG_NOTICE, "report successfully created in session: " . $this->get_info());
 
+        return 0;
         // TODO:
         // scp to web report.xml to "<host>_<project>_<target>_<session>.xml"
     }
