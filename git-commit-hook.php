@@ -236,8 +236,6 @@ function main()
 
         echo "Run target " . $target->get_info() .
             ", create session: " . $ci_server['addr'] . ":" . $target->get_dir() . '/' . $session_name . "\n";
-
-        sleep(1);
     }
 
     return 0;
