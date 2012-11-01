@@ -273,18 +273,20 @@ class Session
         return $ret;
     }
 
+
     /**
      * run checkout sources
      */
-    function checkout_src($commit, $base_commit)
+    function checkout_src($repo, $branch, $commit, $base_commit)
     {
         msg_log(LOG_NOTICE, "start checkout in session: " . $this->get_info());
 
         $this->set_status('running_checkout');
+
         create_file($this->dir . '/.commit', $commit);
         create_file($this->dir . '/.base_commit', $base_commit);
 
-        $ret = $this->run_script('.recipe_checkout');
+        $ret = $this->run_script('.recipe_checkout', $repo . ' ' . $branch . ' ' . $commit);
         create_file($this->dir . '/checkout_log', $ret['log']);
         if ($ret['rc'])
         {

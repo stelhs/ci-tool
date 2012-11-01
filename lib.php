@@ -66,10 +66,11 @@ function msg_log($msg_level, $text)
 /**
  * Run command in console and return output
  * @param $cmd - command
- * @param $viewed - true or false. Display output yes or no
- * @return string
+ * @param bool $fork - true - run in new thread (not receive results), false - run in current thread
+ * @param $stdin_data - optional data direct to stdin
+ * @return array with keys: rc and log
  */
-function run_cmd($cmd, $fork = false)
+function run_cmd($cmd, $fork = false, $stdin_data = '')
 {
     msg_log(LOG_NOTICE, 'run cmd: ' . $cmd);
 
@@ -88,9 +89,12 @@ function run_cmd($cmd, $fork = false)
         fclose(STDOUT);
     }
 
-    $fd = popen($cmd . ' 2>&1', 'r');
+    $fd = popen($cmd . ' 2>&1', 'w');
     if ($fd == false)
         throw new Exception("popen() error in run_cmd()");
+
+    if ($stdin_data)
+        fwrite($fd, $stdin_data);
 
     $log = '';
     while($str = fgets($fd))
@@ -111,9 +115,11 @@ function run_cmd($cmd, $fork = false)
  * @param array $server - settings of server (from $_CONFIG['ci_servers'])
  * @param $cmd - command for run
  * @param bool $fork - true - run in new thread (not receive results), false - run in current thread
+ * @param $stdin_data - optional data direct to stdin
+ *
  * @return array - return result array
  */
-function run_remote_cmd(array $server, $cmd, $fork = false)
+function run_remote_cmd(array $server, $cmd, $fork = false, $stdin_data = '')
 {
     $cmd = str_replace('$', '\$', $cmd);
 
@@ -124,7 +130,7 @@ function run_remote_cmd(array $server, $cmd, $fork = false)
             '@' . $server['addr'] .
             ' -p' . $server['port'] . ' ';
 
-    $rc = run_cmd($ssh . '"' . $cmd . '" 2>&1', $fork);
+    $rc = run_cmd($ssh . '"' . $cmd . '" 2>&1', $fork, $stdin_data);
 
     return $rc;
 }

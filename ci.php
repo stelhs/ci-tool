@@ -515,8 +515,7 @@ function main()
 
             msg_log(LOG_NOTICE, "go to run session: " . $session->get_info());
 
-
-            $rc = $session->checkout_src($commit, $base_commit);
+            $rc = $session->checkout_src($repo, $branch, $commit, $base_commit);
             if ($rc['rc'])
             {
                 msg_log(LOG_ERR, 'checkout fail');

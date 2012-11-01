@@ -52,16 +52,17 @@ function match_branch_with_mask($branch, $branch_mask)
  * @param $ci_server - config CI server
  * @param $cmd - command
  * @param $fork - true - run in new thread (not receive results), false - run in current thread
+ * @param $stdin_data - optional data direct to stdin
  * @return return result array
  */
-function ci_run_cmd($ci_server, $cmd, $fork = false)
+function ci_run_cmd($ci_server, $cmd, $fork = false, $stdin_data = '')
 {
     global $this_server;
 
     if ($ci_server['hostname'] == $this_server['hostname'])
-        $rc = run_cmd($cmd, $fork);
+        $rc = run_cmd($cmd, $fork, $stdin_data);
     else
-        $rc = run_remote_cmd($ci_server, $cmd, $fork);
+        $rc = run_remote_cmd($ci_server, $cmd, $fork, $stdin_data);
 
     return $rc;
 }
@@ -125,6 +126,11 @@ function main()
     $git_commit = isset($argv[3]) ? $argv[3] : NULL;
     $git_base_commit = isset($argv[4]) ? $argv[4] : NULL;
     $git_email = isset($argv[5]) ? $argv[5] : NULL;
+
+    // read git log data from stdin
+    $git_log = '';
+    while (($str = fgets(STDIN)) !== false)
+        $git_log .= $str;
 
     // Detect print help mode
     $print_help = false;
@@ -246,8 +252,9 @@ function main()
         // run build
         ci_run_cmd($ci_server,
             'cd ' . $target->get_dir() . '/' . $session_name . ';' .
+            'cat > .git_log;' .
             'ci all "' . $git_repository . '" "' . $git_branch .
-            '" "' . $git_commit . '" "' . $git_base_commit . '" "' . $git_email . '"', true);
+            '" "' . $git_commit . '" "' . $git_base_commit . '" "' . $git_email . '"', true, $git_log);
 
         echo "Run target " . $target->get_info() .
             ", create session: " . $ci_server['addr'] . ":" .
@@ -258,3 +265,4 @@ function main()
 }
 
 return main();
+
