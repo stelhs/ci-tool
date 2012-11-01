@@ -89,7 +89,7 @@ function run_cmd($cmd, $fork = false, $stdin_data = '')
         fclose(STDOUT);
     }
 
-    $fd = popen($cmd . ' 2>&1', 'r+');
+    $fd = popen($cmd . ' 2>&1', 'w+');
     if ($fd == false)
         throw new Exception("popen() error in run_cmd()");
 
