@@ -89,20 +89,30 @@ function run_cmd($cmd, $fork = false, $stdin_data = '')
         fclose(STDOUT);
     }
 
-    $fd = popen($cmd . ' 2>&1', 'w+');
+    $descriptorspec = array(
+        0 => array("pipe", "r"),
+        1 => array("pipe", "w"),
+    );
+
+    $fd = proc_open($cmd . ' 2>&1', $descriptorspec, $pipes);
     if ($fd == false)
-        throw new Exception("popen() error in run_cmd()");
+        throw new Exception("proc_open() error in run_cmd()");
+    $fd_write = $pipes[0];
+    $fd_read = $pipes[1];
 
     if ($stdin_data)
-        fwrite($fd, $stdin_data);
+        fwrite($fd_write, $stdin_data);
+
+    fclose($fd_write);
 
     $log = '';
-    while($str = fgets($fd))
+    while($str = fgets($fd_read))
         $log .= $str;
 
-    $rc = pclose($fd);
+    fclose($fd_read);
+    $rc = proc_close($fd);
     if ($rc == -1)
-        throw new Exception("pclose() error in run_cmd()");
+        throw new Exception("proc_close() error in run_cmd()");
 
     if ($fork == true)
         exit;
