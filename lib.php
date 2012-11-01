@@ -89,7 +89,7 @@ function run_cmd($cmd, $fork = false, $stdin_data = '')
         fclose(STDOUT);
     }
 
-    $fd = popen($cmd . ' 2>&1', 'w');
+    $fd = popen($cmd . ' 2>&1', 'r+');
     if ($fd == false)
         throw new Exception("popen() error in run_cmd()");
 
@@ -211,7 +211,7 @@ function get_current_ci_server()
         if ($ci_server['hostname'] == $hostname)
             return $ci_server;
 
-    msg_log(LOG_WARNING, "Server " . $hostname . " was not found in the ci servers list.");
+    msg_log(LOG_WARNING, "Server '" . $hostname . "' was not found in the ci servers list.");
     return false;
 }
 
