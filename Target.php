@@ -116,6 +116,8 @@ class Target
             if (!$matches)
                 continue;
 
+            dump($matches[1]);
+
             $session_date = new CiDateTime();
             $session_date->from_string($matches[1]);
 
