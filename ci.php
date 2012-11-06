@@ -682,6 +682,7 @@ function main()
                     'build' => 'run build sources',
                     'test' => 'run tests',
                     'report' => 'make report',
+                    'purge' => 'purge old sessions',
                     'abort' => 'abort current session',
                     'all' => 'waiting for free slot and run checkout, build and tests',
                 ));
