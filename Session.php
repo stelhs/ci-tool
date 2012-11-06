@@ -26,7 +26,7 @@ class Session
      */
     function get_name()
     {
-        return 'build_session_' . $this->index . '_' . $this->date->to_string();
+        return 'build_session_' . $this->date->to_string() . '_' . $this->index;
     }
 
 
@@ -94,7 +94,8 @@ class Session
         $this->set_status($need_status);
         return $need_status;
     }
-        /**
+
+    /**
      * abort session
      * return session status or false if session was not aborted
      */

@@ -15,16 +15,16 @@ class CiDateTime extends DateTime
 
     function to_string()
     {
-        return $this->format('dmY_Hi');
+        return $this->format('Ymd_His');
     }
 
     function from_string($string_date)
     {
-        preg_match('/([0-9]{2})([0-9]{2})([0-9]{4})_([0-9]{2})([0-9]{2}).*/s', $string_date, $matches);
+        preg_match('/([0-9]{2})([0-9]{2})([0-9]{4})_([0-9]{2})([0-9]{2})([0-9]{2}).*/s', $string_date, $matches);
         if (!$matches)
             return false;
 
-        $this->setDate($matches[3], $matches[2], $matches[1]);
-        $this->setTime($matches[4], $matches[5], 0);
+        $this->setDate($matches[1], $matches[2], $matches[3]);
+        $this->setTime($matches[4], $matches[5], $matches[6]);
     }
 }

@@ -112,14 +112,14 @@ class Target
         $list_dirs = get_dirs($this->dir);
         foreach ($list_dirs as $dir_name)
         {
-            preg_match('/build_session_([0-9]+)_(.+)/s', $dir_name, $matches);
+            preg_match('/build_session_(.+)_([0-9]+)/s', $dir_name, $matches);
             if (!$matches)
                 continue;
 
             $session_date = new CiDateTime();
-            $session_date->from_string($matches[2]);
+            $session_date->from_string($matches[1]);
 
-            $session = new Session($this, $this->dir . '/' . $dir_name, $session_date, $matches[1]);
+            $session = new Session($this, $this->dir . '/' . $dir_name, $session_date, $matches[2]);
             $this->add_session($session);
         }
     }
@@ -146,7 +146,7 @@ class Target
         while (is_dir($this->dir . '/build_session_' . $index . '_' . $session_date))
             $index++;
 
-        $dir_name = 'build_session_' . $index . '_' . $session_date;
+        $dir_name = 'build_session_' . $session_date . '_' . $index;
         create_dir($this->dir . '/' . $dir_name);
 
         $session = new Session($this, $this->dir . '/' . $dir_name, $curr_date, $index);
@@ -177,15 +177,19 @@ class Target
     function remove_session($remove_session)
     {
         $remove_session_name = $remove_session->get_name();
+        if (!$this->sessions)
+            return false;
+
         foreach ($this->sessions as $id => $session)
         {
             if ($remove_session_name == $session->get_name())
             {
-                delete_dir($this->dir . '/' . $remove_session_name);
+                delete_dir($session->get_dir());
                 unset($this->sessions[$id]);
+                msg_log(LOG_NOTICE, "removed session: " . $remove_session_name);
             }
         }
 
-        msg_log(LOG_NOTICE, "removed session: " . $remove_session_name);
+        return true;
     }
 }

@@ -418,10 +418,53 @@ function main()
             break;
 
         case 'purge':
+            $type = isset($argv[2]) ? $argv[2] : NULL;
+            if (!$type)
+            {
+                msg_log(LOG_ERR, '2 argument is empty');
+                $print_help = true;
+            }
+
+            switch ($type)
+            {
+                case 'all':
+                    if ($print_help)
+                    {
+                        print_help_commands('purge all', 'delete all not running sessions');
+                        return 0;
+                    }
+
+                    $sessions = $projects->get_all_sessions(array('aborted_checkout',
+                                                                  'aborted_build',
+                                                                  'aborted_test',
+                                                                  'aborted_pending',
+                                                                  'failed_checkout',
+                                                                  'failed_build',
+                                                                  'failed_test',
+                                                                  'finished_checkout',
+                                                                  'finished_build',
+                                                                  'finished_test',
+                                                                 ));
+
+                    if (!$sessions)
+                    {
+                        echo "no sessions\n";
+                        return 0;
+                    }
+
+                    foreach ($sessions as $s)
+                    {
+                        $target = $s->get_target();
+                        $target->remove_session($s);
+                    }
+                    break;
+            }
+
             if ($print_help)
             {
                 print_help_commands('purge', 'delete sessions',
                     array(
+                        'all' => 'delete all not running sessions',
                         'old' => 'delete old sessions',
                     ));
                 return 0;
