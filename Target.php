@@ -116,12 +116,8 @@ class Target
             if (!$matches)
                 continue;
 
-
-
             $session_date = new CiDateTime();
             $session_date->from_string($matches[1]);
-
-            dump($session_date->to_string());
 
             $session = new Session($this, $this->dir . '/' . $dir_name, $session_date, $matches[2]);
             $this->add_session($session);
