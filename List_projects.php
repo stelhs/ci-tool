@@ -72,15 +72,22 @@ class List_projects
         }
 
         create_dir($project_dir);
-        create_file($project_dir . '/.project_desc', $project_name);
-        $rc = run_cmd('cd ' . $_CONFIG['project_dir'] . '; git add ' . $this->dir .
-            ' && git commit -m "add new project ' . $project_name . '" && git push origin master');
+        $rc = run_cmd('cd ' . $_CONFIG['project_dir'] . '; ' .
+        'ssh git.promwad.com git-create-repo \"ci-' . $project_name .
+        '\" \"build targets for project ' . $project_name . '\"' .
+        ' ci-tool --public-repo;' .
+        'git clone ssh://git.promwad.com/repos/ci-' . $project_name . ' .;' .
+        ' echo "' . $project_name . '" > .project_desc;' .
+        'git add .' .
+        ' && git commit -m "add new project ' . $project_name . '" && git push origin master');
         if ($rc['rc'])
         {
             delete_dir($project_dir);
             msg_log(LOG_ERR, 'can\'t created project, can\'t commit new project: ' . $project_name);
             return false;
         }
+
+        create_file($project_dir . '/.project_desc', $project_name);
 
         $project = new Project($project_dir, $project_name);
         $this->add_project($project);

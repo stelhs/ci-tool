@@ -465,7 +465,9 @@ function main()
                 print_help_commands('purge', 'delete sessions',
                     array(
                         'all' => 'delete all not running sessions',
-                        'old' => 'delete old sessions',
+                        'by_count' => 'delete old sessions',
+                        'by_days' => 'delete old sessions',
+                        // TODO: //
                     ));
                 return 0;
             }
