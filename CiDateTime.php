@@ -15,6 +15,8 @@ class CiDateTime extends DateTime
 
     function to_string()
     {
+        dump($this->format('Ymd_His'));
+
         return $this->format('Ymd_His');
     }
 

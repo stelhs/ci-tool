@@ -143,7 +143,7 @@ class Target
         $session_date = $curr_date->to_string();
 
         $index = 0;
-        while (is_dir($this->dir . '/build_session_' . $index . '_' . $session_date))
+        while (is_dir($this->dir . '/build_session_' . $session_date . '_' . $index))
             $index++;
 
         $dir_name = 'build_session_' . $session_date . '_' . $index;
