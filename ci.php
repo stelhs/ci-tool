@@ -557,28 +557,42 @@ function main()
                 return 1;
             }
 
-            $commit = isset($argv[2]) ? $argv[2] : NULL;
-            $base_commit = isset($argv[3]) ? $argv[3] : NULL;
-            if (!$commit)
+            $repo = isset($argv[2]) ? $argv[2] : NULL;
+            $branch = isset($argv[3]) ? $argv[3] : NULL;
+            $commit = isset($argv[4]) ? $argv[4] : NULL;
+            $base_commit = isset($argv[5]) ? $argv[5] : NULL;
+            if (!$repo)
             {
                 msg_log(LOG_ERR, '2 argument is empty');
                 $print_help = true;
             }
 
-            if (!$base_commit)
+            if (!$branch)
             {
                 msg_log(LOG_ERR, '3 argument is empty');
                 $print_help = true;
             }
 
+            if (!$commit)
+            {
+                msg_log(LOG_ERR, '4 argument is empty');
+                $print_help = true;
+            }
+
+            if (!$base_commit)
+            {
+                msg_log(LOG_ERR, '5 argument is empty');
+                $print_help = true;
+            }
+
             if ($print_help)
             {
-                print_help_commands('checkout [commit] [base commit]',
+                print_help_commands('checkout [repo] [branch] [commit] [base commit]',
                     'run checkout sources');
                 return 1;
             }
 
-            $rc = $session->checkout_src($commit, $base_commit);
+            $rc = $session->checkout_src($repo, $branch, $commit, $base_commit);
             break;
 
         case 'build':
