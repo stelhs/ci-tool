@@ -254,7 +254,7 @@ class Session
      * @param $bash_file - script file name
      * @return log or false
      */
-    private function run_script($bash_file, $args = '')
+    private function run_script($bash_file, $args = '', $log_file = '')
     {
         msg_log(LOG_NOTICE, "run_script " . $bash_file . " in session: " . $this->get_info());
 
@@ -266,7 +266,9 @@ class Session
         create_file($this->dir . '/.pid', getmypid());
 
         $ret = run_cmd('cd ' . $this->dir . ';' .
-            $this->target->get_dir() . '/' . $bash_file . ' ' . $args);
+            $this->target->get_dir() . '/' . $bash_file . ' ' . $args .
+            ($log_file ? (' > ' . $this->dir . '/' . $log_file) : '')
+        );
 
         delete_file($this->dir . '/.pid');
 
@@ -286,8 +288,7 @@ class Session
         create_file($this->dir . '/.commit', $commit);
         create_file($this->dir . '/.base_commit', $base_commit);
 
-        $ret = $this->run_script('.recipe_checkout', $repo . ' ' . $branch . ' ' . $commit);
-        create_file($this->dir . '/checkout_log', $ret['log']);
+        $ret = $this->run_script('.recipe_checkout', $repo . ' ' . $branch . ' ' . $commit, 'checkout_log');
         if ($ret['rc'])
         {
             msg_log(LOG_ERR, "failed checkout in session: " . $this->get_info());
@@ -309,8 +310,7 @@ class Session
         msg_log(LOG_NOTICE, "start build in session: " . $this->get_info());
 
         $this->set_status('running_build');
-        $ret = $this->run_script('.recipe_build');
-        create_file($this->dir . '/build_log', $ret['log']);
+        $ret = $this->run_script('.recipe_build', '', 'build_log');
         if ($ret['rc'])
         {
             $this->set_status('failed_build');
@@ -341,8 +341,7 @@ class Session
         }
 
         $this->set_status('running_test');
-        $ret = $this->run_script('.recipe_test');
-        create_file($this->dir . '/test_log', $ret['log']);
+        $ret = $this->run_script('.recipe_test', '', 'test_log');
         if ($ret['rc'])
         {
             $this->set_status('failed_test');
