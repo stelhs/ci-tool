@@ -417,6 +417,17 @@ function main()
             }
             break;
 
+        case 'purge':
+            if ($print_help)
+            {
+                print_help_commands('purge', 'delete sessions',
+                    array(
+                        'old' => 'delete old sessions',
+                    ));
+                return 0;
+            }
+            break;
+
         case 'all':
             if ($obj_type != 'session')
             {

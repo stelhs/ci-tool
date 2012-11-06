@@ -283,12 +283,15 @@ class Session
     {
         msg_log(LOG_NOTICE, "start checkout in session: " . $this->get_info());
 
+        if ($commit == '')
+            $commit = 'HEAD';
+
         $this->set_status('running_checkout');
 
         create_file($this->dir . '/.commit', $commit);
         create_file($this->dir . '/.base_commit', $base_commit);
 
-        $ret = $this->run_script('.recipe_checkout', $repo . ' ' . $branch . ' ' . $commit, 'checkout_log');
+        $ret = $this->run_script('.recipe_checkout', $repo . ' ' . $branch . ' ' . $commit, 'checkout.log');
         if ($ret['rc'])
         {
             msg_log(LOG_ERR, "failed checkout in session: " . $this->get_info());
@@ -310,7 +313,7 @@ class Session
         msg_log(LOG_NOTICE, "start build in session: " . $this->get_info());
 
         $this->set_status('running_build');
-        $ret = $this->run_script('.recipe_build', '', 'build_log');
+        $ret = $this->run_script('.recipe_build', '', 'build.log');
         if ($ret['rc'])
         {
             $this->set_status('failed_build');
@@ -385,14 +388,14 @@ class Session
         $report_data['status'] = $status;
         $report_data['base_commit'] = $this->get_base_commit();
 
-        if (file_exists($this->dir . '/checkout_log'))
-            $report_data['path_to_checkout_log'] = strip_duplicate_slashes($this->dir . '/checkout_log');
+        if (file_exists($this->dir . '/checkout.log'))
+            $report_data['path_to_checkout_log'] = strip_duplicate_slashes($this->dir . '/checkout.log');
 
-        if (file_exists($this->dir . '/build_log'))
-            $report_data['path_to_build_log'] = strip_duplicate_slashes($this->dir . '/build_log');
+        if (file_exists($this->dir . '/build.log'))
+            $report_data['path_to_build_log'] = strip_duplicate_slashes($this->dir . '/build.log');
 
-        if (file_exists($this->dir . '/test_log'))
-            $report_data['path_to_test_log'] = strip_duplicate_slashes($this->dir . '/test_log');
+        if (file_exists($this->dir . '/test.log'))
+            $report_data['path_to_test_log'] = strip_duplicate_slashes($this->dir . '/test.log');
 
         if (file_exists($this->dir . '/.build_result'))
         {
@@ -418,7 +421,7 @@ class Session
                 $xml_data['build_result%' . $i] = $path;
 
         $xml_content = create_xml($xml_data);
-        create_file($this->dir . '/report.xml', $xml_content);
+        create_file($this->dir . '/.report.xml', $xml_content);
 
 
         /*

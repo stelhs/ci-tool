@@ -148,7 +148,6 @@ class Target
 
         $dir_name = 'build_session_' . $index . '_' . $session_date;
         create_dir($this->dir . '/' . $dir_name);
-        create_file($this->dir . '/' . $dir_name . '/.session_desc', $description);
 
         $session = new Session($this, $this->dir . '/' . $dir_name, $curr_date, $index);
         $this->add_session($session);

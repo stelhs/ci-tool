@@ -252,7 +252,7 @@ function main()
         // run build
         ci_run_cmd($ci_server,
             'cd ' . $target->get_dir() . '/' . $session_name . ';' .
-            'cat > .git_log;' .
+            'cat > .session_desc;' .
             'ci all "' . $git_repository . '" "' . $git_branch .
             '" "' . $git_commit . '" "' . $git_base_commit . '" "' . $git_email . '"', true, $git_log);
 
