@@ -304,7 +304,7 @@ class Session
         create_file($this->dir . '/.commit', $commit);
         create_file($this->dir . '/.base_commit', $base_commit);
 
-        add_to_file($this->dir . '/build.log', get_log_header('Checkout procedure'));
+        add_to_file($this->dir . '/build.log', $this->get_log_header('Checkout procedure'));
 
         $ret = $this->run_script('.recipe_checkout', $repo . ' ' . $branch . ' ' . $commit, 'build.log');
         if ($ret['rc'])
@@ -327,7 +327,7 @@ class Session
     {
         msg_log(LOG_NOTICE, "start build in session: " . $this->get_info());
 
-        add_to_file($this->dir . '/build.log', get_log_header('Build procedure'));
+        add_to_file($this->dir . '/build.log', $this->get_log_header('Build procedure'));
 
         $this->set_status('running_build');
         $ret = $this->run_script('.recipe_build', '', 'build.log');
@@ -360,7 +360,7 @@ class Session
             return true;
         }
 
-        add_to_file($this->dir . '/build.log', get_log_header('Test procedure'));
+        add_to_file($this->dir . '/build.log', $this->get_log_header('Test procedure'));
 
         $this->set_status('running_test');
         $ret = $this->run_script('.recipe_test', '', 'build.log');

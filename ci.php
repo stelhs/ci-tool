@@ -506,13 +506,13 @@ function main()
 
             if (!$base_commit)
             {
-                msg_log(LOG_ERR, '"commit" 5 argument is empty');
+                msg_log(LOG_ERR, '"base_commit" 5 argument is empty');
                 $print_help = true;
             }
 
             if (!$email)
             {
-                msg_log(LOG_ERR, '"commit" 6 argument is empty');
+                msg_log(LOG_ERR, '"email" 6 argument is empty');
                 $print_help = true;
             }
 
