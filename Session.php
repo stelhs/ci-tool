@@ -277,10 +277,19 @@ class Session
     }
 
 
+    private function get_log_header($procedure_name)
+    {
+        return
+            "\n========================================\n" .
+            "\t" . $procedure_name . "\n" .
+            "\tDate: " . date("Y-m-d H:i:s") . "\n" .
+            "========================================\n\n";
+    }
+
     /**
      * run checkout sources
      */
-    function checkout_src($repo, $branch, $commit, $base_commit)
+    public function checkout_src($repo, $branch, $commit, $base_commit)
     {
         msg_log(LOG_NOTICE, "start checkout in session: " . $this->get_info());
 
@@ -292,13 +301,7 @@ class Session
         create_file($this->dir . '/.commit', $commit);
         create_file($this->dir . '/.base_commit', $base_commit);
 
-        $description =
-            "\n====================\n" .
-            "\tCheckout procedure\n" .
-            "Date: " . date("Y-m-d H:i:s") . "\n" .
-            "====================\n\n";
-
-        add_to_file($this->dir . '/build.log', $description);
+        add_to_file($this->dir . '/build.log', get_log_header('Checkout procedure'));
 
         $ret = $this->run_script('.recipe_checkout', $repo . ' ' . $branch . ' ' . $commit, 'build.log');
         if ($ret['rc'])
@@ -317,17 +320,11 @@ class Session
     /**
      * run build sources
      */
-    function build_src()
+    public function build_src()
     {
         msg_log(LOG_NOTICE, "start build in session: " . $this->get_info());
 
-        $description =
-            "\n====================\n" .
-            "\nBuild procedure\n" .
-            "Date: " . date("Y-m-d H:i:s") . "\n" .
-            "====================\n\n";
-
-        add_to_file($this->dir . '/build.log', $description);
+        add_to_file($this->dir . '/build.log', get_log_header('Build procedure'));
 
         $this->set_status('running_build');
         $ret = $this->run_script('.recipe_build', '', 'build.log');
@@ -350,7 +347,7 @@ class Session
     /**
      * run test sources
      */
-    function test_src()
+    public function test_src()
     {
         msg_log(LOG_NOTICE, "start tests in session: " . $this->get_info());
 
@@ -360,13 +357,7 @@ class Session
             return true;
         }
 
-        $description =
-            "\n====================\n" .
-            "\nTest procedure\n" .
-            "Date: " . date("Y-m-d H:i:s") . "\n" .
-            "====================\n\n";
-
-        add_to_file($this->dir . '/build.log', $description);
+        add_to_file($this->dir . '/build.log', get_log_header('Test procedure'));
 
         $this->set_status('running_test');
         $ret = $this->run_script('.recipe_test', '', 'build.log');
@@ -393,7 +384,7 @@ class Session
      * send report by email
      * @param string $email_addr - report recepient email address
      */
-    function make_report($email_addr = '')
+    public function make_report($email_addr = '')
     {
         global $_CONFIG, $this_server;
 
