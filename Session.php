@@ -295,7 +295,7 @@ class Session
         $description =
             "\n====================\n" .
             "\tCheckout procedure\n" .
-            "Date: " . date("Y-m-d H:i:s") . "\n";
+            "Date: " . date("Y-m-d H:i:s") . "\n" .
             "====================\n\n";
 
         add_to_file($this->dir . '/build.log', $description);
@@ -324,7 +324,7 @@ class Session
         $description =
             "\n====================\n" .
             "\nBuild procedure\n" .
-            "Date: " . date("Y-m-d H:i:s") . "\n";
+            "Date: " . date("Y-m-d H:i:s") . "\n" .
             "====================\n\n";
 
         add_to_file($this->dir . '/build.log', $description);
@@ -363,7 +363,7 @@ class Session
         $description =
             "\n====================\n" .
             "\nTest procedure\n" .
-            "Date: " . date("Y-m-d H:i:s") . "\n";
+            "Date: " . date("Y-m-d H:i:s") . "\n" .
             "====================\n\n";
 
         add_to_file($this->dir . '/build.log', $description);
@@ -413,14 +413,8 @@ class Session
         $report_data['status'] = $status;
         $report_data['base_commit'] = $this->get_base_commit();
 
-        if (file_exists($this->dir . '/checkout.log'))
-            $report_data['path_to_checkout_log'] = strip_duplicate_slashes($this->dir . '/checkout.log');
-
         if (file_exists($this->dir . '/build.log'))
             $report_data['path_to_build_log'] = strip_duplicate_slashes($this->dir . '/build.log');
-
-        if (file_exists($this->dir . '/test.log'))
-            $report_data['path_to_test_log'] = strip_duplicate_slashes($this->dir . '/test.log');
 
         if (file_exists($this->dir . '/.build_result'))
         {
