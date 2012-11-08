@@ -58,7 +58,7 @@ function msg_log($msg_level, $text)
     switch ($msg_level)
     {
         case LOG_ERR:
-            echo $utility_name . ': Error: ' . $text . "\n";
+            echo 'CI-tool: ' . $utility_name . ': Error: ' . $text . "\n";
             break;
     }
 }
@@ -297,6 +297,23 @@ function create_file($file_name, $content = '')
         throw new Exception("can't create file: " . $file_name);
 
     msg_log(LOG_NOTICE, "created file: " . $file_name);
+}
+
+function add_to_file($file_name, $content = '')
+{
+    $fd = fopen($file_name, "a+");
+    if ($fd === false)
+        throw new Exception("can't open file: " . $file_name);
+
+    $rc = fwrite($fd, $content);
+    if ($rc === false)
+        throw new Exception("can't write to file: " . $file_name);
+
+    $rc = fclose($fd);
+    if ($rc === false)
+        throw new Exception("can't close file: " . $file_name);
+
+    msg_log(LOG_NOTICE, "append to file: " . $file_name);
 }
 
 function delete_file($file_name)

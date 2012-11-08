@@ -257,7 +257,7 @@ function main()
             'ci all "' . $git_repository . '" "' . $git_branch .
             '" "' . $git_commit . '" "' . $git_base_commit . '" "' . $git_email . '"', true, $git_log);
 
-        echo "Run target " . $target->get_info() .
+        echo "CI-tool: run target " . $target->get_info() .
             ", create session: " . $ci_server['addr'] . ":" .
             strip_duplicate_slashes($target->get_dir() . '/' . $session_name) . "\n";
     }

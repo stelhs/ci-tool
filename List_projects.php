@@ -87,8 +87,6 @@ class List_projects
             return false;
         }
 
-        create_file($project_dir . '/.project_desc', $project_name);
-
         $project = new Project($project_dir, $project_name);
         $this->add_project($project);
 

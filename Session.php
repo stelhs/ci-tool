@@ -268,7 +268,7 @@ class Session
 
         $ret = run_cmd('cd ' . $this->dir . ';' .
             $this->target->get_dir() . '/' . $bash_file . ' ' . $args .
-            ($log_file ? (' > ' . $this->dir . '/' . $log_file) : '')
+            ($log_file ? (' >> ' . $this->dir . '/' . $log_file) : '')
         );
 
         delete_file($this->dir . '/.pid');
@@ -292,7 +292,15 @@ class Session
         create_file($this->dir . '/.commit', $commit);
         create_file($this->dir . '/.base_commit', $base_commit);
 
-        $ret = $this->run_script('.recipe_checkout', $repo . ' ' . $branch . ' ' . $commit, 'checkout.log');
+        $description =
+            "\n====================\n" .
+            "\tCheckout procedure\n" .
+            "Date: " . date("Y-m-d H:i:s") . "\n";
+            "====================\n\n";
+
+        add_to_file($this->dir . '/build.log', $description);
+
+        $ret = $this->run_script('.recipe_checkout', $repo . ' ' . $branch . ' ' . $commit, 'build.log');
         if ($ret['rc'])
         {
             msg_log(LOG_ERR, "failed checkout in session: " . $this->get_info());
@@ -312,6 +320,14 @@ class Session
     function build_src()
     {
         msg_log(LOG_NOTICE, "start build in session: " . $this->get_info());
+
+        $description =
+            "\n====================\n" .
+            "\nBuild procedure\n" .
+            "Date: " . date("Y-m-d H:i:s") . "\n";
+            "====================\n\n";
+
+        add_to_file($this->dir . '/build.log', $description);
 
         $this->set_status('running_build');
         $ret = $this->run_script('.recipe_build', '', 'build.log');
@@ -344,8 +360,16 @@ class Session
             return true;
         }
 
+        $description =
+            "\n====================\n" .
+            "\nTest procedure\n" .
+            "Date: " . date("Y-m-d H:i:s") . "\n";
+            "====================\n\n";
+
+        add_to_file($this->dir . '/build.log', $description);
+
         $this->set_status('running_test');
-        $ret = $this->run_script('.recipe_test', '', 'test_log');
+        $ret = $this->run_script('.recipe_test', '', 'build.log');
         if ($ret['rc'])
         {
             $this->set_status('failed_test');
