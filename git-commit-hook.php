@@ -43,7 +43,8 @@ function error_exception($exception)
 
 function match_branch_with_mask($branch, $branch_mask)
 {
-    $branch_mask = str_replace('refs/heads/', '', $branch_mask);
+    $branch_mask = str_replace('refs/', '', $branch_mask);
+    $branch = str_replace('refs/', '', $branch);
     return fnmatch($branch_mask, $branch);
 }
 
