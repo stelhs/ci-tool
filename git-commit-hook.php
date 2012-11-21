@@ -41,14 +41,6 @@ function error_exception($exception)
 }
 
 
-function match_branch_with_mask($branch, $branch_mask)
-{
-    $branch_mask = str_replace('refs/', '', $branch_mask);
-    $branch = str_replace('refs/', '', $branch);
-    return fnmatch($branch_mask, $branch);
-}
-
-
 /**
  * Run command on CI server
  * @param $ci_server - config CI server
@@ -232,6 +224,24 @@ function main()
     {
         msg_log(LOG_WARNING, 'not found build targets for ' . $git_repository . ' ' . $git_branch);
         return false;
+    }
+
+
+    // Stop all identical pending sessions on all servers
+    foreach ($_CONFIG['ci_servers'] as $ci_server)
+    {
+        $rc = ci_run_cmd($ci_server,
+            'ci get sessions pending ' . $git_repository . ' ' . $git_branch);
+
+        $session_dirs = $rc['log'];
+        $dirs = explode("\n", $session_dirs);
+        if (!$dirs)
+            continue;
+
+        // abort sessions
+        foreach ($dirs as $dir)
+            ci_run_cmd($ci_server,
+                'cd ' . $dir . '; ci abort "drop duplicate pendings"');
     }
 
     // create command and run his on CI servers

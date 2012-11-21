@@ -225,6 +225,19 @@ function get_current_ci_server()
     return false;
 }
 
+/**
+ * match branch name with branch mask
+ * @param $branch - branch name
+ * @param $branch_mask - $branch mask
+ * @return bool - true if successfully matched
+ */
+function match_branch_with_mask($branch, $branch_mask)
+{
+    $branch_mask = str_replace('refs/', '', $branch_mask);
+    $branch = str_replace('refs/', '', $branch);
+    return fnmatch($branch_mask, $branch);
+}
+
 
 /**
  * get list of children PID

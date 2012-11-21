@@ -186,84 +186,87 @@ function main()
                     case 'sessions':
                     {
                         $command = isset($argv[3]) ? $argv[3] : NULL;
+                        $repo = isset($argv[4]) ? $argv[4] : NULL;
+                        $branch = isset($argv[5]) ? $argv[5] : NULL;
+
                         switch ($command)
                         {
                             case 'all':
                                 if ($print_help)
                                 {
-                                    print_help_commands('get sessions all', 'get list of all sessions');
+                                    print_help_commands('get sessions all [repo] [branch]', 'get list of all sessions');
                                     return 0;
                                 }
 
-                                $sessions = $projects->get_all_sessions();
+                                $sessions = $projects->get_all_sessions(array(), $repo, $branch);
                                 break;
 
                             case 'pending':
                                 if ($print_help)
                                 {
-                                    print_help_commands('get sessions pending', 'get list of pending sessions');
+                                    print_help_commands('get sessions pending [repo] [branch]', 'get list of pending sessions');
                                     return 0;
                                 }
 
-                                $sessions = $projects->get_all_sessions(array('pending'));
+                                $sessions = $projects->get_all_sessions(array('pending'), $repo, $branch);
                                 break;
 
                             case 'created':
                                 if ($print_help)
                                 {
-                                    print_help_commands('get sessions created', 'get list of created sessions');
+                                    print_help_commands('get sessions created [repo] [branch]', 'get list of created sessions');
                                     return 0;
                                 }
 
-                                $sessions = $projects->get_all_sessions(array('created'));
+                                $sessions = $projects->get_all_sessions(array('created'), $repo, $branch);
                                 break;
 
                             case 'finished':
                                 if ($print_help)
                                 {
-                                    print_help_commands('get sessions finished', 'get list of finished sessions');
+                                    print_help_commands('get sessions finished [repo] [branch]', 'get list of finished sessions');
                                     return 0;
                                 }
 
                                 $sessions = $projects->get_all_sessions(array('finished_checkout',
                                     'finished_build',
-                                    'finished_tests'));
+                                    'finished_tests'), $repo, $branch);
                                 break;
 
                             case 'failed':
                                 if ($print_help)
                                 {
-                                    print_help_commands('get sessions failed', 'get list of failed sessions');
+                                    print_help_commands('get sessions failed [repo] [branch]', 'get list of failed sessions');
                                     return 0;
                                 }
 
                                 $sessions = $projects->get_all_sessions(array('failed_checkout',
                                                                               'failed_build',
-                                                                              'failed_tests'));
+                                                                              'failed_tests'), $repo, $branch);
                                 break;
 
                             case 'aborted':
                                 if ($print_help)
                                 {
-                                    print_help_commands('get sessions aborted', 'get list of aborted sessions');
+                                    print_help_commands('get sessions aborted [repo] [branch]', 'get list of aborted sessions');
                                     return 0;
                                 }
 
                                 $sessions = $projects->get_all_sessions(array('aborted_checkout',
                                                                               'aborted_build',
-                                                                              'aborted_tests'));
+                                                                              'aborted_tests'), $repo, $branch);
                                 break;
 
                             case 'running':
                                 if ($print_help)
                                 {
-                                    print_help_commands('get sessions running', 'get list of running sessions');
+                                    print_help_commands('get sessions running [repo] [branch]', 'get list of running sessions');
                                     return 0;
                                 }
 
                                 $sessions = $projects->get_all_sessions(array('running_checkout',
                                     'running_build',
-                                    'running_tests'));
+                                    'running_tests'), $repo, $branch);
                                 break;
 
                             default:

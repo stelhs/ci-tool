@@ -212,6 +212,17 @@ class Session
         switch ($stored_status)
         {
             case 'pending':
+                if (!$pid)
+                {
+                    msg_log(LOG_WARNING, 'session: ' . $this->dir .
+                        ' stand in status: "' . $stored_status .
+                        '" but .pid file was not found, re run pending');
+
+                    // TODO: Запустить пендинг если тот упал
+                    return $stored_status;
+                }
+                break;
+
             case 'running_checkout':
             case 'running_build':
             case 'running_test':

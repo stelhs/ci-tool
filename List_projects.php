@@ -112,33 +112,59 @@ class List_projects
      * contain array of all possible states,
      * return all sessions if this variable is NULL
      */
-    function get_all_sessions($states = array())
+    function get_all_sessions($states = array(), $repo_name = '', $branch_name = '')
     {
         $list_sessions = array();
 
         foreach ($this->projects as $project)
             if ($project->get_targets_list())
                 foreach ($project->get_targets_list() as $target)
-                    if ($target->get_list_sessions())
-                        foreach ($target->get_list_sessions() as $session)
-                            if ($session)
-                            {
-                                if (!$states)
-                                {
-                                    $list_sessions[] = $session;
-                                    continue;
-                                }
+                {
+                    $list_sessions = $target->get_list_sessions();
+                    if (!$list_sessions)
+                        continue;
 
-                                // if used filter by states
-                                foreach ($states as $state)
-                                {
-                                    if ($session->get_state() == $state)
-                                    {
-                                        $list_sessions[] = $session;
-                                        break;
-                                    }
-                                }
+                    $list_branches = $target->get_repo_branches($repo_name);
+
+                    // filter by repo
+                    if ($repo_name && (!$list_branches))
+                        continue;
+
+                    // filter by branch
+                    if ($branch_name)
+                    {
+                        $matched_branch = false;
+                        foreach ($list_branches as $branch_mask)
+                            if (match_branch_with_mask($branch_name, $branch_mask))
+                            {
+                                $matched_branch = true;
+                                break;
                             }
+
+                        if (!$matched_branch)
+                            continue;
+                    }
+
+                    foreach ($list_sessions as $session)
+                    {
+                        if (!$session)
+                            continue;
+
+                        if (!$states)
+                        {
+                            $list_sessions[] = $session;
+                            continue;
+                        }
+
+                        // filter by state
+                        foreach ($states as $state)
+                            if ($session->get_state() == $state)
+                            {
+                                $list_sessions[] = $session;
+                                break;
+                            }
+                    }
+                }
 
         return $list_sessions;
     }
