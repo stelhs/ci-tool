@@ -147,11 +147,10 @@ class List_projects
 
                     foreach ($list_sessions as $session)
                     {
-                        dump($session->get_name());
-
                         if (!$session)
                             continue;
 
+                        dump($session->get_name());
                         if (!$states)
                         {
                             $list_sessions[] = $session;
