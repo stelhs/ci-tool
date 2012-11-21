@@ -114,7 +114,7 @@ class List_projects
      */
     function get_all_sessions($states = array(), $repo_name = '', $branch_name = '')
     {
-        $list_sessions = array();
+        $result_list_sessions = array();
 
         foreach ($this->projects as $project)
             if ($project->get_targets_list())
@@ -152,7 +152,7 @@ class List_projects
 
                         if (!$states)
                         {
-                            $list_sessions[] = $session;
+                            $result_list_sessions[] = $session;
                             continue;
                         }
 
@@ -160,13 +160,12 @@ class List_projects
                         foreach ($states as $state)
                             if ($session->get_state() == $state)
                             {
-                                $list_sessions[] = $session;
+                                $result_list_sessions[] = $session;
                                 break;
                             }
                     }
                 }
 
-        dump($list_sessions);
-        return $list_sessions;
+        return $result_list_sessions;
     }
 }
