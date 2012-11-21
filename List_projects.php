@@ -150,13 +150,13 @@ class List_projects
                         if (!$session)
                             continue;
 
-                        dump($session->get_name());
                         if (!$states)
                         {
                             $list_sessions[] = $session;
                             continue;
                         }
 
+                        dump($session->get_name());
                         // filter by state
                         foreach ($states as $state)
                             if ($session->get_state() == $state)
