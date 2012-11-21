@@ -145,9 +145,10 @@ class List_projects
                             continue;
                     }
 
-                    dump(222);
                     foreach ($list_sessions as $session)
                     {
+                        dump($session->get_name());
+
                         if (!$session)
                             continue;
 
