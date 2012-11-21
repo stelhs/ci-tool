@@ -156,7 +156,6 @@ class List_projects
                             continue;
                         }
 
-                        dump($session->get_name());
                         // filter by state
                         foreach ($states as $state)
                             if ($session->get_state() == $state)
@@ -167,6 +166,7 @@ class List_projects
                     }
                 }
 
+        dump($list_sessions);
         return $list_sessions;
     }
 }
