@@ -153,7 +153,6 @@ class List_projects
                         if (!$states)
                         {
                             $list_sessions[] = $session;
-                            dump($list_sessions);
                             continue;
                         }
 
@@ -165,6 +164,8 @@ class List_projects
                                 break;
                             }
                     }
+                    dump($list_sessions);
+
                 }
 
         return $list_sessions;
