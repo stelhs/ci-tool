@@ -126,6 +126,8 @@ class List_projects
 
                     $list_branches = $target->get_repo_branches($repo_name);
 
+                    dump(111);
+
                     // filter by repo
                     if ($repo_name && (!$list_branches))
                         continue;
