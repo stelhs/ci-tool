@@ -164,10 +164,9 @@ class List_projects
                                 break;
                             }
                     }
-                    dump($list_sessions);
-
                 }
 
+        dump($list_sessions);
         return $list_sessions;
     }
 }
