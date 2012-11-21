@@ -126,8 +126,6 @@ class List_projects
 
                     $list_branches = $target->get_repo_branches($repo_name);
 
-                    dump(111);
-
                     // filter by repo
                     if ($repo_name && (!$list_branches))
                         continue;
@@ -147,6 +145,7 @@ class List_projects
                             continue;
                     }
 
+                    dump(222);
                     foreach ($list_sessions as $session)
                     {
                         if (!$session)
