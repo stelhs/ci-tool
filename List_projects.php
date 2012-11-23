@@ -72,6 +72,7 @@ class List_projects
         }
 
         create_dir($project_dir);
+        dump('1');
         $rc = run_cmd('cd ' . $_CONFIG['project_dir'] . ' && ' .
         'ssh git.promwad.com create-repo \"ci-' . $project_name .
         '\" \"build targets for project ' . $project_name . '\" ' .
@@ -87,6 +88,7 @@ class List_projects
             msg_log(LOG_ERR, 'can\'t created project, can\'t commit new project: ' . $project_name);
             return false;
         }
+        dump('2');
 
         $project = new Project($project_dir, $project_name);
         $this->add_project($project);
