@@ -11,7 +11,7 @@ require_once('Project.php');
 class List_projects
 {
     private $projects = array();
-    private $dir; // project directory
+    private $dir; // projects directory
 
     function __construct($dir)
     {
@@ -64,7 +64,7 @@ class List_projects
     {
         global $_CONFIG;
 
-        $project_dir = $this->dir . '/' . $project_name;
+        $project_dir = $this->dir . '/ci-' . $project_name;
         if (is_dir($project_dir))
         {
             msg_log(LOG_ERR, 'can\'t created project: ' . $project_name . ', project already exist');
@@ -72,13 +72,12 @@ class List_projects
         }
 
         create_dir($project_dir);
-        dump('1');
-        $rc = run_cmd('cd ' . $_CONFIG['project_dir'] . ' && ' .
+        $rc = run_cmd('cd ' . $this->dir . ' && ' .
         'ssh git.promwad.com create-repo \"ci-' . $project_name .
         '\" \"build targets for project ' . $project_name . '\" ' .
         'ci-tool --public-repo && ' .
         'git clone ssh://git.promwad.com/repos/ci-' . $project_name . '.git && ' .
-        'cd ci-' . $project_name . ' && ' .
+        'cd ' . $project_dir . ' && ' .
         'echo "' . $project_name . '" > .project_desc && ' .
         'git add . && ' .
         'git commit -m "add new project ' . $project_name . '" && git push origin master');
@@ -88,7 +87,6 @@ class List_projects
             msg_log(LOG_ERR, 'can\'t created project, can\'t commit new project: ' . $project_name);
             return false;
         }
-        dump('2');
 
         $project = new Project($project_dir, $project_name);
         $this->add_project($project);
