@@ -128,7 +128,7 @@ class Project
         $this->add_target($target);
 
         // commit added target
-        $rc = run_cmd('cd ' . $_CONFIG['project_dir'] . '; git add ' . $this->dir .
+        $rc = run_cmd('cd ' . $target_dir . '; git add ' . $this->dir .
             ' && git commit -m "add new target ' . $target->get_info() . '" && git push origin master');
         if ($rc['rc'])
         {
