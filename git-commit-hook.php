@@ -187,6 +187,7 @@ function main()
         msg_log(LOG_NOTICE, 'updating configurations for project: ' . $git_repository);
         foreach ($_CONFIG['ci_servers'] as $ci_server)
         {
+            msg_log(LOG_NOTICE, 'is_dir: ' . $_CONFIG['project_dir'] . '/' . $git_repository);
             if (is_dir($_CONFIG['project_dir'] . '/' . $git_repository))
             {
                 msg_log(LOG_NOTICE, 'updating existing project repository: ' . $git_repository);
