@@ -80,7 +80,10 @@ function main()
     $projects = new List_projects($_CONFIG['project_dir']);
 
     // Check operation object
-    $obj_type = '';
+    $obj_type = 'project_list';
+
+    if (file_exists('.project_desc'))
+        $obj_type = 'project';
 
     if (file_exists('.target_desc'))
         $obj_type = 'target';
