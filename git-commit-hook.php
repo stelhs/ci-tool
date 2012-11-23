@@ -187,11 +187,11 @@ function main()
         msg_log(LOG_NOTICE, 'updating configurations for project: ' . $git_repository);
         foreach ($_CONFIG['ci_servers'] as $ci_server)
         {
-            msg_log(LOG_NOTICE, 'is_dir: ' . $_CONFIG['project_dir'] . '/' . $git_repository);
-            if (is_dir($_CONFIG['project_dir'] . '/' . $git_repository))
+            $project_dir = str_replace('.git', '', $_CONFIG['project_dir'] . '/' . $git_repository);
+            if (is_dir($project_dir))
             {
                 msg_log(LOG_NOTICE, 'updating existing project repository: ' . $git_repository);
-                run_remote_cmd($ci_server, 'cd ' . $_CONFIG['project_dir'] . '/' . $git_repository . ' && ' .
+                run_remote_cmd($ci_server, 'cd ' . $project_dir . ' && ' .
                     'git pull origin master');
             }
             else
