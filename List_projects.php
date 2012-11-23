@@ -77,7 +77,7 @@ class List_projects
         '\" \"build targets for project ' . $project_name . '\" ' .
         'ci-tool --public-repo && ' .
         'git clone ssh://git.promwad.com/repos/ci-' . $project_name . '.git && ' .
-        'cd ' . $project_name . ' && ' .
+        'cd ci-' . $project_name . ' && ' .
         'echo "' . $project_name . '" > .project_desc && ' .
         'git add . && ' .
         'git commit -m "add new project ' . $project_name . '" && git push origin master');
