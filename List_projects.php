@@ -74,12 +74,12 @@ class List_projects
         create_dir($project_dir);
         $rc = run_cmd('cd ' . $_CONFIG['project_dir'] . '; ' .
         'ssh git.promwad.com create-repo \"ci-' . $project_name .
-        '\" \"build targets for project ' . $project_name . '\"' .
-        ' ci-tool --public-repo;' .
-        'git clone ssh://git.promwad.com/repos/ci-' . $project_name . ' .;' .
-        ' echo "' . $project_name . '" > .project_desc;' .
-        'git add .' .
-        ' && git commit -m "add new project ' . $project_name . '" && git push origin master');
+        '\" \"build targets for project ' . $project_name . '\" && ' .
+        ' ci-tool --public-repo && ' .
+        'git clone ssh://git.promwad.com/repos/ci-' . $project_name . ' . && ' .
+        ' echo "' . $project_name . '" > .project_desc && ' .
+        'git add . && ' .
+        'git commit -m "add new project ' . $project_name . '" && git push origin master');
         if ($rc['rc'])
         {
             delete_dir($project_dir);
