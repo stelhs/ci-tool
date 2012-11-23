@@ -182,12 +182,24 @@ function main()
     }
 
     // update projects configurations
-    if ($git_repository == $_CONFIG['ci_projects_repo'])
+    if (fnmatch($_CONFIG['ci_projects_repo_mask'], $git_repository))
     {
-        msg_log(LOG_NOTICE, 'updating projects configurations');
+        msg_log(LOG_NOTICE, 'updating configurations for project: ' . $git_repository);
         foreach ($_CONFIG['ci_servers'] as $ci_server)
-            run_remote_cmd($ci_server, 'cd ' . $_CONFIG['project_dir'] . ';' .
-                'git pull origin master');
+        {
+            if (is_dir($_CONFIG['project_dir'] . '/' . $git_repository))
+            {
+                msg_log(LOG_NOTICE, 'updating existing project repository: ' . $git_repository);
+                run_remote_cmd($ci_server, 'cd ' . $_CONFIG['project_dir'] . '/' . $git_repository . ' && ' .
+                    'git pull origin master');
+            }
+            else
+            {
+                msg_log(LOG_NOTICE, 'creating new project repository: ' . $git_repository);
+                run_remote_cmd($ci_server, 'cd ' . $_CONFIG['project_dir'] . ' && ' .
+                    'git clone ssh://git.promwad.com/repos/' . $git_repository);
+            }
+        }
 
         msg_log(LOG_NOTICE, 'projects configurations update successfully');
         return 0;
