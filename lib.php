@@ -68,9 +68,10 @@ function msg_log($msg_level, $text)
  * @param $cmd - command
  * @param bool $fork - true - run in new thread (not receive results), false - run in current thread
  * @param $stdin_data - optional data direct to stdin
+ * @param $print_stdout - optional flag indicates that all output from the process should be printed
  * @return array with keys: rc and log
  */
-function run_cmd($cmd, $fork = false, $stdin_data = '')
+function run_cmd($cmd, $fork = false, $stdin_data = '', $print_stdout = false)
 {
     msg_log(LOG_NOTICE, 'run cmd: ' . $cmd);
 
@@ -107,7 +108,11 @@ function run_cmd($cmd, $fork = false, $stdin_data = '')
 
     $log = '';
     while($str = fgets($fd_read))
+    {
         $log .= $str;
+        if ($print_stdout)
+            echo $str;
+    }
 
     fclose($fd_read);
     $rc = proc_close($fd);
