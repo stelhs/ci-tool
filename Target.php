@@ -153,6 +153,8 @@ class Target
         $this->add_session($session);
         $session->set_status('created');
 
+        create_file($this->dir . '/.session_desc', $description);
+
         msg_log(LOG_NOTICE, "added new session: " . $session->get_name());
         return $session;
     }

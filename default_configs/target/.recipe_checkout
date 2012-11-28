@@ -4,12 +4,6 @@
 # $2 - branch name
 # $3 - commit hash
 
-
-echo BLA
-git pull origin master
-
-for (( i=1; i<5; i++ )); do
- echo $i
- sleep 1
-done
+# git clone ssh://git.promwad.com/repos/$1 &&
+# git checkout $3
 
