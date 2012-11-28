@@ -190,7 +190,6 @@ function main()
 
             // test for existing project
             $ret = ci_run_cmd($ci_server, 'ls ' . $project_dir);
-            msg_log(LOG_NOTICE, 'rc = ' . $ret['rc']);
             if ($ret['rc'] == 0)
             {
                 msg_log(LOG_NOTICE, 'updating existing project repository: ' . $git_repository .
