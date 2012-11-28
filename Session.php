@@ -282,7 +282,7 @@ class Session
 
         $ret = run_cmd('cd ' . $this->dir . ';' .
             $this->target->get_dir() . '/' . $bash_file . ' ' . $args .
-            ($log_file ? (' >> ' . $this->dir . '/' . $log_file) : '')
+            ($log_file ? (' | tee ' . $this->dir . '/' . $log_file) : '')
         );
 
         delete_file($this->dir . '/.pid');
