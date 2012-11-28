@@ -108,7 +108,7 @@ class Project
      * @param $target_name
      * @return bool
      */
-    function add_new_target($target_name)
+    function add_new_target($target_name, $target_description = '')
     {
         global $_CONFIG;
 
@@ -126,6 +126,8 @@ class Project
 
         $target = new Target($this, $target_dir, $target_name);
         $this->add_target($target);
+
+        create_file($target->get_dir() . '/.target_desc', $target_description);
 
         // commit added target
         $rc = run_cmd('cd ' . $target_dir . '; git add ' . $this->dir .

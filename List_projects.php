@@ -60,7 +60,7 @@ class List_projects
      * @param $project_name
      * @return bool
      */
-    function add_new_project($project_name)
+    function add_new_project($project_name, $project_description = '')
     {
         global $_CONFIG;
 
@@ -78,7 +78,7 @@ class List_projects
         'ci-tool --public-repo && ' .
         'git clone ssh://git.promwad.com/repos/ci-' . $project_name . '.git && ' .
         'cd ' . $project_dir . ' && ' .
-        'echo "' . $project_name . '" > .project_desc && ' .
+        'echo "' . $project_description . '" > .project_desc && ' .
         'git add . && ' .
         'git commit -m "add new project ' . $project_name . '" && git push origin master');
         if ($rc['rc'])

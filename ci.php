@@ -362,17 +362,19 @@ function main()
                     case 'project':
                         if ($print_help)
                         {
-                            print_help_commands('create project [project name]', 'create new project');
+                            print_help_commands('create project [project name] {project_description}', 'create new project');
                             return 0;
                         }
 
-                        $rc = $projects->add_new_project($param1);
+                        $description = isset($argv[4]) ? $argv[4] : NULL;
+
+                        $rc = $projects->add_new_project($param1, $description);
                         break;
 
                     case 'target':
                         if ($print_help)
                         {
-                            print_help_commands('create target [target name]', 'create new target');
+                            print_help_commands('create target [target name] {target_description}', 'create new target');
                             return 0;
                         }
 
@@ -382,7 +384,9 @@ function main()
                             return 1;
                         }
 
-                        $rc = $project->add_new_target($param1);
+                        $description = isset($argv[4]) ? $argv[4] : NULL;
+
+                        $rc = $project->add_new_target($param1, $description);
                         break;
 
                     case 'session':
