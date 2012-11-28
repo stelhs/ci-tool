@@ -192,13 +192,15 @@ function main()
             $ret = ci_run_cmd($ci_server, 'ls ' . $project_dir);
             if ($ret['rc'])
             {
-                msg_log(LOG_NOTICE, 'updating existing project repository: ' . $git_repository);
+                msg_log(LOG_NOTICE, 'updating existing project repository: ' . $git_repository .
+                ' on server: ' . $ci_server['hostname']);
                 ci_run_cmd($ci_server, 'cd ' . $project_dir . ' && ' .
                     'git pull origin master');
             }
             else
             {
-                msg_log(LOG_NOTICE, 'creating new project repository: ' . $git_repository);
+                msg_log(LOG_NOTICE, 'creating new project repository: ' . $git_repository .
+                ' on server: ' . $ci_server['hostname']);
                 ci_run_cmd($ci_server, 'cd ' . $_CONFIG['project_dir'] . ' && ' .
                     'git clone ssh://git.promwad.com/repos/' . $git_repository);
             }
