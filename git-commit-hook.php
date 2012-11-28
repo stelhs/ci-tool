@@ -184,10 +184,10 @@ function main()
     // update projects configurations
     if (fnmatch($_CONFIG['ci_projects_repo_mask'], $git_repository))
     {
-        msg_log(LOG_NOTICE, 'updating configurations for project: ' . $git_repository);
         foreach ($_CONFIG['ci_servers'] as $ci_server)
         {
             $project_dir = str_replace('.git', '', $_CONFIG['project_dir'] . '/' . $git_repository);
+
             if (is_dir($project_dir))
             {
                 msg_log(LOG_NOTICE, 'updating existing project repository: ' . $git_repository);
