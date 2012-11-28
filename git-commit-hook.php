@@ -188,16 +188,18 @@ function main()
         {
             $project_dir = str_replace('.git', '', $_CONFIG['project_dir'] . '/' . $git_repository);
 
-            if (is_dir($project_dir))
+            // test for existing project
+            $ret = ci_run_cmd($ci_server, 'ls ' . $project_dir);
+            if ($ret['rc'])
             {
                 msg_log(LOG_NOTICE, 'updating existing project repository: ' . $git_repository);
-                run_remote_cmd($ci_server, 'cd ' . $project_dir . ' && ' .
+                ci_run_cmd($ci_server, 'cd ' . $project_dir . ' && ' .
                     'git pull origin master');
             }
             else
             {
                 msg_log(LOG_NOTICE, 'creating new project repository: ' . $git_repository);
-                run_remote_cmd($ci_server, 'cd ' . $_CONFIG['project_dir'] . ' && ' .
+                ci_run_cmd($ci_server, 'cd ' . $_CONFIG['project_dir'] . ' && ' .
                     'git clone ssh://git.promwad.com/repos/' . $git_repository);
             }
         }
