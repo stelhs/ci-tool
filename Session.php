@@ -303,7 +303,7 @@ class Session
     /**
      * run checkout sources
      */
-    public function checkout_src($repo, $branch, $commit, $base_commit)
+    public function checkout_src($repo, $branch, $commit)
     {
         msg_log(LOG_NOTICE, "start checkout in session: " . $this->get_info());
 
@@ -313,7 +313,6 @@ class Session
         $this->set_status('running_checkout');
 
         create_file($this->dir . '/.commit', $commit);
-        create_file($this->dir . '/.base_commit', $base_commit);
 
         add_to_file($this->dir . '/build.log', $this->get_log_header('Checkout procedure'));
 
