@@ -130,7 +130,7 @@ class Session
 
     /**
      * Get commit number
-     * @return status name
+     * @return name
      */
     private function get_commit()
     {
@@ -142,7 +142,7 @@ class Session
 
     /**
      * Get base commit number
-     * @return status name
+     * @return name
      */
     private function get_base_commit()
     {
@@ -152,6 +152,18 @@ class Session
         return get_dot_file_content($this->dir . '/.base_commit');
     }
 
+
+    /**
+     * Get triggered repo name
+     * @return name
+     */
+    private function get_repo_name()
+    {
+        if (!file_exists($this->dir . '/.repo'))
+            return false;
+
+        return get_dot_file_content($this->dir . '/.repo');
+    }
 
     /**
      * Store status into a file .status
@@ -313,6 +325,7 @@ class Session
         $this->set_status('running_checkout');
 
         create_file($this->dir . '/.commit', $commit);
+        create_file($this->dir . '/.repo', $repo);
 
         add_to_file($this->dir . '/build.log', $this->get_log_header('Checkout procedure'));
 
@@ -325,7 +338,6 @@ class Session
         }
 
         $this->set_status('finished_checkout');
-
         msg_log(LOG_NOTICE, "finished checkout in session: " . $this->get_info());
         return true;
     }
@@ -412,13 +424,16 @@ class Session
         $report_data['target_name'] = $target->get_name();
         $report_data['session_name'] = $this->get_name();
         $report_data['session_dir'] = $this->get_dir();
-        $report_data['server'] = $this_server['hostname'];
+        $report_data['session_url'] = '';
+        $report_data['server_hostname'] = $this_server['hostname'];
+        $report_data['server_addr'] = $this_server['addr'];
         $report_data['commit'] = $this->get_commit();
         $report_data['status'] = $status;
         $report_data['base_commit'] = $this->get_base_commit();
+        $report_data['repo_name'] = $this->get_repo_name();
 
         if (file_exists($this->dir . '/build.log'))
-            $report_data['path_to_build_log'] = strip_duplicate_slashes($this->dir . '/build.log');
+            $report_data['url_to_build_log'] = strip_duplicate_slashes($this->dir . '/build.log');
 
         if (file_exists($this->dir . '/.build_result'))
         {
@@ -476,7 +491,7 @@ class Session
         $email_tpl->assign(0, $report_data);
         if ($build_result_paths)
             foreach($build_result_paths as $path)
-                $email_tpl->assign("result", $path);
+                $email_tpl->assign("result", array('result_url' => $path));
         $email_body = $email_tpl->make_result();
 
         // get list email addresses from target settings
