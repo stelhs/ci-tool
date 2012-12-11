@@ -347,3 +347,14 @@ function strip_duplicate_slashes($str)
 {
     return preg_replace('/\/+/', '/', $str);
 }
+
+/**
+ * Return current http url path prefix to list projects
+ * @return string
+ */
+function get_http_url_projects()
+{
+    global $this_server;
+    return 'http://' . $this_server['addr'] .
+        ':80/build_results/';
+}

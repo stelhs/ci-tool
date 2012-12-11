@@ -40,6 +40,17 @@ class Session
     }
 
     /**
+     * Get session url
+     * @return CiDateTime
+     */
+    function get_url()
+    {
+        $target = $this->get_target();
+        $project = $target->get_project();
+        return get_http_url_projects() . '/' . $project->get_name() . '/' . $target->get_name() . '/' . $this->get_name();
+    }
+
+    /**
      * Get session date
      * @return CiDateTime
      */
@@ -424,7 +435,7 @@ class Session
         $report_data['target_name'] = $target->get_name();
         $report_data['session_name'] = $this->get_name();
         $report_data['session_dir'] = $this->get_dir();
-        $report_data['session_url'] = '';
+        $report_data['session_url'] = $this->get_url();
         $report_data['server_hostname'] = $this_server['hostname'];
         $report_data['server_addr'] = $this_server['addr'];
         $report_data['commit'] = $this->get_commit();
@@ -445,7 +456,7 @@ class Session
                 if (!trim($path))
                     continue;
 
-                $build_result_paths[] = strip_duplicate_slashes($this->dir . '/' . $path);
+                $build_result_paths[] = strip_duplicate_slashes($this->get_url() . '/' . $path);
             }
         }
 
@@ -469,7 +480,7 @@ class Session
         $tpl->assign(0, $report_data);
         if ($build_result_paths)
             foreach($build_result_paths as $path)
-                $tpl->assign("build_result", $path);
+                $tpl->assign("result", $path);
 
         create_file($this->dir . '/report.html', $tpl->make_result());
 
@@ -508,7 +519,6 @@ class Session
         if ($email_list)
             foreach ($email_list as $m_addr)
                 mail($m_addr, $subject, $email_body, $_CONFIG['email_header']);
-
 
         msg_log(LOG_NOTICE, "report successfully created in session: " . $this->get_info());
         return 0;
