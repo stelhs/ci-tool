@@ -296,7 +296,7 @@ function main()
                         if (!$sessions)
                         {
                             echo "no sessions\n";
-                            return 0;
+                            return 1;
                         }
 
                         echo "list of sessions:\n";
@@ -535,6 +535,9 @@ function main()
              * and waiting while all pending sessions before current sessions go to build state
              */
             $free_build_slots = get_free_build_slots($projects);
+            msg_log(LOG_NOTICE, "Detect " . $free_build_slots . " free build slots on " .
+                $this_server['hostname'] . " server");
+
             if ($free_build_slots <= 0)
             {
                 $session->set_status('pending');

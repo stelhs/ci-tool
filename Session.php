@@ -474,7 +474,7 @@ class Session
 
 
         /*
-         * generate html file
+         * generate html filelfds
          */
         $tpl = new Tpl($_CONFIG['ci_dir'] . '/templates/report.html');
         $tpl->assign(0, $report_data);

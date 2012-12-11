@@ -250,6 +250,9 @@ function main()
         $rc = ci_run_cmd($ci_server,
             'ci get sessions pending ' . $git_repository . ' ' . $git_branch);
 
+        if ($rc['rc'])
+            continue;
+
         $session_dirs = $rc['log'];
         $dirs = explode("\n", $session_dirs);
         if (!$dirs)
