@@ -480,7 +480,7 @@ class Session
         $tpl->assign(0, $report_data);
         if ($build_result_paths)
             foreach($build_result_paths as $path)
-                $tpl->assign("result", $path);
+                $tpl->assign("result", array('result_url' => $path));
 
         create_file($this->dir . '/report.html', $tpl->make_result());
 
