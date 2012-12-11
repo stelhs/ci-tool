@@ -24,8 +24,8 @@ $_CONFIG['ci_servers'] = array(
                                 ),
                         );
 
-$_CONFIG['email_header'] = 'From: erocalendar.ru <service@erocalendar.ru>'."\n".
-    'Reply-To: service@erocalendar.ru'."\n".
+$_CONFIG['email_header'] = 'From: ci-tool@promwad.com'."\n".
+    'Reply-To: ci-tool@promwad.com'."\n".
     'Content-type:text/html; Charset=utf-8'."\r\n";
 
 $_CONFIG['debug_level'] = array(LOG_ERR, LOG_WARNING, LOG_NOTICE);
