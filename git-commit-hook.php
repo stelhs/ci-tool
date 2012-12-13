@@ -302,5 +302,6 @@ function main()
     return 0;
 }
 
-return main();
+$rc =  main();
+exit($rc);
 

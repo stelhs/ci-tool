@@ -742,5 +742,4 @@ function main()
 }
 
 $rc =  main();
-dump('$rc = ' . $rc);
 exit($rc);
