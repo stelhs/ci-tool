@@ -281,7 +281,7 @@ function main()
             msg_log(LOG_ERROR, 'can\'t create session');
             continue;
         }
-        
+
         $session_name = $rc['log'];
 
         msg_log(LOG_NOTICE, 'run build on session: ' . $ci_server['hostname'] .
