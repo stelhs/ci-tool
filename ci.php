@@ -743,4 +743,4 @@ function main()
 
 $rc =  main();
 dump('$rc = ' . $rc);
-return $rc;
+exit($rc);
