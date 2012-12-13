@@ -242,10 +242,8 @@ class Session
                         '" but .pid file was not found, re run pending');
 
                     // TODO: Запустить пендинг если тот упал
-                    dump($stored_status);
-                    return $stored_status;
                 }
-                break;
+                return $stored_status;
 
             case 'running_checkout':
             case 'running_build':
