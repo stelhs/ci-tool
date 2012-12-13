@@ -124,9 +124,7 @@ function main()
     // get project object
     if ($project_name)
     {
-        dump($project_name);
         $project = $projects->find_project($project_name);
-        dump('$project = ' . $project);
         if (!$project)
         {
             msg_log(LOG_ERR, 'project not found');
