@@ -121,11 +121,11 @@ function main()
             break;
     }
 
-dump($projects->get_dir());
     // get project object
     if ($project_name)
     {
         $project = $projects->find_project($project_name);
+        dump('$project = ' . $project);
         if (!$project)
         {
             msg_log(LOG_ERR, 'project not found');
