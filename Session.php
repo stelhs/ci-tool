@@ -232,6 +232,7 @@ class Session
     {
         $pid = $this->get_pid();
         $stored_status = get_dot_file_content($this->dir . '/.status');
+        dump($stored_status);
         switch ($stored_status)
         {
             case 'pending':
