@@ -209,6 +209,8 @@ function main()
                                     return 0;
                                 }
 
+                                dump('$repo = ' . $repo);
+                                dump('$branch = ' . $branch);
                                 $sessions = $projects->get_all_sessions(array('pending'), $repo, $branch);
                                 break;
 
