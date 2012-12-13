@@ -741,4 +741,6 @@ function main()
     return $rc;
 }
 
-return main();
+$rc =  main();
+dump('$rc = ' . $rc);
+return $rc;
