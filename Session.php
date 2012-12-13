@@ -293,7 +293,7 @@ class Session
      */
     private function run_recipe($bash_file, $args = '', $log_file = '')
     {
-        msg_log(LOG_NOTICE, "run_script " . $bash_file . " in session: " . $this->get_info());
+        msg_log(LOG_NOTICE, "run_recipe " . $bash_file . " in session: " . $this->get_info());
 
         if (!is_file($this->target->get_dir() . '/' . $bash_file))
         {
@@ -304,7 +304,7 @@ class Session
 
         $ret = run_cmd('cd ' . $this->dir . ';' .
             $this->target->get_dir() . '/' . $bash_file . ' ' . $args .
-            ($log_file ? (' | tee -a ' . $this->dir . '/' . $log_file) : ''),
+            ($log_file ? (' 2>&1 | tee -a ' . $this->dir . '/' . $log_file) : ''),
             false, '', true);
 
         delete_file($this->dir . '/.pid');
