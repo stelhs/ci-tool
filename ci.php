@@ -186,9 +186,9 @@ function main()
 
                     case 'sessions':
                     {
-                        $command = isset($argv[3]) ? $argv[3] : NULL;
-                        $repo = isset($argv[4]) ? $argv[4] : NULL;
-                        $branch = isset($argv[5]) ? $argv[5] : NULL;
+                        $command = trim(isset($argv[3]) ? $argv[3] : NULL);
+                        $repo = trim(isset($argv[4]) ? $argv[4] : NULL);
+                        $branch = trim(isset($argv[5]) ? $argv[5] : NULL);
 
                         switch ($command)
                         {
@@ -209,8 +209,6 @@ function main()
                                     return 0;
                                 }
 
-                                dump('$repo = ' . $repo);
-                                dump('$branch = ' . $branch);
                                 $sessions = $projects->get_all_sessions(array('pending'), $repo, $branch);
                                 break;
 
