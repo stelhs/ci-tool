@@ -476,6 +476,7 @@ class Session
          * generate html filelfds
          */
         $tpl = new Tpl($_CONFIG['ci_dir'] . '/templates/report.html');
+        $tpl->enable_comments = false;
         $tpl->assign(0, $report_data);
         if ($build_result_paths)
             foreach($build_result_paths as $path)
@@ -488,6 +489,7 @@ class Session
          * generate and send email
          */
         $tpl = new Tpl($_CONFIG['ci_dir'] . '/templates/email_report.html');
+        $tpl->enable_comments = false;
         $subject_template = trim($tpl->load_block('build_result_subject'));
         $email_template = $tpl->load_block('build_result');
 
