@@ -59,8 +59,7 @@ function get_free_build_slots(List_projects $projects)
     // count sessions in running mode
     $build_processes = count($list_sessions);
 
-    // +1 - need because current process run in "created" session
-    $free_build_slots = $this_server['max_build_slots'] - $build_processes + 1;
+    $free_build_slots = $this_server['max_build_slots'] - $build_processes;
     return $free_build_slots;
 }
 
@@ -535,7 +534,9 @@ function main()
              * if found pending sessions - switch current session to 'pending' state,
              * and waiting while all pending sessions before current sessions go to build state
              */
-            $free_build_slots = get_free_build_slots($projects);
+            $free_build_slots = get_free_build_slots($projects) + 1;
+            // +1 - need because current process run in "created" session
+
             msg_log(LOG_NOTICE, "Detect " . $free_build_slots . " free build slots on server " .
                 $this_server['hostname']);
 
