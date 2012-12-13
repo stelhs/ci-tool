@@ -445,11 +445,11 @@ class Session
         if (file_exists($this->dir . '/build.log'))
             $report_data['url_to_build_log'] = strip_duplicate_slashes($this->dir . '/build.log');
 
+        $build_result_paths = array();
         if (file_exists($this->dir . '/.build_result'))
         {
             $content = get_dot_file_content($this->dir . '/.build_result');
             $paths = explode("\n", $content);
-            $build_result_paths = array();
             foreach($paths as $path)
             {
                 if (!trim($path))
