@@ -92,8 +92,6 @@ function main()
     if (file_exists('.session_desc'))
         $obj_type = 'session';
 
-    dump($obj_type);
-
     // Parse path and detect $project_name and $target_name and $session_name
     $target_name = '';
     $project_name = '';
