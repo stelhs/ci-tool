@@ -121,7 +121,7 @@ function main()
             break;
     }
 
-dump($project_name);
+dump($projects->get_dir());
     // get project object
     if ($project_name)
     {
