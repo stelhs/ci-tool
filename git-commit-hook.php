@@ -64,7 +64,6 @@ function ci_run_cmd($ci_server, $cmd, $fork = false, $stdin_data = '')
 function get_ci_free_build_slots($ci_server)
 {
     $rc = ci_run_cmd($ci_server, 'ci get free_build_slots');
-dump($rc);
     if ($rc['rc'])
         throw new Exception('"ci get free_build_slots" - return error');
 
