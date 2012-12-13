@@ -232,7 +232,6 @@ class Session
     {
         $pid = $this->get_pid();
         $stored_status = get_dot_file_content($this->dir . '/.status');
-        dump($stored_status);
         switch ($stored_status)
         {
             case 'pending':
@@ -243,6 +242,7 @@ class Session
                         '" but .pid file was not found, re run pending');
 
                     // TODO: Запустить пендинг если тот упал
+                    dump($stored_status);
                     return $stored_status;
                 }
                 break;
