@@ -186,7 +186,6 @@ function main()
                         $last_session = array();
                         $last_date = new CiDateTime();
                         $last_date->setDate(2000, 1, 1);
-                        dump($last_date->to_string());
                         foreach ($list_sessions as $session)
                         {
                             $created_date = $session->get_date();
