@@ -189,6 +189,7 @@ function main()
                         foreach ($list_sessions as $session)
                         {
                             $created_date = $session->get_date();
+                            dump($created_date->to_string());
                             if ($created_date > $last_date)
                             {
                                 $last_session = $session;
