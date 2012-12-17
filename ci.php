@@ -169,6 +169,36 @@ function main()
                 $param = isset($argv[2]) ? $argv[2] : NULL;
                 switch ($param)
                 {
+                    case 'get_last_commit':
+                        if ($print_help)
+                        {
+                            print_help_commands('get get_last_commit', 'get last session and return time and commit hash');
+                            return 0;
+                        }
+
+                        $list_sessions = $projects->get_all_sessions();
+                        if (!$list_sessions)
+                        {
+                            echo 'sessions not found';
+                            return 1;
+                        }
+
+                        $last_session = array();
+                        $last_date = new CiDateTime();
+                        $last_date->createFromFormat('Y-m-d', '2000-01-01');
+                        foreach ($list_sessions as $session)
+                        {
+                            $created_date = $session->get_date();
+                            if ($created_date > $last_date)
+                            {
+                                $last_session = $session;
+                                $last_date = $created_date;
+                            }
+                        }
+
+                        echo $last_date->to_string() . ':' . $last_session->get_commit() . "\n";
+                        return 0;
+
                     case 'free_build_slots':
                         if ($print_help)
                         {
@@ -330,6 +360,7 @@ function main()
                 {
                     print_help_commands('get', 'get various values',
                         array(
+                        'get_last_commit' => 'get last session and return time and commit hash',
                         'free_build_slots' => 'get count of free build clots',
                         'session_status' => 'return current session status',
                         'sessions' => 'get information about all sessions',

@@ -4,6 +4,7 @@ $_CONFIG['project_dir'] = '/var/opt/ci-projects/';
 $_CONFIG['web'] = '/home/stelhs/projects/ci/web/';
 $_CONFIG['ci_repo'] = 'ci-tool.git';
 $_CONFIG['ci_projects_repo_mask'] = 'ci-*';
+$_CONFIG['git_server'] = 'git.promwad.com';
 $_CONFIG['ci_servers'] = array(
                                 array('hostname' => 'sp-build03-lo1.promwad.corp',
                                       'addr' => '192.168.10.2',

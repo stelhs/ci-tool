@@ -201,7 +201,7 @@ function main()
                 msg_log(LOG_NOTICE, 'creating new project repository: ' . $git_repository .
                 ' on server: ' . $ci_server['hostname']);
                 ci_run_cmd($ci_server, 'cd ' . $_CONFIG['project_dir'] . ' && ' .
-                    'git clone ssh://git.promwad.com/repos/' . $git_repository);
+                    'git clone ssh://' . $_CONFIG['git_server'] . '/repos/' . $git_repository);
             }
         }
 

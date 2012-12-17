@@ -152,19 +152,6 @@ class Session
     }
 
     /**
-     * Get base commit number
-     * @return name
-     */
-    private function get_base_commit()
-    {
-        if (!file_exists($this->dir . '/.base_commit'))
-            return false;
-
-        return get_dot_file_content($this->dir . '/.base_commit');
-    }
-
-
-    /**
      * Get triggered repo name
      * @return name
      */
@@ -459,6 +446,13 @@ class Session
             }
         }
 
+        // foreach all servers
+            // foreach sessions and match repo and branch with status finished_xxx
+            // found recent session
+        // found recent $old_commit
+        $rc = run_cmd('ssh ' . $_CONFIG['git_server'] . ' get-git-log ' .
+            $this->get_repo_name() . ' ' . $old_commit . ' ' $this->get_commit());
+        $report_data['git_log'] = $rc['log'];
 
         /*
         * generate XML report file

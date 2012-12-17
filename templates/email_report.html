@@ -8,28 +8,36 @@
 <!-- END BLOCK : build_result_subject -->
 
 <!-- START BLOCK : build_result --> /// Тело письма
-	<table>
-		<tr>
-			<td>Project Name: </td>
-			<td>{project_name}</td>
-		</tr>
-		<tr>
-			<td>Target Name: </td>
-			<td>{target_name}</td>
-		</tr>
+    <table>
+        <tr>
+            <td>Project Name: </td>
+            <td>{project_name}</td>
+        </tr>
+        <tr>
+            <td>Target Name: </td>
+            <td>{target_name}</td>
+        </tr>
         <tr>
                 <td>Session Name: </td>
-                <td>{session_name}</td>
+                <td>
+                    <a href="{session_url}">
+                        {session_name}
+                    </a>
+                </td>
         </tr>
         <tr>
                 <td>Server Name: </td>
-                <td>{server_hostname}</td>
+                <td>
+                    <a href="{projects_url}">
+                        {server_hostname}
+                    </a>
+                </td>
         </tr>
         <tr>
                 <td>Triggered Commit: </td>
                 <td>
                     <a href="http://git.promwad.com/gitweb/?p={repo_name};a=commit;h={commit}">
-                        http://git.promwad.com/gitweb/?p={repo_name};a=commit;h={commit}
+                        {commit}
                     </a>
                 </td>
         </tr>
@@ -42,13 +50,6 @@
                 <td>{url_to_build_log}</td>
         </tr>
         <tr>
-                <td>Build Folder: </td>
-                <td>
-                    {session_url}<br>
-                    scp://ci-tool@{server_addr}/{session_dir}
-                </td>
-        </tr>
-        <tr>
             <td>Results: </td>
             <td>
                 <!-- START BLOCK : result -->
@@ -59,5 +60,13 @@
                 <!-- END BLOCK : result -->
              </td>
         </tr>
-    </table>                
+        <tr>
+            <td>Comments:</td>
+            <td>{session_description}</td>
+        </tr>
+        <tr>
+            <td>Git log:</td>
+            <td>{git_log}</td>
+        </tr>
+    </table>
 <!-- END BLOCK : build_result -->
