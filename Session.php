@@ -450,9 +450,9 @@ class Session
             // foreach sessions and match repo and branch with status finished_xxx
             // found recent session
         // found recent $old_commit
-        $rc = run_cmd('ssh ' . $_CONFIG['git_server'] . ' get-git-log ' .
+      /*  $rc = run_cmd('ssh ' . $_CONFIG['git_server'] . ' get-git-log ' .
             $this->get_repo_name() . ' ' . $old_commit . ' ' $this->get_commit());
-        $report_data['git_log'] = $rc['log'];
+        $report_data['git_log'] = $rc['log'];*/
 
         /*
         * generate XML report file
