@@ -143,7 +143,7 @@ class Session
      * Get commit number
      * @return name
      */
-    private function get_commit()
+    public function get_commit()
     {
         if (!file_exists($this->dir . '/.commit'))
             return false;
