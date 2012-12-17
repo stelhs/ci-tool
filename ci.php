@@ -185,7 +185,7 @@ function main()
 
                         $last_session = array();
                         $last_date = date_create_from_format('Y-m-d', '2000-01-01');
-                        dump($last_date->to_string());
+                        dump($last_date);
                         foreach ($list_sessions as $session)
                         {
                             $created_date = $session->get_date();
