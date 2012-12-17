@@ -185,7 +185,7 @@ function main()
 
                         $last_session = array();
                         $last_date = new CiDateTime();
-                        $last_date->setDate(2000, 1, 1);
+                        $last_date->setDate(1984, 1, 1);
                         foreach ($list_sessions as $session)
                         {
                             $created_date = $session->get_date();
@@ -634,7 +634,39 @@ function main()
                 return 1;
             }
 
-            $rc = $session->make_report($email);
+
+            // found last commit on all servers
+            $last_date = new CiDateTime();
+            $last_date->setDate(1984, 1, 1);
+            $last_commit_info = array();
+            foreach ($_CONFIG['ci_servers'] as $ci_server)
+            {
+                $rc = ci_run_cmd($ci_server, 'ci get get_last_commit');
+                if ($rc['rc'])
+                    continue;
+
+                $commit_info = explode(':', $rc['ret']);
+                $date = new CiDateTime();
+                $date->from_string($commit_info[0]);
+
+                if ($date > $last_date)
+                {
+                    $last_date = $date;
+                    $last_commit_info = $commit_info;
+                }
+            }
+
+            $prev_commit = '';
+            if ($last_commit_info)
+            {
+                $prev_commit = $last_commit_info[1];
+                msg_log(LOG_NOTICE, 'found previous commit hash: ' . $prev_commit);
+            }
+            else
+                msg_log(LOG_WARNING, 'not found previous commit hash, report was created without git-log');
+
+
+            $rc = $session->make_report($prev_commit, $email);
             break;
 
         case 'checkout':

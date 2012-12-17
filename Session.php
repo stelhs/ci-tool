@@ -404,9 +404,10 @@ class Session
      * create report.xml
      * create report.html
      * send report by email
+     * @param $prev_commit - previous last commit
      * @param string $email_addr - report recepient email address
      */
-    public function make_report($email_addr = '')
+    public function make_report($prev_commit, $email_addr = '')
     {
         global $_CONFIG, $this_server;
 
@@ -446,13 +447,19 @@ class Session
             }
         }
 
-        // foreach all servers
-            // foreach sessions and match repo and branch with status finished_xxx
-            // found recent session
-        // found recent $old_commit
-      /*  $rc = run_cmd('ssh ' . $_CONFIG['git_server'] . ' get-git-log ' .
-            $this->get_repo_name() . ' ' . $old_commit . ' ' $this->get_commit());
-        $report_data['git_log'] = $rc['log'];*/
+        /*
+         * create git-log
+         */
+        if ($prev_commit)
+        {
+            $rc = run_cmd('ssh ' . $_CONFIG['git_server'] . ' get-git-log ' .
+                $this->get_repo_name() . ' ' . $prev_commit . ' ' . $this->get_commit());
+
+            if ($rc['rc'])
+                msg_log(LOG_ERR, 'Can\'t get git-log. script get-git-log say: ' . $rc['log']);
+            else
+                $report_data['git_log'] = $rc['log'];
+        }
 
         /*
         * generate XML report file

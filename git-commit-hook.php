@@ -40,27 +40,6 @@ function error_exception($exception)
     exit;
 }
 
-
-/**
- * Run command on CI server
- * @param $ci_server - config CI server
- * @param $cmd - command
- * @param $fork - true - run in new thread (not receive results), false - run in current thread
- * @param $stdin_data - optional data direct to stdin
- * @return return result array
- */
-function ci_run_cmd($ci_server, $cmd, $fork = false, $stdin_data = '')
-{
-    global $this_server;
-
-    if ($ci_server['hostname'] == $this_server['hostname'])
-        $rc = run_cmd($cmd, $fork, $stdin_data);
-    else
-        $rc = run_remote_cmd($ci_server, $cmd, $fork, $stdin_data);
-
-    return $rc;
-}
-
 function get_ci_free_build_slots($ci_server)
 {
     $rc = ci_run_cmd($ci_server, 'ci get free_build_slots');
