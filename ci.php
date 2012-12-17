@@ -185,11 +185,11 @@ function main()
 
                         $last_session = array();
                         $last_date = new CiDateTime();
+                        dump($last_date->to_string());
                         $last_date->createFromFormat('Y-m-d', '2000-01-01');
                         foreach ($list_sessions as $session)
                         {
                             $created_date = $session->get_date();
-                            dump($created_date->to_string());
                             if ($created_date > $last_date)
                             {
                                 $last_session = $session;
