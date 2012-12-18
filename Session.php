@@ -152,6 +152,18 @@ class Session
     }
 
     /**
+     * Get session description
+     * @return name
+     */
+    public function get_description()
+    {
+        if (!file_exists($this->dir . '/.session_desc'))
+            return false;
+
+        return get_dot_file_content($this->dir . '/.session_desc');
+    }
+
+    /**
      * Get triggered repo name
      * @return name
      */
@@ -429,6 +441,7 @@ class Session
         $report_data['status'] = $status;
         $report_data['base_commit'] = $this->get_base_commit();
         $report_data['repo_name'] = $this->get_repo_name();
+        $report_data['session_description'] = $this->get_description();
 
         if (file_exists($this->dir . '/build.log'))
             $report_data['url_to_build_log'] = strip_duplicate_slashes($this->dir . '/build.log');
@@ -450,7 +463,7 @@ class Session
         /*
          * create git-log
          */
-       /* if ($prev_commit)
+        if ($prev_commit)
         {
             $rc = run_cmd('ssh ' . $_CONFIG['git_server'] . ' get-git-log ' .
                 $this->get_repo_name() . ' ' . $prev_commit . ' ' . $this->get_commit());
@@ -459,7 +472,7 @@ class Session
                 msg_log(LOG_ERR, 'Can\'t get git-log. script get-git-log say: ' . $rc['log']);
             else
                 $report_data['git_log'] = $rc['log'];
-        }*/
+        }
 
         /*
         * generate XML report file
