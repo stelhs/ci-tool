@@ -439,7 +439,6 @@ class Session
         $report_data['server_addr'] = $this_server['addr'];
         $report_data['commit'] = $this->get_commit();
         $report_data['status'] = $status;
-        $report_data['base_commit'] = $this->get_base_commit();
         $report_data['repo_name'] = $this->get_repo_name();
         $report_data['session_description'] = $this->get_description();
 

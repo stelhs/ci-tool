@@ -645,7 +645,7 @@ function main()
                 if ($rc['rc'])
                     continue;
 
-                $commit_info = explode(':', $rc['ret']);
+                $commit_info = explode(':', $rc['log']);
                 $date = new CiDateTime();
                 $date->from_string($commit_info[0]);
 
