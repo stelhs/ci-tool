@@ -512,6 +512,21 @@ class Session
         $email_tpl = new Tpl();
         $email_tpl->open_buffer($email_template);
         $email_tpl->assign(0, $report_data);
+
+        //succesfull_build
+        switch ($report_data['status'])
+        {
+            case 'finished_checkout':
+            case 'finished_build':
+            case 'finished_test':
+                $email_tpl->assign("succesfull_build", array('status' => $report_data['status']));
+                break;
+
+            default:
+                $email_tpl->assign("fail_build", array('status' => $report_data['status']));
+                break;
+        }
+
         if ($build_result_paths)
             foreach($build_result_paths as $path)
                 $email_tpl->assign("result", array('result_url' => $path));

@@ -3,12 +3,23 @@
 */
 
 // Письмо с уведомлением о автоматической сборки таргета
-<!-- START BLOCK : build_result_subject --> /// Заголовок письма
-	[CI Tool] {target_name} was built on {server} for {project_name}
+<!-- START BLOCK : build_result_subject --> /// Subject
+	[CI Tool][{project_name}][{target_name}] - {status}
 <!-- END BLOCK : build_result_subject -->
 
-<!-- START BLOCK : build_result --> /// Тело письма
+<!-- START BLOCK : build_result --> /// body
     <table>
+        <tr>
+            <td>Status of Build: </td>
+            <td>
+                <!-- START BLOCK : succesfull_build -->
+                    <font color="green">{status}</font>
+                <!-- END BLOCK : succesfull_build -->
+                <!-- START BLOCK : fail_build -->
+                    <font color="red">{status}</font>
+                <!-- END BLOCK : fail_build -->
+            </td>
+        </tr>
         <tr>
             <td>Project Name: </td>
             <td>{project_name}</td>
@@ -26,24 +37,13 @@
                 </td>
         </tr>
         <tr>
-                <td>Server Name: </td>
-                <td>
-                    <a href="{projects_url}">
-                        {server_hostname}
-                    </a>
-                </td>
-        </tr>
-        <tr>
                 <td>Triggered Commit: </td>
                 <td>
                     <a href="http://git.promwad.com/gitweb/?p={repo_name};a=commit;h={commit}">
-                        {commit}
+                        {commit}<br>
+                        {session_description}
                     </a>
                 </td>
-        </tr>
-        <tr>
-                <td>Status of Build: </td>
-                <td>{status}</td>
         </tr>
         <tr>
                 <td>Build Log: </td>
@@ -59,10 +59,6 @@
                     <br>
                 <!-- END BLOCK : result -->
              </td>
-        </tr>
-        <tr>
-            <td>Comments:</td>
-            <td>{session_description}</td>
         </tr>
         <tr>
             <td>Git log:</td>
