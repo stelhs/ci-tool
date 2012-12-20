@@ -32,14 +32,14 @@
                 <td>Session Name: </td>
                 <td>
                     <a href="{session_url}">
-                        {session_name}
+                        {session_date}
                     </a>
                 </td>
         </tr>
         <tr>
                 <td>Triggered Commit: </td>
                 <td>
-                    <a href="http://git.promwad.com/gitweb/?p={repo_name};a=commit;h={commit}">
+                    <a href="http://git.promwad.com/gitweb?p={repo_name};a=commitdiff;h={commit};hp={prev_commit};ds=sidebyside">
                         {commit}<br>
                         {session_description}
                     </a>

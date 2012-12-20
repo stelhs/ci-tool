@@ -110,7 +110,7 @@ class Session
      * abort session
      * return session status or false if session was not aborted
      */
-    function abort()
+    function abort($reason = '')
     {
         $current_state = $this->get_state();
         $aborted_state = $this->set_abort_status($current_state);
@@ -121,6 +121,8 @@ class Session
             delete_file($this->dir . '/.pid');
             kill_all($pid);
         }
+
+        add_to_file($this->dir . '/build.log', $this->get_log_header('Session was aborted', 'Reason: ' . $reason));
 
         msg_log(LOG_NOTICE, "session was aborted");
         return $aborted_state;
@@ -312,11 +314,12 @@ class Session
     }
 
 
-    private function get_log_header($procedure_name)
+    private function get_log_header($procedure_name, $addition_text = '')
     {
         return
             "\n========================================\n" .
             "\t" . $procedure_name . "\n" .
+            "\t" . $addition_text . "\n" .
             "\tDate: " . date("Y-m-d H:i:s") . "\n" .
             "========================================\n\n";
     }
@@ -433,11 +436,13 @@ class Session
         $report_data['project_name'] = $project->get_name();
         $report_data['target_name'] = $target->get_name();
         $report_data['session_name'] = $this->get_name();
+        $report_data['session_date'] = $this->get_date()->format('Y-m-d h:i:s');
         $report_data['session_dir'] = $this->get_dir();
         $report_data['session_url'] = $this->get_url();
         $report_data['server_hostname'] = $this_server['hostname'];
         $report_data['server_addr'] = $this_server['addr'];
         $report_data['commit'] = $this->get_commit();
+        $report_data['prev_commit'] = $prev_commit;
         $report_data['status'] = $status;
         $report_data['repo_name'] = $this->get_repo_name();
         $report_data['session_description'] = $this->get_description();

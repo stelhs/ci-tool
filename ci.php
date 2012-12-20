@@ -63,6 +63,47 @@ function get_free_build_slots(List_projects $projects)
     return $free_build_slots;
 }
 
+/**
+ * Function view on all servers and find last commit hash
+ * @return string - commit hash
+ */
+function find_previous_commit()
+{
+    global $_CONFIG;
+
+    // found last commit on all servers
+    $last_date = new CiDateTime();
+    $last_date->setDate(1984, 1, 1);
+    $last_commit_info = array();
+    foreach ($_CONFIG['ci_servers'] as $ci_server)
+    {
+        $rc = ci_run_cmd($ci_server, 'ci get get_last_commit');
+        if ($rc['rc'])
+            continue;
+
+        $commit_info = explode(':', $rc['log']);
+        $date = new CiDateTime();
+        $date->from_string($commit_info[0]);
+
+        if ($date > $last_date)
+        {
+            $last_date = $date;
+            $last_commit_info = $commit_info;
+        }
+    }
+
+    $prev_commit = '';
+    if ($last_commit_info)
+    {
+        msg_log(LOG_NOTICE, 'found previous commit hash: ' . $prev_commit);
+        $prev_commit = $last_commit_info[1];
+    }
+    else
+        msg_log(LOG_WARNING, 'not found previous commit hash, report was created without git-log');
+
+    return $prev_commit;
+}
+
 
 function main()
 {
@@ -634,38 +675,7 @@ function main()
                 return 1;
             }
 
-
-            // found last commit on all servers
-            $last_date = new CiDateTime();
-            $last_date->setDate(1984, 1, 1);
-            $last_commit_info = array();
-            foreach ($_CONFIG['ci_servers'] as $ci_server)
-            {
-                $rc = ci_run_cmd($ci_server, 'ci get get_last_commit');
-                if ($rc['rc'])
-                    continue;
-
-                $commit_info = explode(':', $rc['log']);
-                $date = new CiDateTime();
-                $date->from_string($commit_info[0]);
-
-                if ($date > $last_date)
-                {
-                    $last_date = $date;
-                    $last_commit_info = $commit_info;
-                }
-            }
-
-            $prev_commit = '';
-            if ($last_commit_info)
-            {
-                $prev_commit = $last_commit_info[1];
-                msg_log(LOG_NOTICE, 'found previous commit hash: ' . $prev_commit);
-            }
-            else
-                msg_log(LOG_WARNING, 'not found previous commit hash, report was created without git-log');
-
-
+            $prev_commit = find_previous_commit();
             $rc = $session->make_report($prev_commit, $email);
             break;
 
@@ -757,13 +767,14 @@ function main()
                 return 1;
             }
 
-            $rc = $session->make_report($email_addr);
+            $prev_commit = find_previous_commit();
+            $rc = $session->make_report($prev_commit, $email_addr);
             break;
 
         case 'abort':
             if ($print_help)
             {
-                print_help_commands('abort',
+                print_help_commands('abort {reason}',
                     'abort current session');
                 return 1;
             }
@@ -774,15 +785,35 @@ function main()
                 return 1;
             }
 
-            $rc = $session->abort();
+            $reason = isset($argv[2]) ? $argv[2] : NULL;
+
+            $rc = $session->abort($reason);
             if (!$rc)
             {
                 msg_log(LOG_ERR, 'session not run');
                 break;
             }
 
-            $session->make_report();
+            $prev_commit = find_previous_commit();
+            $session->make_report($prev_commit);
             break;
+
+        case 'status':
+            if ($print_help)
+            {
+                print_help_commands('status', 'return current build session status');
+                return 0;
+            }
+
+            if ($obj_type != 'session')
+            {
+                msg_log(LOG_ERR, 'This operation permited only from session dir');
+                return 1;
+            }
+
+            echo $session->get_state() . "\n";
+            return 0;
+
 
         default:
             msg_log(LOG_ERR, 'No operation');
@@ -796,6 +827,7 @@ function main()
                     'report' => 'make report',
                     'purge' => 'purge old sessions',
                     'abort' => 'abort current session',
+                    'status' => 'get build session status',
                     'all' => 'waiting for free slot and run checkout, build and tests',
                 ));
             return 1;
