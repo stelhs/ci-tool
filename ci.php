@@ -601,10 +601,12 @@ function main()
                 return 1;
             }
 
+            $prev_commit = find_previous_commit();
+
             /*
-             * if found pending sessions - switch current session to 'pending' state,
-             * and waiting while all pending sessions before current sessions go to build state
-             */
+            * if found pending sessions - switch current session to 'pending' state,
+            * and waiting while all pending sessions before current sessions go to build state
+            */
             $free_build_slots = get_free_build_slots($projects) + 1;
             // +1 - need because current process run in "created" session
 
@@ -675,7 +677,6 @@ function main()
                 return 1;
             }
 
-            $prev_commit = find_previous_commit();
             $rc = $session->make_report($prev_commit, $email);
             break;
 
