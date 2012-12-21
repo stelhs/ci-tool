@@ -306,7 +306,7 @@ class Session
 
         create_file($this->dir . '/.pid', getmypid());
 
-        $ret = run_cmd("error() {\nexit 1\n}\ntrap error ERR;" .
+        $ret = run_cmd("function error() {\nexit 1\n}\ntrap error ERR;" .
             'cd ' . $this->dir . ' && ' .
 //            $_CONFIG['ci_dir'] . "/run_script.sh " .
             $this->target->get_dir() . '/' . $bash_file . ' ' . $args .
