@@ -313,6 +313,8 @@ class Session
             'exit $?',
             false, '', true);
 
+        dump($ret);
+
         delete_file($this->dir . '/.pid');
 
         return $ret;
