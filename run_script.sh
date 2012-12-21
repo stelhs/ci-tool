@@ -9,7 +9,7 @@ function error() {
   else
     echo "Error on or near line ${PARENT_LINENO}; exiting with status ${CODE}"
   fi
-  exit "${CODE}"
+  exit ${CODE}
 }
 trap 'error ${LINENO}' ERR
 
