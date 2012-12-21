@@ -323,7 +323,7 @@ class Session
         return
             "\n========================================\n" .
             "\t" . $procedure_name . "\n" .
-            "\t" . $addition_text . "\n" .
+            ($addition_text ? ("\t" . $addition_text . "\n") : "") .
             "\tDate: " . date("Y-m-d H:i:s") . "\n" .
             "========================================\n\n";
     }
