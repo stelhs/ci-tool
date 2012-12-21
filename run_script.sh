@@ -15,4 +15,4 @@ trap 'error ${LINENO}' ERR
 
 script=$1
 shift 1
-./$script $@
+$script $@
