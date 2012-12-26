@@ -310,7 +310,7 @@ class Session
             'cd ' . $this->dir . ' && ' .
 //            $_CONFIG['ci_dir'] . "/run_script.sh " .
             $this->target->get_dir() . '/' . $bash_file . ' ' . $args .
-            ($log_file ? (' 2>&1 | tee -a ' . $this->dir . '/' . $log_file) : '') . '; exit 1',
+            ($log_file ? (' 2>&1 | tee -a ' . $this->dir . '/' . $log_file) : '') . '',
             false, '', true);
 
         dump($ret);
