@@ -306,11 +306,11 @@ class Session
 
         create_file($this->dir . '/.pid', getmypid());
 
-        $ret = run_cmd("error() { echo JOPA; exit 1; }; trap error ERR;" .
+        $ret = run_cmd("" .
             'cd ' . $this->dir . ' && ' .
 //            $_CONFIG['ci_dir'] . "/run_script.sh " .
             $this->target->get_dir() . '/' . $bash_file . ' ' . $args .
-            ($log_file ? (' 2>&1 | tee -a ' . $this->dir . '/' . $log_file) : ''),
+            ($log_file ? (' 2>&1 | tee -a ' . $this->dir . '/' . $log_file) : '') . '; exit 1',
             false, '', true);
 
         dump($ret);
