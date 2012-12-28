@@ -313,8 +313,6 @@ class Session
             ($log_file ? (' 2>&1 | tee -a ' . $this->dir . '/' . $log_file) : '') . '; exit ${PIPESTATUS[0]}',
             false, '', true);
 
-        dump($ret);
-
         delete_file($this->dir . '/.pid');
 
         return $ret;
