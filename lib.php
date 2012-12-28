@@ -98,6 +98,7 @@ function run_cmd($cmd, $fork = false, $stdin_data = '', $print_stdout = false)
     $fd = proc_open($cmd . ' 2>&1;', $descriptorspec, $pipes);
     if ($fd == false)
         throw new Exception("proc_open() error in run_cmd()");
+
     $fd_write = $pipes[0];
     $fd_read = $pipes[1];
 
