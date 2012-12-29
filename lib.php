@@ -357,7 +357,7 @@ function get_http_url_projects()
 {
     global $this_server;
     return 'http://' . $this_server['addr'] .
-        ':80/build_results/';
+        ':80/';
 }
 
 
