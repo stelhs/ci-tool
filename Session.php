@@ -351,10 +351,13 @@ class Session
         {
             msg_log(LOG_ERR, "failed checkout in session: " . $this->get_info());
             $this->set_status('failed_checkout');
+            add_to_file($this->dir . '/build.log', $this->get_log_header('checkout ended: failed'));
             return false;
         }
 
         $this->set_status('finished_checkout');
+        add_to_file($this->dir . '/build.log', $this->get_log_header('checkout ended: success'));
+
         msg_log(LOG_NOTICE, "finished checkout in session: " . $this->get_info());
         return true;
     }
@@ -366,22 +369,20 @@ class Session
     {
         msg_log(LOG_NOTICE, "start build in session: " . $this->get_info());
 
-        add_to_file($this->dir . '/build.log', $this->get_log_header('Build procedure'));
+        add_to_file($this->dir . '/build.log', $this->get_log_header('build procedure'));
 
         $this->set_status('running_build');
         $ret = $this->run_recipe('.recipe_build', '', 'build.log');
         if ($ret['rc'])
         {
             $this->set_status('failed_build');
+            add_to_file($this->dir . '/build.log', $this->get_log_header('build ended: failed'));
             msg_log(LOG_ERR, "failed build in session: " . $this->get_info());
             return false;
         }
 
-        // TODO: check log file and return status
-        // if (error)
-        //    $this->set_status('failed_build');
-
         $this->set_status('finished_build');
+        add_to_file($this->dir . '/build.log', $this->get_log_header('build ended: success'));
         msg_log(LOG_NOTICE, "finished build in session: " . $this->get_info());
         return true;
     }
@@ -406,14 +407,13 @@ class Session
         if ($ret['rc'])
         {
             $this->set_status('failed_test');
+            add_to_file($this->dir . '/build.log', $this->get_log_header('test ended: failed'));
             msg_log(LOG_ERR, "failed tests in session: " . $this->get_info());
             return false;
         }
 
-        // TODO: check log file and return status
-        // if (error)
-        //    $this->set_status('failed_build');
         $this->set_status('finished_test');
+        add_to_file($this->dir . '/build.log', $this->get_log_header('test ended: success'));
         msg_log(LOG_NOTICE, "finished tests in session: " . $this->get_info());
 
         return true;

@@ -67,7 +67,7 @@ function get_free_build_slots(List_projects $projects)
  * Function view on all servers and find last commit hash
  * @return string - commit hash
  */
-function find_previous_commit()
+function find_previous_commit($target)
 {
     global $_CONFIG;
 
@@ -77,7 +77,7 @@ function find_previous_commit()
     $last_commit_info = array();
     foreach ($_CONFIG['ci_servers'] as $ci_server)
     {
-        $rc = ci_run_cmd($ci_server, 'ci get get_last_commit');
+        $rc = ci_run_cmd($ci_server, 'cd ' . $target->get_dir() . ';ci get get_last_commit');
         if ($rc['rc'])
             continue;
 
@@ -217,7 +217,13 @@ function main()
                             return 0;
                         }
 
-                        $list_sessions = $projects->get_all_sessions();
+                        if ($obj_type != 'target')
+                        {
+                            msg_log(LOG_ERR, 'This operation permited only from target dir');
+                            return 1;
+                        }
+
+                        $list_sessions = $target->get_list_sessions();
                         if (!$list_sessions)
                         {
                             echo 'sessions not found';
@@ -601,7 +607,7 @@ function main()
                 return 1;
             }
 
-            $prev_commit = find_previous_commit();
+            $prev_commit = find_previous_commit($target);
 
             /*
             * if found pending sessions - switch current session to 'pending' state,
@@ -768,7 +774,7 @@ function main()
                 return 1;
             }
 
-            $prev_commit = find_previous_commit();
+            $prev_commit = find_previous_commit($target);
             $rc = $session->make_report($prev_commit, $email_addr);
             break;
 
@@ -795,7 +801,7 @@ function main()
                 break;
             }
 
-            $prev_commit = find_previous_commit();
+            $prev_commit = find_previous_commit($target);
             $session->make_report($prev_commit);
             break;
 
