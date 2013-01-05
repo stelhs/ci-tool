@@ -15,6 +15,30 @@ $this_server = array();
 
 
 
+<<<<<<< HEAD
+=======
+function print_help()
+{
+    // TODO:
+    // Нужно нарисовать красивый хэлп
+}
+
+
+function error_exception($exception)
+{
+    echo 'Error: ' . $exception->getMessage() . "\n";
+    exit;
+}
+
+
+
+function match_branch_with_mask($branch, $branch_mask)
+{
+    return fnmatch($branch_mask, $branch);
+}
+
+
+>>>>>>> master
 /**
  * Formated help output
  * @param $cmd - full command (text string)
@@ -89,10 +113,13 @@ function main()
 
     set_exception_handler('error_exception');
 
+<<<<<<< HEAD
     $this_server = get_current_ci_server();
     if (!$this_server)
         throw new Exception("Can't detect current server");
 
+=======
+>>>>>>> master
     $git_repository = isset($argv[1]) ? $argv[1] : NULL;
     $git_branch = isset($argv[2]) ? $argv[2] : NULL;
     $git_commit = isset($argv[3]) ? $argv[3] : NULL;

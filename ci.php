@@ -36,9 +36,16 @@ function print_help_commands($cmd, $description, $sub_commands = array())
 
 function error_exception($exception)
 {
+<<<<<<< HEAD
     msg_log(LOG_ERR, $exception->getMessage());
     exit;
 }
+=======
+    echo 'Error: ' . $exception->getMessage() . "\n";
+    exit;
+}
+
+>>>>>>> master
 
 /**
  * function returned count of free build slots,
@@ -112,11 +119,14 @@ function main()
 
     set_exception_handler('error_exception');
 
+<<<<<<< HEAD
     $this_server = get_current_ci_server();
     if (!$this_server)
         throw new Exception("Can't detect current server");
 
 
+=======
+>>>>>>> master
     // create list all projects
     $projects = new List_projects($_CONFIG['project_dir']);
 
