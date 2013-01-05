@@ -662,21 +662,21 @@ function main()
             msg_log(LOG_NOTICE, "go to run session: " . $session->get_info());
 
             $rc = $session->checkout_src($repo, $branch, $commit, $base_commit);
-            if ($rc['rc'])
+            if (!$rc)
             {
                 msg_log(LOG_ERR, 'checkout fail');
                 return 1;
             }
 
             $rc = $session->build_src();
-            if ($rc['rc'])
+            if (!$rc)
             {
                 msg_log(LOG_ERR, 'build fail');
                 return 1;
             }
 
             $rc = $session->test_src();
-            if ($rc['rc'])
+            if (!$rc)
             {
                 msg_log(LOG_ERR, 'test fail');
                 return 1;
