@@ -234,6 +234,12 @@ function main()
                         $last_date->setDate(1984, 1, 1);
                         foreach ($list_sessions as $session)
                         {
+                            $state = $session->get_state();
+
+                            if ($state != 'finished_build' &&
+                                $state != 'finished_test')
+                                continue;
+
                             $created_date = $session->get_date();
                             if ($created_date > $last_date)
                             {
