@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 # $1 - repository name
 # $2 - branch name
