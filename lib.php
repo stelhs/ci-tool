@@ -146,17 +146,10 @@ function run_remote_cmd(array $server, $cmd, $fork = false, $stdin_data = '')
             '@' . $server['addr'] .
             ' -p' . $server['port'] . ' ';
 
-<<<<<<< HEAD
-    $rc = run_cmd($ssh . '"' . $cmd . '" 2>&1', $fork, $stdin_data);
-=======
-
-    #dump($ssh . '"' . $cmd . '"');
-
     $rc = run_cmd($ssh . '"' . $cmd . '" 2>&1 > /dev/null');
 
     if ($fork == true)
         exit;
->>>>>>> master
 
     return $rc;
 }
