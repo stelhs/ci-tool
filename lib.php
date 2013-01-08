@@ -95,8 +95,9 @@ function run_cmd($cmd, $fork = false, $stdin_data = '', $print_stdout = false)
         1 => array("pipe", "w"),
     );
 
-    dump("bash 2>&1 << EOF\n" . $cmd . "\nEOF\n");
-    $fd = proc_open("bash 2>&1 << EOF\n" . $cmd . "\nEOF\n", $descriptorspec, $pipes);
+    //dump("bash 2>&1 << EOF\n" . $cmd . "\nEOF\n");
+    dump("bash -c \"" . $cmd . "\" 2>&1; echo $?");
+    $fd = proc_open("bash -c \"" . $cmd . "\" 2>&1; echo $?", $descriptorspec, $pipes);
     if ($fd == false)
         throw new Exception("proc_open() error in run_cmd()");
 
