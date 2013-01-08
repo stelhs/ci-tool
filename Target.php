@@ -50,6 +50,16 @@ class Target
     }
 
     /**
+     * Get target url
+     * @return CiDateTime
+     */
+    function get_url()
+    {
+        $project = $this->get_project();
+        return get_http_url_projects() . '/' . $project->get_name() . '/' . $this->get_name() . '/';
+    }
+
+    /**
      * Get email addresses
      */
     function get_email_list()

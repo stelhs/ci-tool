@@ -86,6 +86,16 @@ class Project
     }
 
     /**
+     * Get project URL
+     * @return string
+     */
+    function get_url()
+    {
+        return get_http_url_projects() . '/' . $this->get_name() . '/';
+    }
+
+
+    /**
      * Get array with all targets
      * @return array
      */

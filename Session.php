@@ -444,6 +444,8 @@ class Session
         $report_data['session_date'] = $this->get_date()->format('Y-m-d h:i:s');
         $report_data['session_dir'] = $this->get_dir();
         $report_data['session_url'] = $this->get_url();
+        $report_data['project_url'] = $this->get_target()->get_project()->get_url();
+        $report_data['target_url'] = $this->get_target()->get_url();
         $report_data['server_hostname'] = $this_server['hostname'];
         $report_data['server_addr'] = $this_server['addr'];
         $report_data['commit'] = $this->get_commit();
@@ -453,7 +455,10 @@ class Session
         $report_data['session_description'] = $this->get_description();
 
         if (file_exists($this->dir . '/build.log'))
-            $report_data['url_to_build_log'] = strip_duplicate_slashes($this->dir . '/build.log');
+        {
+            $report_data['build_log_url'] = $this->get_url() . '/build.log';
+            $report_data['build_log_dir'] = $this->get_dir() . 'build.log';
+        }
 
         $build_result_paths = array();
         if (file_exists($this->dir . '/.build_result'))
@@ -538,8 +543,18 @@ class Session
         }
 
         if ($build_result_paths)
+        {
             foreach($build_result_paths as $path)
                 $email_tpl->assign("result", array('result_url' => $path));
+        }
+        else
+            $email_tpl->assign("not_result", 0);
+
+        if ($report_data['git_log'])
+            $email_tpl->assign("git_log_content", $report_data);
+        else
+            $email_tpl->assign("no_git_log_content", 0);
+
         $email_body = $email_tpl->make_result();
 
         // get list email addresses from target settings
