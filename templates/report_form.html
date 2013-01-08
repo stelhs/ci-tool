@@ -1,0 +1,66 @@
+<table>
+    <tr>
+        <td>Status of Build: </td>
+        <td>
+            <!-- START BLOCK : succesfull_build -->
+            <font color="green">{status}</font>
+            <!-- END BLOCK : succesfull_build -->
+            <!-- START BLOCK : fail_build -->
+            <font color="red">{status}</font>
+            <!-- END BLOCK : fail_build -->
+        </td>
+    </tr>
+    <tr>
+        <td>Project Name: </td>
+        <td><a href="{project_url}">{project_name}</a></td>
+    </tr>
+    <tr>
+        <td>Target Name: </td>
+        <td><a href="{target_url}">{target_name}</a></td>
+    </tr>
+    <tr>
+        <td>Session Name: </td>
+        <td>
+            <a href="{session_url}">
+                {session_date}
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td>Session Description</td>
+        <td>
+            <a href="http://git.promwad.com/gitweb?p={repo_name};a=commitdiff;h={commit};hp={prev_commit};ds=sidebyside">
+                {session_description}
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td>Build Log: </td>
+        <td><a href="{build_log_url}">{build_log_dir}</a></td>
+    </tr>
+    <tr>
+        <td>Results: </td>
+        <td>
+            <!-- START BLOCK : result -->
+            <a href="{result_url}">
+                {result_url}
+            </a>
+            <br>
+            <!-- END BLOCK : result -->
+            <!-- START BLOCK : not_result -->
+            No results
+            <!-- END BLOCK : not_result -->
+        </td>
+    </tr>
+    <tr>
+        <td>Git log:</td>
+        <td>
+            <!-- START BLOCK : git_log_content -->
+            {git_log}
+            <!-- END BLOCK : git_log_content -->
+            <!-- START BLOCK : no_git_log_content -->
+            Not available
+            <!-- END BLOCK : no_git_log_content -->
+        </td>
+    </tr>
+</table>
