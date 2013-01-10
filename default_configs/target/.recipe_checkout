@@ -1,9 +1,9 @@
 #!/bin/bash -e
 
-# $1 - repository name
-# $2 - branch name
-# $3 - commit hash
+# $REPO_NAME - repository name
+# $BRANCH_NAME - branch name
+# $COMMIT - commit hash
 
-# git clone ssh://git.promwad.com/repos/$1 &&
-# git checkout $3
+# git clone ssh://git.promwad.com/repos/$REPO_NAME &&
+# git checkout $COMMIT
 

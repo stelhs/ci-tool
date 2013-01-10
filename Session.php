@@ -294,9 +294,8 @@ class Session
      * @param $bash_file - script file name
      * @return log or false
      */
-    private function run_recipe($bash_file, $args = '', $log_file = '')
+    private function run_recipe($bash_file, $args = array(), $log_file = '')
     {
-        global $_CONFIG;
         msg_log(LOG_NOTICE, "run_recipe " . $bash_file . " in session: " . $this->get_info());
 
         if (!is_file($this->target->get_dir() . '/' . $bash_file))
@@ -306,9 +305,13 @@ class Session
 
         create_file($this->dir . '/.pid', getmypid());
 
-        $ret = run_cmd("export SESSION_DIR=\"" . $this->dir . "\";" .
+        $env_vars = '';
+        foreach ($args as $arg_name => $arg_value)
+            $env_vars .= $arg_name . '="' . $arg_value . '";';
+
+        $ret = run_cmd($env_vars .
             'cd ' . $this->dir . ' && ' .
-            $this->target->get_dir() . '/' . $bash_file . ' ' . $args .
+            $this->target->get_dir() . '/' . $bash_file .
             ($log_file ? (' 2>&1 | tee -a ' . $this->dir . '/' . $log_file) : '') . '; exit ${PIPESTATUS[0]}',
             false, '', true);
 
@@ -345,7 +348,11 @@ class Session
 
         add_to_file($this->dir . '/build.log', $this->get_log_header('Checkout procedure'));
 
-        $ret = $this->run_recipe('.recipe_checkout', $repo . ' ' . $branch . ' ' . $commit, 'build.log');
+        $ret = $this->run_recipe('.recipe_checkout',
+                                  array('REPO_NAME' => $repo,
+                                        'BRANCH_NAME' => $branch,
+                                        'COMMIT' => $commit),
+                                 'build.log');
         if ($ret['rc'])
         {
             msg_log(LOG_ERR, "failed checkout in session: " . $this->get_info());
@@ -371,7 +378,7 @@ class Session
         add_to_file($this->dir . '/build.log', $this->get_log_header('build procedure'));
 
         $this->set_status('running_build');
-        $ret = $this->run_recipe('.recipe_build', '', 'build.log');
+        $ret = $this->run_recipe('.recipe_build', array('SESSION_DIR' => $this->dir), 'build.log');
         if ($ret['rc'])
         {
             $this->set_status('failed_build');
