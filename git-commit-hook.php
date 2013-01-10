@@ -158,6 +158,7 @@ function main()
         return 0;
     }
 
+
     // update projects configurations
     if (fnmatch($_CONFIG['ci_projects_repo_mask'], $git_repository))
     {
