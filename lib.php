@@ -95,7 +95,6 @@ function run_cmd($cmd, $fork = false, $stdin_data = '', $print_stdout = false)
         1 => array("pipe", "w"),
     );
 
-//$cmd . ' 2>&1;'
     $fd = proc_open('/bin/bash', $descriptorspec, $pipes);
     if ($fd == false)
         throw new Exception("proc_open() error in run_cmd()");

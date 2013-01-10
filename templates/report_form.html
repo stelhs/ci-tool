@@ -3,10 +3,10 @@
         <td>Status of Build: </td>
         <td>
             <!-- START BLOCK : succesfull_build -->
-            <font color="green">{status}</font>
+                <font color="green">{status}</font>
             <!-- END BLOCK : succesfull_build -->
             <!-- START BLOCK : fail_build -->
-            <font color="red">{status}</font>
+                <font color="red">{status}</font>
             <!-- END BLOCK : fail_build -->
         </td>
     </tr>
@@ -27,11 +27,9 @@
         </td>
     </tr>
     <tr>
-        <td>Session Description</td>
+        <td>Session Description: </td>
         <td>
-            <a href="http://git.promwad.com/gitweb?p={repo_name};a=commitdiff;h={commit};hp={prev_commit};ds=sidebyside">
                 {session_description}
-            </a>
         </td>
     </tr>
     <tr>
@@ -42,13 +40,14 @@
         <td>Results: </td>
         <td>
             <!-- START BLOCK : result -->
-            <a href="{result_url}">
-                {result_url}
-            </a>
-            <br>
+                <a href="{result_url}">
+                    {result_url}
+                </a>
+                <br>
+                <br>
             <!-- END BLOCK : result -->
             <!-- START BLOCK : not_result -->
-            No results
+               No results
             <!-- END BLOCK : not_result -->
         </td>
     </tr>
@@ -56,10 +55,12 @@
         <td>Git log:</td>
         <td>
             <!-- START BLOCK : git_log_content -->
-            {git_log}
+                <a href="http://git.promwad.com/gitweb?p={repo_name};a=commitdiff;h={commit};hp={prev_commit};ds=sidebyside">
+                    {git_log}
+                </a>
             <!-- END BLOCK : git_log_content -->
             <!-- START BLOCK : no_git_log_content -->
-            Not available
+                Not available
             <!-- END BLOCK : no_git_log_content -->
         </td>
     </tr>
