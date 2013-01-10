@@ -93,7 +93,7 @@ function find_previous_commit($target)
     }
 
     $prev_commit = '';
-    if ($last_commit_info)
+    if (isset($last_commit_info[1]))
     {
         msg_log(LOG_NOTICE, 'found previous commit hash: ' . $prev_commit);
         $prev_commit = $last_commit_info[1];

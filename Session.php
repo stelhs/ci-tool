@@ -470,7 +470,7 @@ class Session
                 if (!trim($path))
                     continue;
 
-                $build_result_paths[] = strip_duplicate_slashes($this->get_url() . '/' . $path);
+                $build_result_paths[] = $this->get_url() . strip_duplicate_slashes('/' . $path);
             }
         }
 
@@ -550,7 +550,7 @@ class Session
         else
             $email_tpl->assign("not_result", 0);
 
-        if ($report_data['git_log'])
+        if (isset($report_data['git_log']))
             $email_tpl->assign("git_log_content", $report_data);
         else
             $email_tpl->assign("no_git_log_content", 0);

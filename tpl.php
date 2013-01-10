@@ -752,7 +752,7 @@
 		*/
 		function assign_array($assign_data)
 		{
-			if($assign_data['block']) // Если есть блоки, то ассайним их
+			if(isset($assign_data['block'])) // Если есть блоки, то ассайним их
 			{
 				foreach($assign_data['block'] as $assign_block_data)
 				{
