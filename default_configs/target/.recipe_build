@@ -1,6 +1,8 @@
 #!/bin/bash -e
 
 # This script builds target and returns paths to build products in .build_result file
+# $SESSION_DIR - path to the session directory
+
 
 # building procedure...
 
