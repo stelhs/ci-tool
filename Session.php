@@ -307,7 +307,7 @@ class Session
 
         $env_vars = '';
         foreach ($args as $arg_name => $arg_value)
-            $env_vars .= $arg_name . '="' . $arg_value . '";';
+            $env_vars .= 'export ' . $arg_name . '="' . $arg_value . '";';
 
         $ret = run_cmd($env_vars .
             'cd ' . $this->dir . ' && ' .
