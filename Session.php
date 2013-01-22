@@ -506,7 +506,7 @@ class Session
         if (file_exists($this->dir . '/build.log'))
         {
             $report_data['build_log_url'] = $this->get_url() . '/build.log';
-            $report_data['build_log_dir'] = $this->get_dir() . 'build.log';
+            $report_data['build_log_dir'] = $this->get_dir() . '/build.log';
         }
 
         $build_result_paths = array();
