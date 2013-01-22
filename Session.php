@@ -193,6 +193,26 @@ class Session
     }
 
     /**
+     * Get build results path
+     * @return array result_name => path
+     */
+    function get_build_results()
+    {
+        if (!file_exists($this->dir . '/.build_result'))
+            return false;
+
+        $results = array();
+        $strings = get_strings_from_file($this->dir . '/.build_result');
+        foreach ($strings as $string)
+        {
+            $rows = explode(":", $string);
+            $results[$rows[0]] = $rows[1];
+        }
+
+        return $results;
+    }
+
+    /**
      * Get checkout duration time
      * @return name
      */
@@ -509,19 +529,7 @@ class Session
             $report_data['build_log_dir'] = $this->get_dir() . '/build.log';
         }
 
-        $build_result_paths = array();
-        if (file_exists($this->dir . '/.build_result'))
-        {
-            $content = get_dot_file_content($this->dir . '/.build_result');
-            $paths = explode("\n", $content);
-            foreach($paths as $path)
-            {
-                if (!trim($path))
-                    continue;
-
-                $build_result_paths[] = $this->get_url() . strip_duplicate_slashes('/' . $path);
-            }
-        }
+        $build_result_paths = $this->get_build_results();
 
         /*
          * create git-log
@@ -541,13 +549,13 @@ class Session
         /*
         * generate XML report file
         */
-        $xml_data = $report_data;
+/*        $xml_data = $report_data;
         if ($build_result_paths)
-            foreach($build_result_paths as $i => $path)
+            foreach($build_result_paths as $name => $path)
                 $xml_data['build_result%' . $i] = $path;
 
         $xml_content = create_xml($xml_data);
-        create_file($this->dir . '/.report.xml', $xml_content);
+        create_file($this->dir . '/.report.xml', $xml_content);*/
 
         /*
          * generate report form content
@@ -569,8 +577,10 @@ class Session
 
         if ($build_result_paths)
         {
-            foreach($build_result_paths as $path)
-                $report_tpl->assign("result", array('result_url' => $path));
+            foreach($build_result_paths as $name => $path)
+                $report_tpl->assign("result", array(
+                    'result_name' => $name,
+                    'result_url' => $path));
         }
         else
             $report_tpl->assign("not_result", 0);
