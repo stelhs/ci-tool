@@ -533,7 +533,10 @@ class Session
         if ($rc['rc'])
             msg_log(LOG_ERR, 'Can\'t get git-log. script get-git-log say: ' . $rc['log']);
         else
+        {
             $report_data['git_log'] = $rc['log'];
+            $report_data['git_log_wrapped'] = str_replace("\n", '<br>', $report_data['git_log']);
+        }
 
         /*
         * generate XML report file
