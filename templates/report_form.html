@@ -11,6 +11,14 @@
         </td>
     </tr>
     <tr>
+        <td>Build duration: </td>
+        <td>{build_duration}</td>
+    </tr>
+    <tr>
+        <td>Checkout duration: </td>
+        <td>{checkout_duration}</td>
+    </tr>
+    <tr>
         <td>Project Name: </td>
         <td><a href="{project_url}">{project_name}</a></td>
     </tr>
@@ -19,10 +27,18 @@
         <td><a href="{target_url}">{target_name}</a></td>
     </tr>
     <tr>
-        <td>Session Name: </td>
+        <td>Session dir: </td>
         <td>
             <a href="{session_url}">
                 {session_date}
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td>Reference to previous success build: </td>
+        <td>
+            <a href="{prev_session_url}">
+                {prev_session_date}
             </a>
         </td>
     </tr>
