@@ -179,6 +179,31 @@ class Session
         return get_dot_file_content($this->dir . '/.repo');
     }
 
+
+    /**
+     * Get build duration time
+     * @return name
+     */
+    function get_build_duration()
+    {
+        if (!file_exists($this->dir . '/.build_duration'))
+            return false;
+
+        return get_dot_file_content($this->dir . '/.build_duration');
+    }
+
+    /**
+     * Get checkout duration time
+     * @return name
+     */
+    function get_checkout_duration()
+    {
+        if (!file_exists($this->dir . '/.checkout_duration'))
+            return false;
+
+        return get_dot_file_content($this->dir . '/.checkout_duration');
+    }
+
     /**
      * Store status into a file .status
      * and check for valid session
@@ -342,6 +367,7 @@ class Session
             $commit = 'HEAD';
 
         $this->set_status('running_checkout');
+        $start_date = new CiDateTime();
 
         create_file($this->dir . '/.commit', $commit);
         create_file($this->dir . '/.repo', $repo);
@@ -353,6 +379,12 @@ class Session
                                         'BRANCH_NAME' => $branch,
                                         'COMMIT' => $commit),
                                  'build.log');
+
+        $end_date = new CiDateTime();
+        $interval = $start_date->diff($end_date);
+        create_file($this->dir . '/.checkout_duration',
+            $interval->format('%h hours, %i minutes and %s seconds'));
+
         if ($ret['rc'])
         {
             msg_log(LOG_ERR, "failed checkout in session: " . $this->get_info());
@@ -376,9 +408,16 @@ class Session
         msg_log(LOG_NOTICE, "start build in session: " . $this->get_info());
 
         add_to_file($this->dir . '/build.log', $this->get_log_header('build procedure'));
+        $start_date = new CiDateTime();
 
         $this->set_status('running_build');
         $ret = $this->run_recipe('.recipe_build', array('SESSION_DIR' => $this->dir), 'build.log');
+
+        $end_date = new CiDateTime();
+        $interval = $start_date->diff($end_date);
+        create_file($this->dir . '/.build_duration',
+            $interval->format('%h hours, %i minutes and %s seconds'));
+
         if ($ret['rc'])
         {
             $this->set_status('failed_build');
@@ -430,10 +469,10 @@ class Session
      * create report.xml
      * create report.html
      * send report by email
-     * @param $prev_commit - previous last commit
+     * @param $prev_session_info - array with previous session info
      * @param string $email_addr - report recepient email address
      */
-    public function make_report($prev_commit, $email_addr = '')
+    public function make_report($prev_session_info, $email_addr = '')
     {
         global $_CONFIG, $this_server;
 
@@ -444,18 +483,22 @@ class Session
         $status = $this->get_state();
 
         $report_data = array();
+        $report_data['build_duration'] = $this->get_build_duration();
+        $report_data['checkout_duration'] = $this->get_checkout_duration();
         $report_data['project_name'] = $project->get_name();
         $report_data['target_name'] = $target->get_name();
         $report_data['session_name'] = $this->get_name();
         $report_data['session_date'] = $this->get_date()->format('Y-m-d h:i:s');
         $report_data['session_dir'] = $this->get_dir();
         $report_data['session_url'] = $this->get_url();
+        $report_data['prev_session_url'] = $prev_session_info['url'];
+        $report_data['prev_session_date'] = $prev_session_info['date']->to_string();
         $report_data['project_url'] = $this->get_target()->get_project()->get_url();
         $report_data['target_url'] = $this->get_target()->get_url();
         $report_data['server_hostname'] = $this_server['hostname'];
         $report_data['server_addr'] = $this_server['addr'];
         $report_data['commit'] = $this->get_commit();
-        $report_data['prev_commit'] = $prev_commit;
+        $report_data['prev_commit'] = $prev_session_info['commit'];
         $report_data['status'] = $status;
         $report_data['repo_name'] = $this->get_repo_name();
         $report_data['session_description'] = $this->get_description();
@@ -484,7 +527,7 @@ class Session
          * create git-log
          */
         $rc = run_cmd('ssh ' . $_CONFIG['git_server'] . ' get-git-log ' .
-            $this->get_repo_name() . ' ' . ($prev_commit ? $prev_commit : 'TAIL') .
+            $this->get_repo_name() . ' ' . ($prev_session_info['commit'] ? $prev_session_info['commit'] : 'TAIL') .
             ' ' . $this->get_commit());
 
         if ($rc['rc'])

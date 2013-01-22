@@ -65,9 +65,9 @@ function get_free_build_slots(List_projects $projects)
 
 /**
  * Function view on all servers and find last commit hash
- * @return string - commit hash
+ * @return array - commit hash and last session url
  */
-function find_previous_commit($target)
+function find_previous_session_info($target)
 {
     global $_CONFIG;
 
@@ -93,15 +93,17 @@ function find_previous_commit($target)
     }
 
     $prev_commit = '';
+    $prev_session_url = '';
     if (isset($last_commit_info[1]))
     {
         $prev_commit = $last_commit_info[1];
+        $prev_session_url = $last_commit_info[2];
         msg_log(LOG_NOTICE, 'found previous commit hash: ' . $prev_commit);
     }
     else
         msg_log(LOG_WARNING, 'not found previous commit hash, report was created without git-log');
 
-    return $prev_commit;
+    return array('commit' => $prev_commit, 'url' => $prev_session_url, 'date' => $last_date);
 }
 
 
@@ -248,7 +250,7 @@ function main()
                             }
                         }
 
-                        echo $last_date->to_string() . ':' . $last_session->get_commit() . "\n";
+                        echo $last_date->to_string() . ':' . $last_session->get_commit() . ':' . $last_session->get_url() . "\n";
                         return 0;
 
                     case 'free_build_slots':
@@ -612,7 +614,7 @@ function main()
                 return 1;
             }
 
-            $prev_commit = find_previous_commit($target);
+            $prev_session_info = find_previous_session_info($target);
 
             /*
             * if found pending sessions - switch current session to 'pending' state,
@@ -688,7 +690,7 @@ function main()
                 return 1;
             }
 
-            $rc = $session->make_report($prev_commit, $email);
+            $rc = $session->make_report($prev_session_info, $email);
             break;
 
         case 'checkout':
@@ -779,8 +781,8 @@ function main()
                 return 1;
             }
 
-            $prev_commit = find_previous_commit($target);
-            $rc = $session->make_report($prev_commit, $email_addr);
+            $prev_session_info = find_previous_session_info($target);
+            $rc = $session->make_report($prev_session_info, $email_addr);
             break;
 
         case 'abort':
@@ -806,8 +808,8 @@ function main()
                 break;
             }
 
-            $prev_commit = find_previous_commit($target);
-            $session->make_report($prev_commit);
+            $prev_session_info = find_previous_session_info($target);
+            $session->make_report($prev_session_info);
             break;
 
         case 'status':
