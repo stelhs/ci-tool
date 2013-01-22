@@ -673,6 +673,7 @@ function main()
             if (!$rc)
             {
                 msg_log(LOG_ERR, 'checkout fail');
+                $session->make_report($prev_session_info, $email);
                 return 1;
             }
 
@@ -680,6 +681,7 @@ function main()
             if (!$rc)
             {
                 msg_log(LOG_ERR, 'build fail');
+                $session->make_report($prev_session_info, $email);
                 return 1;
             }
 
@@ -687,6 +689,7 @@ function main()
             if (!$rc)
             {
                 msg_log(LOG_ERR, 'test fail');
+                $session->make_report($prev_session_info, $email);
                 return 1;
             }
 
