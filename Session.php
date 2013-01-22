@@ -546,22 +546,50 @@ class Session
         $xml_content = create_xml($xml_data);
         create_file($this->dir . '/.report.xml', $xml_content);
 
-
         /*
-         * generate html filelfds
+         * generate report form content
          */
-        $tpl = new Tpl($_CONFIG['ci_dir'] . '/templates/report.html', array(), TPL_INTERPRETER_MODE, '', false);
-        $tpl->assign(0, $report_data);
+        $report_tpl = new Tpl($_CONFIG['ci_dir'] . '/templates/report_form.html', array(), TPL_INTERPRETER_MODE, '', false);
+        $report_tpl->assign(0, $report_data);
+        switch ($report_data['status'])
+        {
+            case 'finished_checkout':
+            case 'finished_build':
+            case 'finished_test':
+                $report_tpl->assign("succesfull_build", array('status' => $report_data['status']));
+                break;
+
+            default:
+                $report_tpl->assign("fail_build", array('status' => $report_data['status']));
+                break;
+        }
+
         if ($build_result_paths)
+        {
             foreach($build_result_paths as $path)
-                $tpl->assign("result", array('result_url' => $path));
+                $report_tpl->assign("result", array('result_url' => $path));
+        }
+        else
+            $report_tpl->assign("not_result", 0);
 
-        create_file($this->dir . '/report.html', $tpl->make_result());
+        if (isset($report_data['git_log']))
+            $report_tpl->assign("git_log_content", $report_data);
+        else
+            $report_tpl->assign("no_git_log_content", 0);
+
+        $report_form_content = $report_tpl->make_result();
+
 
 
         /*
-         * generate and send email
-         */
+        * generate html report
+        */
+        create_file($this->dir . '/report.html', $report_form_content);
+
+
+        /*
+        * send email
+        */
         $tpl = new Tpl($_CONFIG['ci_dir'] . '/templates/email_report.html', array(), TPL_INTERPRETER_MODE, '', false);
         $subject_template = trim($tpl->load_block('build_result_subject'));
         $email_template = $tpl->load_block('build_result');
@@ -573,35 +601,7 @@ class Session
 
         $email_tpl = new Tpl();
         $email_tpl->open_buffer($email_template);
-        $email_tpl->assign(0, $report_data);
-
-        //succesfull_build
-        switch ($report_data['status'])
-        {
-            case 'finished_checkout':
-            case 'finished_build':
-            case 'finished_test':
-                $email_tpl->assign("succesfull_build", array('status' => $report_data['status']));
-                break;
-
-            default:
-                $email_tpl->assign("fail_build", array('status' => $report_data['status']));
-                break;
-        }
-
-        if ($build_result_paths)
-        {
-            foreach($build_result_paths as $path)
-                $email_tpl->assign("result", array('result_url' => $path));
-        }
-        else
-            $email_tpl->assign("not_result", 0);
-
-        if (isset($report_data['git_log']))
-            $email_tpl->assign("git_log_content", $report_data);
-        else
-            $email_tpl->assign("no_git_log_content", 0);
-
+        $email_tpl->assign(0, array('mail' => $report_form_content));
         $email_body = $email_tpl->make_result();
 
         // get list email addresses from target settings
