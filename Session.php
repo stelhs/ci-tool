@@ -492,7 +492,7 @@ class Session
         $report_data['session_dir'] = $this->get_dir();
         $report_data['session_url'] = $this->get_url();
         $report_data['prev_session_url'] = $prev_session_info['url'];
-        $report_data['prev_session_date'] = $prev_session_info['date']->to_string();
+        $report_data['prev_session_date'] = $prev_session_info['date']->format('Y-m-d h:i:s');
         $report_data['project_url'] = $this->get_target()->get_project()->get_url();
         $report_data['target_url'] = $this->get_target()->get_url();
         $report_data['server_hostname'] = $this_server['hostname'];

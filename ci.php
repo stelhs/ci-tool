@@ -81,7 +81,7 @@ function find_previous_session_info($target)
         if ($rc['rc'])
             continue;
 
-        $commit_info = explode(':', $rc['log']);
+        $commit_info = explode(';', $rc['log']);
         $date = new CiDateTime();
         $date->from_string($commit_info[0]);
 
@@ -250,7 +250,7 @@ function main()
                             }
                         }
 
-                        echo $last_date->to_string() . ':' . $last_session->get_commit() . ':' . $last_session->get_url() . "\n";
+                        echo $last_date->to_string() . ';' . $last_session->get_commit() . ';' . $last_session->get_url() . "\n";
                         return 0;
 
                     case 'free_build_slots':
