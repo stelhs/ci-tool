@@ -3,20 +3,12 @@
         <td>Status of Build: </td>
         <td>
             <!-- START BLOCK : succesfull_build -->
-                <font color="green">{status}</font>
+                <font color="green"><b>{status}</b></font>
             <!-- END BLOCK : succesfull_build -->
             <!-- START BLOCK : fail_build -->
-                <font color="red">{status}</font>
+                <font color="red"><b>{status}</b></font>
             <!-- END BLOCK : fail_build -->
         </td>
-    </tr>
-    <tr>
-        <td>Build duration: </td>
-        <td>{build_duration}</td>
-    </tr>
-    <tr>
-        <td>Checkout duration: </td>
-        <td>{checkout_duration}</td>
     </tr>
     <tr>
         <td>Project Name: </td>
@@ -25,6 +17,14 @@
     <tr>
         <td>Target Name: </td>
         <td><a href="{target_url}">{target_name}</a></td>
+    </tr>
+    <tr>
+        <td>Build duration: </td>
+        <td>{build_duration}</td>
+    </tr>
+    <tr>
+        <td>Checkout duration: </td>
+        <td>{checkout_duration}</td>
     </tr>
     <tr>
         <td>Session dir: </td>
