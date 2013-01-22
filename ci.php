@@ -95,8 +95,8 @@ function find_previous_commit($target)
     $prev_commit = '';
     if (isset($last_commit_info[1]))
     {
-        msg_log(LOG_NOTICE, 'found previous commit hash: ' . $prev_commit);
         $prev_commit = $last_commit_info[1];
+        msg_log(LOG_NOTICE, 'found previous commit hash: ' . $prev_commit);
     }
     else
         msg_log(LOG_WARNING, 'not found previous commit hash, report was created without git-log');

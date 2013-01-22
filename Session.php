@@ -483,17 +483,15 @@ class Session
         /*
          * create git-log
          */
-        if ($prev_commit)
-        {
-            $rc = run_cmd('ssh ' . $_CONFIG['git_server'] . ' get-git-log ' .
-                $this->get_repo_name() . ' ' . $prev_commit . ' ' . $this->get_commit());
+        $rc = run_cmd('ssh ' . $_CONFIG['git_server'] . ' get-git-log ' .
+            $this->get_repo_name() . ' ' . ($prev_commit ? $prev_commit : 'TAIL') .
+            ' ' . $this->get_commit());
 
-            if ($rc['rc'])
-                msg_log(LOG_ERR, 'Can\'t get git-log. script get-git-log say: ' . $rc['log']);
-            else
-                $report_data['git_log'] = $rc['log'];
-        }
-
+        if ($rc['rc'])
+            msg_log(LOG_ERR, 'Can\'t get git-log. script get-git-log say: ' . $rc['log']);
+        else
+            $report_data['git_log'] = $rc['log'];
+        
         /*
         * generate XML report file
         */
