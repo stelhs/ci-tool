@@ -152,6 +152,7 @@ function main()
         msg_log(LOG_NOTICE, 'updating CI-tool sources');
         foreach ($_CONFIG['ci_servers'] as $ci_server)
             run_remote_cmd($ci_server, 'cd ' . $_CONFIG['ci_dir'] . ';' .
+                'git reset --hard;' .
                 'git pull origin master');
 
         msg_log(LOG_NOTICE, 'CI-tool sources update successfully');
