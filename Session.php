@@ -206,7 +206,7 @@ class Session
         foreach ($strings as $string)
         {
             $rows = explode(":", $string);
-            $results[$rows[0]] = $rows[1];
+            $results[trim($rows[0])] = $this->get_url() . '/' . trim($rows[1]);
         }
 
         return $results;
