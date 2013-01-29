@@ -134,7 +134,7 @@ function main()
 
     if ($print_help)
     {
-        print_help_commands('[repo name] [branch name] [commit] [base_commit] [email]',
+        print_help_commands('[repo name] [branch name] [commit] [email]',
             'git commit hook receiver, run by GIT');
         return 1;
     }
