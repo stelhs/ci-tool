@@ -95,8 +95,7 @@ function main()
     $git_repository = isset($argv[1]) ? $argv[1] : NULL;
     $git_branch = isset($argv[2]) ? $argv[2] : NULL;
     $git_commit = isset($argv[3]) ? $argv[3] : NULL;
-    $git_base_commit = isset($argv[4]) ? $argv[4] : NULL;
-    $git_email = isset($argv[5]) ? $argv[5] : NULL;
+    $git_email = isset($argv[4]) ? $argv[4] : NULL;
 
     // read git log data from stdin
     $git_log = '';
@@ -127,15 +126,9 @@ function main()
         $print_help = true;
     }
 
-    if (!$git_base_commit)
-    {
-        msg_log(LOG_ERR, 'incorrect argument 4');
-        $print_help = true;
-    }
-
     if (!$git_email)
     {
-        msg_log(LOG_ERR, 'incorrect argument 5');
+        msg_log(LOG_ERR, 'incorrect argument 4');
         $print_help = true;
     }
 
@@ -270,7 +263,7 @@ function main()
             'cd ' . $target->get_dir() . '/' . $session_name . ';' .
             'cat > .session_desc;' .
             'ci all "' . $git_repository . '" "' . $git_branch .
-            '" "' . $git_commit . '" "' . $git_base_commit . '" "' . $git_email . '"', true, $git_log);
+            '" "' . $git_commit . '" "' . $git_email . '"', true, $git_log);
 
         echo "CI-tool: run target " . $target->get_info() .
             ", create session: " . $ci_server['addr'] . ":" .

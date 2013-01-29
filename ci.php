@@ -574,8 +574,7 @@ function main()
             $repo = isset($argv[2]) ? $argv[2] : NULL;
             $branch = isset($argv[3]) ? $argv[3] : NULL;
             $commit = isset($argv[4]) ? $argv[4] : NULL;
-            $base_commit = isset($argv[5]) ? $argv[5] : NULL;
-            $email = isset($argv[6]) ? $argv[6] : NULL;
+            $email = isset($argv[5]) ? $argv[5] : NULL;
 
             if (!$repo)
             {
@@ -595,21 +594,15 @@ function main()
                 $print_help = true;
             }
 
-            if (!$base_commit)
-            {
-                msg_log(LOG_ERR, '"base_commit" 5 argument is empty');
-                $print_help = true;
-            }
-
             if (!$email)
             {
-                msg_log(LOG_ERR, '"email" 6 argument is empty');
+                msg_log(LOG_ERR, '"email" 5 argument is empty');
                 $print_help = true;
             }
 
             if ($print_help)
             {
-                print_help_commands('all [repo name] [branch name] [commit] [base_commit] [email]',
+                print_help_commands('all [repo name] [branch name] [commit] [email]',
                     'waiting for free slot and run checkout, build and tests');
                 return 1;
             }
@@ -669,7 +662,7 @@ function main()
 
             msg_log(LOG_NOTICE, "go to run session: " . $session->get_info());
 
-            $rc = $session->checkout_src($repo, $branch, $commit, $base_commit);
+            $rc = $session->checkout_src($repo, $branch, $commit);
             if (!$rc)
             {
                 msg_log(LOG_ERR, 'checkout fail');
