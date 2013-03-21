@@ -67,7 +67,7 @@ function get_free_build_slots(List_projects $projects)
  * Function view on all servers and find last commit hash
  * @return array - commit hash and last session url
  */
-function find_previous_session_info($target)
+function find_previous_session_info($target, $repo_name)
 {
     global $_CONFIG;
 
@@ -77,7 +77,7 @@ function find_previous_session_info($target)
     $last_commit_info = array();
     foreach ($_CONFIG['ci_servers'] as $ci_server)
     {
-        $rc = ci_run_cmd($ci_server, 'cd ' . $target->get_dir() . ';ci get get_last_commit');
+        $rc = ci_run_cmd($ci_server, 'cd ' . $target->get_dir() . ';ci get get_last_commit ' . $repo_name);
         if ($rc['rc'])
             continue;
 
@@ -212,9 +212,16 @@ function main()
                 switch ($param)
                 {
                     case 'get_last_commit':
+                        $repo = trim(isset($argv[3]) ? $argv[3] : NULL);
+                        if (!$repo)
+                        {
+                            msg_log(LOG_ERR, '"repo name" 1 argument is empty');
+                            $print_help = true;
+                        }
+
                         if ($print_help)
                         {
-                            print_help_commands('get get_last_commit', 'get last session and return time and commit hash');
+                            print_help_commands('get get_last_commit [repo]', 'get last session and return time and commit hash');
                             return 0;
                         }
 
@@ -236,6 +243,9 @@ function main()
                         $last_date->setDate(1984, 1, 1);
                         foreach ($list_sessions as $session)
                         {
+                            if ($session->get_repo_name() != $repo)
+                                continue;
+
                             $state = $session->get_state();
 
                             if ($state != 'finished_build' &&
@@ -607,7 +617,7 @@ function main()
                 return 1;
             }
 
-            $prev_session_info = find_previous_session_info($target);
+            $prev_session_info = find_previous_session_info($target, $repo);
 
             /*
             * if found pending sessions - switch current session to 'pending' state,
@@ -777,7 +787,8 @@ function main()
                 return 1;
             }
 
-            $prev_session_info = find_previous_session_info($target);
+            $repo = $session->get_repo_name();
+            $prev_session_info = find_previous_session_info($target, $repo);
             $rc = $session->make_report($prev_session_info, $email_addr);
             break;
 
@@ -804,7 +815,8 @@ function main()
                 break;
             }
 
-            $prev_session_info = find_previous_session_info($target);
+            $repo = $session->get_repo_name();
+            $prev_session_info = find_previous_session_info($target, $repo);
             $session->make_report($prev_session_info);
             break;
 
