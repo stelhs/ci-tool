@@ -168,7 +168,7 @@ class Session
     }
 
     /**
-     * Get triggered repo name
+     * Get repo name
      * @return name
      */
     private function get_repo_name()
