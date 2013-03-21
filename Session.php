@@ -171,7 +171,7 @@ class Session
      * Get repo name
      * @return name
      */
-    private function get_repo_name()
+    public function get_repo_name()
     {
         if (!file_exists($this->dir . '/.repo'))
             return false;
