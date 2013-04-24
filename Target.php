@@ -71,6 +71,19 @@ class Target
     }
 
     /**
+     * Get expiration sesisions time in days
+     */
+    function get_expiration_sessions_time()
+    {
+        if (!file_exists($this->dir . '/.expiration_time'))
+            return false;
+
+        return get_strings_from_file($this->dir . '/.expiration_time');
+    }
+
+
+
+    /**
      * Get project object
      * @return string
      */
