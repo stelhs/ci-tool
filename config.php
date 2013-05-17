@@ -11,18 +11,18 @@ $_CONFIG['ci_servers'] = array(
                                       'port' => 22,
                                       'login' => 'ci-tool',
                                       'role' => 'build',
-                                      'max_build_slots' => 10,
+                                      'max_build_slots' => 2,
                                       'description' => 'xz',
                                 ),
 
-                                array('hostname' => 'ws-127',
+                                /*array('hostname' => 'ws-127',
                                     'addr' => '192.168.10.244',
                                     'port' => 22,
                                     'login' => 'ci-tool',
                                     'role' => 'web',
                                     'max_build_slots' => 1,
                                     'description' => 'xz',
-                                ),
+                                ),*/
                         );
 
 $_CONFIG['email_header'] = 'From: ci-tool@promwad.com'."\n".
