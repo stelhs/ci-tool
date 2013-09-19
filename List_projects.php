@@ -73,7 +73,7 @@ class List_projects
 
         create_dir($project_dir);
         $rc = run_cmd('cd ' . $this->dir . ' && ' .
-        'ssh git.promwad.com create-repo \"ci-' . $project_name .
+        'ssh git.promwad.com git-create-repo \"ci-' . $project_name .
         '\" \"build targets for project ' . $project_name . '\" ' .
         'ci-tool --public-repo && ' .
         'git clone ssh://git.promwad.com/repos/ci-' . $project_name . '.git && ' .
