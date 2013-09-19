@@ -84,7 +84,7 @@ class List_projects
         if ($rc['rc'])
         {
             delete_dir($project_dir);
-            msg_log(LOG_ERR, 'can\'t created project, can\'t commit new project: ' . $project_name . 'Output: ' . $rc['log']);
+            msg_log(LOG_ERR, 'can\'t created project, can\'t commit new project: ' . $project_name . '. Output: ' . $rc['log']);
             return false;
         }
 
