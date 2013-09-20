@@ -9,7 +9,7 @@ class CiDateTime extends DateTime
 {
     function __construct()
     {
-        date_default_timezone_set('America/Los_Angeles');
+        date_default_timezone_set('Europe/Minsk');
         parent::__construct();
     }
 
