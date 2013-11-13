@@ -1,6 +1,8 @@
 #!/usr/bin/php
 <?php
 
+date_default_timezone_set("Europe/Minsk");
+
 $Ci_dir = '/opt/ci-tool/';
 require_once($Ci_dir . 'config.php');
 
